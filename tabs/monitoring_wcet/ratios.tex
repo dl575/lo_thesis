@@ -1,0 +1,16 @@
+% WCET results 
+
+\begin{tabular}{|lll||r|r|r|r|r|r|r||r|r|r|}
+\hline
+
+\multicolumn{3}{|c||}{\multirow{2}{*}{\bf Ratio}}  &\multicolumn{7}{c||}{\bf Benchmark}      &\multicolumn{1}{c|}{\multirow{2}{*}{\bf min}}&\multicolumn{1}{c|}{\multirow{2}{*}{\bf max}}&\multicolumn{1}{c|}{\multirow{2}{*}{\bf geomean}} \\ \cline{4-10}
+&&&\multicolumn{1}{c|}{\tt cnt}&\multicolumn{1}{c|}{\tt expint}&\multicolumn{1}{c|}{\tt fdct}&\multicolumn{1}{c|}{\tt fibcall}&\multicolumn{1}{c|}{\tt insertsort}&\multicolumn{1}{c|}{\tt matmult}&\multicolumn{1}{c||}{\tt ns}&&& \\ \hline \hline
+wcet-none&:&sim-none&1.03&1.52&1.00&1.00&1.00&1.00&1.00&1.00&1.52&1.07 \\ \hline
+wcet-umc&:&sim-umc&1.03&1.52&1.18&1.00&1.12&1.09&1.00&1.00&1.52&1.12 \\ \hline
+wcet-cfp&:&sim-cfp&1.29&1.71&1.00&1.43&1.13&1.00&1.39&1.00&1.71&1.26 \\ \hline \hline
+sequential-umc&:&wcet-umc&1.60&1.03&1.44&1.05&1.19&1.40&1.74&1.03&1.74&1.33 \\ \hline
+sequential-cfp&:&wcet-cfp&1.62&1.30&1.09&1.45&1.73&1.73&1.37&1.09&1.73&1.45 \\ \hline \hline
+wcet-umc&:&wcet-none&1.00&1.00&1.68&1.00&3.48&1.92&1.00&1.00&3.48&1.41 \\ \hline
+wcet-cfp&:&wcet-none&1.45&2.58&1.00&2.23&1.13&1.00&2.29&1.00&2.58&1.55 \\ \hline
+
+\end{tabular}

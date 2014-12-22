@@ -1,0 +1,17 @@
+% WCET results 
+
+\begin{tabular}{|l|l||r|r|r|r|r|r|r|}
+\hline
+
+\multirow{2}{*}{\bf Monitoring}&\multirow{2}{*}{\bf Experiment}&\multicolumn{7}{c|}{\bf Benchmark}       \\ \cline{3-9}
+&&\multicolumn{1}{c|}{\tt cnt}&\multicolumn{1}{c|}{\tt expint}&\multicolumn{1}{c|}{\tt fdct}&\multicolumn{1}{c|}{\tt fibcall}&\multicolumn{1}{c|}{\tt insertsort}&\multicolumn{1}{c|}{\tt matmult}&\multicolumn{1}{c|}{\tt ns} \\ \hline \hline
+\multirow{2}{*}{None}&wcet-none&64531&3483&1805&245&598&133668&5951 \\ \cline{2-9}
+&sim-none&62931&2293&1805&245&598&133668&5951 \\ \hline \hline
+\multirow{3}{*}{UMC}&sequential-umc&103052&3591&4382&257&2489&357453&10338 \\ \cline{2-9}
+&wcet-umc&64550&3498&3035&245&2083&256120&5953 \\ \cline{2-9}
+&sim-umc&62931&2297&2564&245&1864&235120&5951 \\ \hline \hline
+\multirow{3}{*}{CFP}&sequential-cfp&151732&11669&1976&794&1174&231507&18623 \\ \cline{2-9}
+&wcet-cfp&93544&8984&1805&547&677&133668&13614 \\ \cline{2-9}
+&sim-cfp&72540&5247&1805&382&598&133668&9824 \\ \hline
+
+\end{tabular}
