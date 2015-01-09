@@ -1,6 +1,40 @@
 \chapter{Introduction}
 \label{chap:intro}
 
+% Real-time systems are important
+The last decade has seen an increased ubiquity of computers with the widespread
+adoption of smartphones and tablets and the continued spread of embedded
+cyber-physical systems. With this deep integration into our environments, it has
+become important to consider the real-world interactions of these computers
+rather than simply treating them as abstract computing machines. For example,
+cyber-physical systems typically have real-time constraints in order to ensure
+safe and correct physical interactions. Similarly, even mobile and desktop
+systems, which are not traditionally considered real-time systems, are
+inherently time-sensitive because of their interaction with users.
+
+% Background on real-time systems
+These real-time systems introduce new design constraints that must be
+considered in order to ensure their safe and reliable operation.
+Real-time systems are typically specified as a set of tasks $\tau = \{\tau_1,
+\tau_2, \dots, \tau_n\}$. Each task has a deadline which it must finish before.
+Missing a deadline is considered an error. Extensive work has been done on how
+to schedule task sets in order to meet deadlines while optimizing various
+metrics such as CPU utilization. Another important topic of real-time system
+design is worst-case execution time (WCET) analysis. WCET analysis seeks to
+find the worst-case timing of tasks under all possible inputs and operating
+conditions. This worst-case execution time is used in various real-time
+scheduling algorithms and for giving strong guarantees on the ability to meet
+all deadlines.
+
+% Thesis statement
+Traditionally, techniques proposed for improving
+hardware architectures are only evaluated for their average-case
+performance and are not designed to take into account the possibility of timing
+constraints. This thesis explore the development of hardware
+architectures that are aware of real-time requirements. Specifically, 
+we present solutions for applying modern hardware techniques for improving
+system security, reliability, and energy-efficiency to real-time systems.
+
 \section{Secure and Reliable Hardware Architectures for Real-Time Systems}
 \label{sec:intro.security}
 
@@ -130,3 +164,13 @@ start to our goal of developing an architecture that automatically takes
 advantage of response-time requirements in order to save energy through dynamic
 resource allocation.
 
+\section{Organization}
+The rest of the thesis is organized as follows.
+Chapter~\ref{chap:monitoring_wcet} discusses the static analysis of run-time
+monitoring for hard real-time systems. Chapter~\ref{chap:monitoring_hard_drop}
+describes a dynamic scheme for implementing run-time monitoring on hard
+real-time systems. Chapter~\ref{chap:monitoring_dift_drop} extends this schemes
+to other applications with soft rather than hard deadlines.
+Chapter~\ref{chap:exec_time_prediction} presents our work on creating
+energy-efficient real-time systems. Finally, Chapter~\ref{chap:related_work}
+discusses related work and Chapter~\ref{chap:conclusion} concludes the thesis.
