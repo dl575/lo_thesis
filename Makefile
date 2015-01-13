@@ -19,7 +19,7 @@ cornell.pdf: cornell.dvi
 
 LDIRT = cornell.aux cornell.glo cornell.idx cornell.log
 
-TEXS = $(DOC).tex *.tex cornell.cls
+TEXS = $(DOC).tex *.tex */*.tex cornell.cls
 FIGS =
 #
 # List of postscript figures to be included
