@@ -140,30 +140,32 @@ the following set of constraints determines the bounded output monitoring load,
 $lo_{3.0}$.
 \begin{subequations}
 \begin{align}
-  -1000\lambda_3 + 7\lambda_5 + 1000\lambda_6 =& 10 \label{app:lo1}\\ 
-  \lambda_3 + \lambda_4 + \lambda_5 + \lambda_6 =& 1 \label{app:lo2}\\
-  2 \delta_3 + \lambda_5 + \lambda_6 \leq& 2 \label{app:lo3}\\
-  2 \delta_4 + \lambda_3 + \lambda_6 \leq& 2 \label{app:lo4}\\
-  2 \delta_5 + \lambda_3 + \lambda_4 \leq& 2 \label{app:lo5}\\
-  \delta_3 + \delta_4 + \delta_5 = 1 \label{app:lo6}\\
-  7\lambda_5 + 7\lambda_6 =& lo_{3.0} \label{app:lo7}
+  -1000\lambda_3 + 7\lambda_5 + 1000\lambda_6 =& 10 \label{eq:monitoring_wcet.lo1}\\ 
+  \lambda_3 + \lambda_4 + \lambda_5 + \lambda_6 =& 1 \label{eq:monitoring_wcet.lo2}\\
+  2 \delta_3 + \lambda_5 + \lambda_6 \leq& 2 \label{eq:monitoring_wcet.lo3}\\
+  2 \delta_4 + \lambda_3 + \lambda_6 \leq& 2 \label{eq:monitoring_wcet.lo4}\\
+  2 \delta_5 + \lambda_3 + \lambda_4 \leq& 2 \label{eq:monitoring_wcet.lo5}\\
+  \delta_3 + \delta_4 + \delta_5 = 1 \label{eq:monitoring_wcet.lo6}\\
+  7\lambda_5 + 7\lambda_6 =& lo_{3.0} \label{eq:monitoring_wcet.lo7}
 \end{align}
 \end{subequations}
 The -1000 and 1000 values were chosen arbitrarily and only require that
 $lo'_{3.0}$ to fall between them. $\delta_3$, $\delta_4$, and $\delta_5$ are
-binary variables. By Constraint~\ref{app:lo2}, it can be seen that all
-$\lambda_i$ are less than or equal to 1. Thus, in order for
-Constraint~\ref{app:lo1} to hold, $\lambda_6 >  0$. Since $\lambda_6 > 0$,
-Constraints~\ref{app:lo3} and \ref{app:lo4} force $\delta_3$ and $\delta_4$ to
-both be zero. From this, by Constraint~\ref{app:lo6}, $\delta_5 = 1$. Then, by
-Constraint~\ref{app:lo5}, $\lambda_3$ and $\lambda_4$ are both forced to be
-zero. If we now go back to the first two constraints, they are reduced to
+binary variables. By Constraint~\ref{eq:monitoring_wcet.lo2}, it can be seen
+that all $\lambda_i$ are less than or equal to 1. Thus, in order for
+Constraint~\ref{eq:monitoring_wcet.lo1} to hold, $\lambda_6 >  0$. Since
+$\lambda_6 > 0$, Constraints~\ref{eq:monitoring_wcet.lo3} and
+\ref{eq:monitoring_wcet.lo4} force $\delta_3$ and $\delta_4$ to both be zero.
+From this, by Constraint~\ref{eq:monitoring_wcet.lo6}, $\delta_5 = 1$. Then, by
+Constraint~\ref{eq:monitoring_wcet.lo5}, $\lambda_3$ and $\lambda_4$ are both
+forced to be zero. If we now go back to the first two constraints, they are
+reduced to
 \begin{align*}
   7\lambda_5 + 1000\lambda_6 =& 10\\
   \lambda_5 + \lambda_6 =& 1 \\
 \end{align*}
 Solving this system of equations gives the solution $(\lambda_5, \lambda_6) =
-(0.997, 0.003)$. Plugging these values into Constraint~\ref{app:lo7},
+(0.997, 0.003)$. Plugging these values into Constraint~\ref{eq:monitoring_wcet.lo7},
 \begin{align*}
   lo_{3.0} =& 7\lambda_5 + 7\lambda_6 \\
   =& 7\cdot 0.997 + 7\cdot 0.003 \\
@@ -190,18 +192,19 @@ In this case, since $s'_{3.0}$ is positive, we expect $s_{3.0} = s'_{3.0}$. The
 MILP problem determines $s_{3.0}$ using the following set of constraints.
 \begin{subequations}
 \begin{align}
-  -1000\lambda_0 + 1000\lambda_2 =& 3 \label{app:s1}\\
-  \lambda_0 + \lambda_1 + \lambda_2 =& 1 \label{app:s2}\\
-  \delta_1 + \lambda_2 \leq& 1 \label{app:s3}\\
-  \delta_2 + \lambda_0 \leq& 1 \label{app:s4}\\
-  \delta_1 + \delta_2 =& 1 \label{app:s5}\\
-  1000\lambda_2 =& s_{3.0} \label{app:s6}
+  -1000\lambda_0 + 1000\lambda_2 =& 3 \label{eq:monitoring_wcet.s1}\\
+  \lambda_0 + \lambda_1 + \lambda_2 =& 1 \label{eq:monitoring_wcet.s2}\\
+  \delta_1 + \lambda_2 \leq& 1 \label{eq:monitoring_wcet.s3}\\
+  \delta_2 + \lambda_0 \leq& 1 \label{eq:monitoring_wcet.s4}\\
+  \delta_1 + \delta_2 =& 1 \label{eq:monitoring_wcet.s5}\\
+  1000\lambda_2 =& s_{3.0} \label{eq:monitoring_wcet.s6}
 \end{align}
 \end{subequations}
 The -1000 and 1000 values are chosen arbitrarily, only requiring that
-$s'_{3.0}$ is between them. From Constraint~\ref{app:s1}, $\lambda_2$ must be
-positive. Since $\delta_i$ are binary variables, Constraint~\ref{app:s3} then
-implies that $\delta_1 = 0$. Constraints~\ref{app:s4} and \ref{app:s5} then
+$s'_{3.0}$ is between them. From Constraint~\ref{eq:monitoring_wcet.s1},
+$\lambda_2$ must be positive. Since $\delta_i$ are binary variables,
+Constraint~\ref{eq:monitoring_wcet.s3} then implies that $\delta_1 = 0$.
+Constraints~\ref{eq:monitoring_wcet.s4} and \ref{eq:monitoring_wcet.s5} then
 force $\delta_2 = 1$ and $\lambda_0 = 0$. The first two constraints then reduce
 to
 \begin{align*}
@@ -209,7 +212,8 @@ to
   \lambda_1 + \lambda_2 =& 1 
 \end{align*}
 Solving this system of equations leads to $(\lambda_1, \lambda_2) = (0.997,
-0.003)$ and thus calculating $s_{3.0}$ using Constraint~\ref{app:s6}:
+0.003)$ and thus calculating $s_{3.0}$ using
+Constraint~\ref{eq:monitoring_wcet.s6}:
 \begin{align*}
   s_{3.0} =& 1000 \lambda_2 \\
   =& 1000 \cdot 0.003 = 3

@@ -11,44 +11,41 @@
 \end{figure}
 
 % Results
-\begin{table*}[htb]
+\begin{table*}
   \begin{center}
     \begin{scriptsize}
     \input{tabs/monitoring_wcet/wcet}
     \end{scriptsize}
-    \vspace{-0.1in}
     \caption{Estimated and observed WCET (clock cycles) with and without monitoring.}
-    \label{tab:evaluation.wcet}
-    \vspace{-0.2in}
+    \label{tab:monitoring_wcet.evaluation.wcet}
   \end{center}
 \end{table*}
 
 % Calculated ratios
-\begin{table*}[htb]
+\begin{table*}
   \begin{center}
     \begin{tiny}
     \input{tabs/monitoring_wcet/ratios}
     \end{tiny}
-    \vspace{-0.1in}
-    \caption{Ratios comparing results from different experiments.} \label{tab:evaluation.ratios}
-    \vspace{-0.3in}
+    \caption{Ratios comparing results from different experiments.} 
+    \label{tab:monitoring_wcet.evaluation.ratios}
   \end{center}
 \end{table*}
 
-\vspace{-0.0in}
 \subsection{Experimental Setup}
 
-Our toolflow for the proposed WCET method is shown in Figure~\ref{fig:monitoring_wcet.evaluation.toolflow}. We
-first use Chronos \cite{chronos-tool}, an open source WCET tool, to estimate
-the WCET for the main task and the monitoring tasks. We also modified Chronos
-to produce a MFG of the main task. This MFG and the monitoring task WCET are used to produce an MILP formulation as in
-Section \ref{sec:formulation}. This MILP problem is solved
-using lp\_solve \cite{lpsolve}, which produces the worst-case monitoring stall cycles for each forwarded
-instruction. These monitoring stalls are combined into the ILP formulation that 
-is originally generated for the main task to estimate the overall
-WCET with parallel run-time monitoring. Although we use Chronos and lp\_solve
-for our implementation, these components can be replaced with any WCET
-estimation tool and LP solver respectively.
+Our toolflow for the proposed WCET method is shown in
+Figure~\ref{fig:monitoring_wcet.evaluation.toolflow}. We first use Chronos
+\cite{chronos-tool}, an open source WCET tool, to estimate the WCET for the
+main task and the monitoring tasks. We also modified Chronos to produce a MFG
+of the main task. This MFG and the monitoring task WCET are used to produce an
+MILP formulation as in Section \ref{sec:monitoring_wcet.wcet}. This MILP
+problem is solved using lp\_solve \cite{lpsolve}, which produces the worst-case
+monitoring stall cycles for each forwarded instruction. These monitoring stalls
+are combined into the ILP formulation that is originally generated for the main
+task to estimate the overall WCET with parallel run-time monitoring. Although
+we use Chronos and lp\_solve for our implementation, these components can be
+replaced with any WCET estimation tool and LP solver respectively.
 
 To evaluate the effectiveness of our WCET scheme, we compared its estimate
 with a simple WCET bound from sequential monitoring (Section~\ref{sec:formulation:sequential})
@@ -79,20 +76,18 @@ This information is stored on the monitoring core.
 On a branch or jump, the monitoring core ensures that the target is
 contained in the list of valid targets.
 
-
-\vspace{-0.05in}
 \subsection{Results}
 
-Table~\ref{tab:evaluation.wcet} shows the experimental results for each
+Table~\ref{tab:monitoring_wcet.evaluation.wcet} shows the experimental results for each
 benchmark under different configurations. The first set of rows show the WCET 
 estimate from Chronos ({\tt wcet-none}) and actual run-times from simulations ({\tt sim-none}) without 
 monitoring. The remaining rows show the WCET for the UMC and
 CFP monitoring extensions. The results are shown for three different approaches:
 a bound from sequential monitoring ({\tt sequential}), our approach ({\tt wcet}),
 and simulations ({\tt sim}). The numbers indicate the number of clock cycles.
-Appendix~\ref{sec:lptime} includes running times for these experiments.
+Section~\ref{sec:monitoring_wcet.evaluation.lptime} includes running times for these experiments.
 
-Table~\ref{tab:evaluation.ratios} shows relative comparisons between
+Table~\ref{tab:monitoring_wcet.evaluation.ratios} shows relative comparisons between
 different configurations or WCET methods.
 The first set of rows compare the WCET estimates from ILP or MILP formulations
 with the worst-case simulation cycles for each monitoring setup. 
@@ -117,7 +112,7 @@ These results demonstrate that modeling the FIFO decoupling between the main and
 tasks is important for obtaining tight WCET estimates of parallel
 monitoring. 
 
-Finally, the last two rows in Table~\ref{tab:evaluation.ratios} compare the WCET 
+Finally, the last two rows in Table~\ref{tab:monitoring_wcet.evaluation.ratios} compare the WCET 
 estimates with and without run-time monitoring.
 The results show that the increase in WCET varies significantly depending on
 benchmark and monitoring technique. Benchmarks with infrequent monitoring
@@ -147,7 +142,7 @@ microarchitecture and is applicable to more optimized architectures.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Time to Solve Linear Programming Problem}
-\label{sec:lptime}
+\label{sec:monitoring_wcet.evaluation.lptime}
 
 % lp_solve time
 \begin{table*}[htb]
@@ -155,11 +150,9 @@ microarchitecture and is applicable to more optimized architectures.
     \begin{small}
     \input{tabs/monitoring_wcet/runtime}
     \end{small}
-    \vspace{-0.1in}
     \caption{Running time of lp\_solve in seconds to determine worst-case stalls
     (stall), sequential bound (sequential), and worst-case execution times (wcet).}
-    \label{tab:appendix.runtime}
-    \vspace{-0.2in}
+    \label{tab:monitoring_wcet.evaluation.runtime}
   \end{center}
 \end{table*}
 
@@ -167,7 +160,7 @@ The most time intensive portion of the WCET analysis is the actual solving of
 the linear programming (LP) problem. For our experiments, we used lp\_solve
 5.5.2.0 \cite{lpsolve} as our LP solver. These experiments were run on a 2.67
 GHz Xeon E5430 quad-core processor with 4 GB of RAM. The running times for
-lp\_solve are shown in Table~\ref{tab:appendix.runtime}.  The first set of rows
+lp\_solve are shown in Table~\ref{tab:monitoring_wcet.evaluation.runtime}.  The first set of rows
 show the running time for determining the worst-case stalls from the monitoring flow
 graph ({\tt stall}). The second set of rows show the lp\_solve running time for
 finding the sequential bounds. The final set of rows show the running time for

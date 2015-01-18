@@ -2,7 +2,7 @@
 \label{sec:monitoring_wcet.wcet}
 
 \subsection{Implicit Path Enumeration}
-\label{sec:formulation:ipet}
+\label{sec:monitoring_wcet.wcet.ipet}
 
 Most of the WCET analysis techniques today rely on an ILP formulation that is
 obtained from implicit path enumeration techniques \cite{li-ipet-dac95}.  In
@@ -47,7 +47,7 @@ monitoring lies in determining $s_{B,max}$.  The rest of this section addresses
 this problem.
 
 \subsection{Sequential Monitoring Bound}
-\label{sec:formulation:sequential}
+\label{sec:monitoring_wcet.wcet.sequential}
 
 One way to determine a conservative bound on the worst-case monitoring stall
 cycles is to consider sequential monitoring.  In sequential monitoring, the
@@ -64,7 +64,7 @@ core. These features are critical to utilizing run-time monitoring techniques
 while maintaining low performance overheads.
 
 \subsection{FIFO Model}
-\label{sec:formulation:model}
+\label{sec:monitoring_wcet.wcet.model}
 
 To obtain tighter WCET bounds, we need to model the FIFO.  The main task can
 continue its execution as long as a FIFO entry is available, but needs to stall
@@ -167,7 +167,7 @@ by this analysis. That is, determining the individual worst-case stalls results
 in the global worst-case stalls.
 
 \subsection{MILP Formulation}
-\label{sec:formulation:milp}
+\label{sec:monitoring_wcet.wcet.milp}
 
 The proposed FIFO model requires solving an optimization problem to obtain the
 worst-case stalls, where the input and output monitoring loads, $li_{M}$ and
