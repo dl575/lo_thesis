@@ -2,14 +2,11 @@
 \label{sec:monitoring_wcet.evaluation}
 
 % Toolflow
-\begin{figure}%[htb]
+\begin{figure}
   \begin{center}
-    \vspace{-0.1in}
-    \includegraphics[height=2.2in]{monitoring_wcet/figs/toolflow.pdf}
-    \vspace{-0.1in}
+    \includegraphics[width=3.5in]{monitoring_wcet/figs/toolflow.pdf}
     \caption{Toolflow for WCET estimation of parallel monitoring.}
-    \label{fig:evaluation.toolflow}
-    \vspace{-0.3in}
+    \label{fig:monitoring_wcet.evaluation.toolflow}
   \end{center}
 \end{figure}
 
@@ -41,7 +38,7 @@
 \vspace{-0.0in}
 \subsection{Experimental Setup}
 
-Our toolflow for the proposed WCET method is shown in Figure~\ref{fig:evaluation.toolflow}. We
+Our toolflow for the proposed WCET method is shown in Figure~\ref{fig:monitoring_wcet.evaluation.toolflow}. We
 first use Chronos \cite{chronos-tool}, an open source WCET tool, to estimate
 the WCET for the main task and the monitoring tasks. We also modified Chronos
 to produce a MFG of the main task. This MFG and the monitoring task WCET are used to produce an MILP formulation as in

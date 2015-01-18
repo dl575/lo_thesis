@@ -14,18 +14,15 @@ monitoring.
 \subsection{Example Setup}
 
 % CFG
-\begin{figure}[htb]
+\begin{figure}
   \begin{center}
-    \vspace{-0.0in}
-    \includegraphics[width=2.0in]{monitoring_wcet/figs/cfg.pdf}
-    \vspace{-0.1in}
+    \includegraphics[width=3.5in]{monitoring_wcet/figs/cfg.pdf}
     \caption{Control flow graph of a main task.}
-    \label{fig:app.cfg}
-    \vspace{-0.2in}
+    \label{fig:monitoring_wcet.example.cfg}
   \end{center}
 \end{figure}
 
-The control flow graph for an example main task is shown in Figure~\ref{fig:app.cfg}. We assume
+The control flow graph for an example main task is shown in Figure~\ref{fig:monitoring_wcet.example.cfg}. We assume
 that the execution time for each node has already been calculated using
 previous methods. These execution times are labeled as {\tt cB\_max} in the figure.
 
@@ -63,19 +60,16 @@ two nodes in the MFG. The first node represents the first three instructions and
 the second node represents the last instruction. 
 
 % MFG
-\begin{figure}[htb]
+\begin{figure}
   \begin{center}
-    \vspace{-0.0in}
-    \includegraphics[width=2in]{monitoring_wcet/figs/mfg.pdf}
-    \vspace{-0.1in}
+    \includegraphics[width=3.5in]{monitoring_wcet/figs/mfg.pdf}
     \caption{Monitoring flow graph of the main task. Blue (dark) nodes indicate ones with a forwarded instruction at the end. Yellow (light) nodes indicate ones without a forwarded instruction.}
-    \label{fig:app.mfg}
-    \vspace{-0.2in}
+    \label{fig:monitoring_wcet.example.mfg}
   \end{center}
 \end{figure}
 
 The full MFG is shown in
-Figure~\ref{fig:app.mfg}. Nodes that are blue (dark) include a forwarded
+Figure~\ref{fig:monitoring_wcet.example.mfg}. Nodes that are blue (dark) include a forwarded
 instruction, which is located at the end of the node. Nodes that are yellow
 (light) do not include a forwarded instruction. The nodes in the graph are
 labeled with minimum ({\tt cB\_min}) rather than maximum execution times. It can be seen that
