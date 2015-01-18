@@ -8,21 +8,21 @@
   \begin{center}
     \includegraphics[width=3.5in]{monitoring_wcet/figs/arch.pdf}
     \caption{Parallel monitoring architecture model.}
-    \label{fig:monitoring_wcet.monitoring.overview} 
+    \label{fig:monitoring_wcet.monitoring.arch} 
   \end{center}
 \end{figure}
 
 % Automatically forward instructions
 \begin{figure}
   \begin{center}
-    \includegraphics[width=3.5in]{monitoring_wcet/figs/monitoring.pdf}
+    \includegraphics[width=\linewidth]{monitoring_wcet/figs/forwarding.pdf}
     \caption{The main core pipeline is modified to forward information on certain
     instruction types.}
     \label{fig:monitoring_wcet.monitoring.forwarding}
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:monitoring_wcet.monitoring.overview} shows the model of
+Figure~\ref{fig:monitoring_wcet.monitoring.arch} shows a model of the
 run-time parallel monitoring architecture that is assumed in this thesis. The
 architecture consists of two parallel processing elements, main and monitoring
 cores, which are loosely coupled with a FIFO buffer.  The main core runs a
@@ -43,14 +43,7 @@ should be forwarded. If the instruction should be forwarded, then an enqueue
 signal is sent to the FIFO.  Information about the instruction that is needed
 for monitoring, such as register values, memory locations accessed, etc., is
 stored in the FIFO. In this way, the detection and handling of monitoring
-events is handled in hardware, with no need to modify the main task.  The FIFO
-allows the monitoring core to operate in a decoupled manner by buffering
-forwarded instructions.  However, if the FIFO is full, the main core needs to
-wait on a forwarded instruction until a FIFO entry becomes available.  These
-stalls are a major source of overhead because the monitor may take several
-cycles to process a single event from the main core.  We refer to these stalls
-of the main core due to monitoring as {\em monitoring stalls} and the number of
-cycles stalled as {\em monitoring stall cycles}.
+events is handled in hardware, with no need to modify the main task.
 
 % Pipeline diagram to show stalls
 \begin{figure*}
@@ -78,6 +71,11 @@ core pipeline is shown.  After the 4th instruction ({\tt ADD}) is committed by
 the main core, the FIFO is full and the monitoring core is busy. Thus, in order
 to not miss information about a monitoring event, the main core must stall
 before continuing execution and committing the 5th instruction ({\tt STR}).
+These stalls due to the mismatch in throughput are a major source of overhead.
+We refer these stalls of the main core due to monitoring as \emph{monitoring
+stalls} and the number of cycles stalled as \emph{monitoring stall cycles}. In
+the example code sequence shown, three monitoring stall cycles occur, two for
+instruction 4 and one for instruction 5.
 
 The forwarded instruction triggers the monitoring core to execute a series of
 monitoring instructions.  A different monitoring task is executed depending on
@@ -92,7 +90,7 @@ focus here on how to handle such an error. However, there are several options
 on how to handle such an error such as raising an exception, notifying the
 user, or switching to a simple, more trusted main task \cite{sha-simplex-sw01}.
 
-\subsection{Monitoring Scheme Example}
+\subsection{Example Monitoring Scheme}
 
 There are many possible monitoring schemes that can be implemented on this type
 of fine-grained parallel monitoring architecture such as memory protection
@@ -102,7 +100,7 @@ detection \cite{cord-hpca06, eraser-tocs97, literace-pldi09, pacer-pldi10},
 etc.  For example, an array bounds check (BC) \cite{hardbound-asplos08} can be
 implemented in order to detect when software attempts to read or write to a
 memory location outside of an array's bounds. This can be done by associating
-metadata with array pointers that indicates the array's base (start) and bound
+metadata with array pointers that indicate the arrays' base (start) and bound
 (end) addresses. On loads or stores with the array pointer, the monitor checks
 that the memory address accessed is within the base and bound addresses. In
 addition, this base and bound metadata is propagated on ALU and memory
@@ -152,7 +150,7 @@ forwarded.
 
 \subsection{Analysis Assumptions}
 
-Our analysis focuses on the interaction between the main core and the
+Our WCET analysis focuses on the interaction between the main core and the
 monitoring core through a FIFO with an assumption that each core has its own
 memory. Therefore, there is no interference between the two cores on memory
 accesses. This configuration applies for typical multi-core embedded

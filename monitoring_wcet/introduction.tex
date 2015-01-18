@@ -1,10 +1,10 @@
 \section{Introduction}
 \label{sec:monitoring_wcet.introduction}
 
-In order to apply run-time monitoring to traditional real-time systems, we must
+In order to apply parallel run-time monitoring to traditional real-time systems, we must
 be able to analyze the worst-case execution time (WCET) of running a program
 with run-time monitoring. The only existing way to do this is to assume that
-monitoring is done sequentially. However, this bound is conservative but overly so.
+monitoring is done sequentially. However, this bound is overly conservative when used to analyze parallel run-time monitoring.
 In this chapter, we present a method for estimating the increase in WCET of
 programs running on a system with parallel monitoring. We first investigate how
 to mathematically model the loosely-coupled relationship between the main 
