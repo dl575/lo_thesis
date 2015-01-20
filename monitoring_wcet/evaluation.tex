@@ -4,33 +4,11 @@
 % Toolflow
 \begin{figure}
   \begin{center}
-    \includegraphics[width=3.5in]{monitoring_wcet/figs/toolflow.pdf}
+    \includegraphics{monitoring_wcet/figs/toolflow.pdf}
     \caption{Toolflow for WCET estimation of parallel monitoring.}
     \label{fig:monitoring_wcet.evaluation.toolflow}
   \end{center}
 \end{figure}
-
-% Results
-\begin{table*}
-  \begin{center}
-    \begin{scriptsize}
-    \input{tabs/monitoring_wcet/wcet}
-    \end{scriptsize}
-    \caption{Estimated and observed WCET (clock cycles) with and without monitoring.}
-    \label{tab:monitoring_wcet.evaluation.wcet}
-  \end{center}
-\end{table*}
-
-% Calculated ratios
-\begin{table*}
-  \begin{center}
-    \begin{tiny}
-    \input{tabs/monitoring_wcet/ratios}
-    \end{tiny}
-    \caption{Ratios comparing results from different experiments.} 
-    \label{tab:monitoring_wcet.evaluation.ratios}
-  \end{center}
-\end{table*}
 
 \subsection{Experimental Setup}
 
@@ -47,109 +25,138 @@ task to estimate the overall WCET with parallel run-time monitoring. Although
 we use Chronos and lp\_solve for our implementation, these components can be
 replaced with any WCET estimation tool and LP solver respectively.
 
-To evaluate the effectiveness of our WCET scheme, we compared its estimate
-with a simple WCET bound from sequential monitoring (Section~\ref{sec:formulation:sequential})
-as well as simulation results using the SimpleScalar tool \cite{simplescalar}.
-In addition to the WCET estimates with monitoring, we also compared the results with
-the WCET of the main task without monitoring, using both Chronos and simulations. 
-% The baseline WCET allows us to study the overheads of parallel run-time monitoring
-% in terms of the worst-case execution time.
+To evaluate the effectiveness of our WCET scheme, we compared its estimate with
+a simple WCET bound from sequential monitoring
+(Section~\ref{sec:monitoring_wcet.wcet.sequential}) as well as simulation
+results using the SimpleScalar architectural simulator \cite{simplescalar}.  In
+addition to the WCET estimates with monitoring, we also compared the results
+with the WCET of the main task without monitoring, using both Chronos and
+simulations. 
 
-%In order to examine
-%how conservative the estimate was, we used the SimpleScalar simulator to
-%simulate the benchmarks, both with and without monitoring. 
+For the experiments, we configured Chronos and SimpleScalar to model simple
+processing cores that execute one instruction per cycle for both main and
+monitoring cores and used an 8-entry FIFO.  This configuration represents
+typical embedded microcontrollers, and is designed to focus on the impact of
+parallel run-time monitoring by removing complex features such as branch
+prediction and caches.  In the evaluation, we used seven benchmarks from the
+M\"alardalen WCET benchmark suite \cite{malardalen} and two monitoring
+techniques: uninitialized memory checks (UMC) and control flow protection
+(CFP).  UMC detects a software bug that reads memory without a write.  CFP
+protects a program's control flow by checking a target address on each control
+transfer \cite{arora-runtime05}. In this technique, a compiler determines a set
+of valid targets for each branch and jump in the main task.  This information
+is stored on the monitoring core.  On a branch or jump, the monitoring core
+ensures that the target is contained in the list of valid targets.
 
-For the experiments, we configured Chronos and SimpleScalar to model simple processing cores
-that execute one instruction per cycle for both main and monitoring cores and used an 8-entry FIFO.
-This configuration represents typical embedded microcontrollers, and is designed to focus on 
-the impact of parallel run-time monitoring by removing complex features such as branch prediction 
-and caches.
-%The experiments model an 8-entry FIFO that can buffer up to eight
-%forwarded instructions. 
-In the evaluation, we used seven benchmarks from the M\"alarden WCET benchmark suite \cite{malarden} 
-and two monitoring techniques: uninitialized memory checks (UMC) and control flow protection (CFP).
-UMC detects a software bug that reads memory without a write as briefly explained in 
-Section~\ref{sec:arch}. CFP protects a program's control flow by checking a target address on
-each control transfer \cite{arora-runtime05}. In this technique, a compiler determines a set of valid
-targets for each branch and jump in the main task.
-This information is stored on the monitoring core. 
-On a branch or jump, the monitoring core ensures that the target is
-contained in the list of valid targets.
+\subsection{WCET Results}
 
-\subsection{Results}
+% Results
+\begin{table*}
+  \begin{center}
+    \begin{scriptsize}
+    \input{monitoring_wcet/tabs/wcet}
+    \end{scriptsize}
+    \caption{Estimated and observed WCET (clock cycles) with and without monitoring.}
+    \label{tab:monitoring_wcet.evaluation.wcet}
+  \end{center}
+\end{table*}
 
-Table~\ref{tab:monitoring_wcet.evaluation.wcet} shows the experimental results for each
-benchmark under different configurations. The first set of rows show the WCET 
-estimate from Chronos ({\tt wcet-none}) and actual run-times from simulations ({\tt sim-none}) without 
-monitoring. The remaining rows show the WCET for the UMC and
-CFP monitoring extensions. The results are shown for three different approaches:
-a bound from sequential monitoring ({\tt sequential}), our approach ({\tt wcet}),
-and simulations ({\tt sim}). The numbers indicate the number of clock cycles.
-Section~\ref{sec:monitoring_wcet.evaluation.lptime} includes running times for these experiments.
+Table~\ref{tab:monitoring_wcet.evaluation.wcet} shows the experimental results
+for each benchmark under different configurations. The first set of rows show
+the WCET estimate from Chronos ({\tt wcet-none}) and actual run-times from
+simulations ({\tt sim-none}) without monitoring. The remaining rows show the
+WCET for the UMC and CFP monitoring extensions. The results are shown for three
+different approaches: a bound from sequential monitoring ({\tt sequential}),
+our approach ({\tt wcet}), and simulations ({\tt sim}). The numbers indicate
+the number of clock cycles.
 
-Table~\ref{tab:monitoring_wcet.evaluation.ratios} shows relative comparisons between
-different configurations or WCET methods.
-The first set of rows compare the WCET estimates from ILP or MILP formulations
-with the worst-case simulation cycles for each monitoring setup. 
-The results show that the analytical WCET estimates from our proposed scheme
-are larger than the observed WCET by 0\% to 52\% for UMC and 0\% to 71\% for CFP, 
-depending on the main task. This difference is comparable to the case without
-parallel run-time monitoring, where the analytical WCET from Chronos
-is larger than simulation results by 0\% to 52\%. 
-In fact, for {\tt expint}, the majority of the difference is from the WCET
-estimate of the main task rather than the effects of monitoring.
-%In fact, for certain benchmarks, such as {\tt expint}, the majority of the difference 
-%is due to estimating the
-%WCET of the main task rather than the effects of monitoring. 
-This result suggests that our WCET approach is not significantly more conservative than
-the baseline WCET tool for the main task.
+% Calculated ratios
+\begin{table*}
+  \begin{center}
+    \begin{tiny}
+    \input{monitoring_wcet/tabs/ratios}
+    \end{tiny}
+    \caption{Ratios comparing results from different experiments.} 
+    \label{tab:monitoring_wcet.evaluation.ratios}
+  \end{center}
+\end{table*}
 
-The second set of rows compare the bound from sequential monitoring and the WCET 
-from our proposed method. 
-For UMC, our approach shows up to a 74\% reduction in WCET estimates over the simple
-bound. Similarly, for CFP, our method shows up to a 73\% improvement.
-These results demonstrate that modeling the FIFO decoupling between the main and monitoring
-tasks is important for obtaining tight WCET estimates of parallel
-monitoring. 
+% WCET vs. Simulation
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_wcet/data/wcet-sim.pdf}
+    \caption{Ratio of estimated WCET to observed WCET.}
+    \label{fig:monitoring_wcet.evaluation.wcet-sim}
+  \end{center}
+\end{figure}
+% Sequential WCET vs. Parallel WCET
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_wcet/data/sequential-wcet.pdf}
+    \caption{Ratio of WCET assuming sequential monitoring to WCET using our
+    proposed method.}
+    \label{fig:monitoring_wcet.evaluation.sequential-wcet}
+  \end{center}
+\end{figure}
+% Monitoring vs. None
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_wcet/data/mon-none.pdf}
+    \caption{Ratio of WCET with monitoring to WCET without monitoring.}
+    \label{fig:monitoring_wcet.evaluation.mon-none}
+  \end{center}
+\end{figure}
 
-Finally, the last two rows in Table~\ref{tab:monitoring_wcet.evaluation.ratios} compare the WCET 
-estimates with and without run-time monitoring.
-The results show that the increase in WCET varies significantly depending on
-benchmark and monitoring technique. Benchmarks with infrequent monitoring
-events (forwarded instructions) show minimal overheads while ones with frequent
-monitoring can see significant impacts.
-Also, the benchmarks with large WCET increases differ between UMC and CFP.
-Therefore, when applying parallel run-time monitoring techniques to real-time systems,
-a careful WCET analysis for the given tasks and monitoring techniques 
-needs to be performed. 
+Table~\ref{tab:monitoring_wcet.evaluation.ratios} shows relative comparisons
+between different configurations or WCET methods.  The first set of rows
+compare the WCET estimates from ILP or MILP formulations with the worst-case
+simulation cycles for each monitoring setup.  The results show that the
+analytical WCET estimates from our proposed scheme are larger than the observed
+WCET by 0\% to 52\% for UMC and 0\% to 71\% for CFP, depending on the main
+task. This difference is comparable to the case without parallel run-time
+monitoring, where the analytical WCET from Chronos is larger than simulation
+results by 0\% to 52\%.  In fact, for {\tt expint}, the majority of the
+difference is from the WCET estimate of the main task rather than the effects
+of monitoring.  This result suggests that our WCET approach is not
+significantly more conservative than the baseline WCET tool for the main task.
 
-The impact of run-time monitoring on the execution time in our experiments
-(up to 3.48x in UMC and 2.58x in CFP) is roughly in line with previous studies
-on multi-cores without any hardware support \cite{chen08-lba, nagarajan08-dift}. 
-The performance overheads will be much lower for multi-cores with optimizations 
-\cite{chen08-lba} or heterogeneous monitors \cite{flexcore-micro10}. 
-Our analysis technique does not depend on any specific monitoring core
+The second set of rows compare the bound from sequential monitoring and the
+WCET from our proposed method. For UMC, our approach shows up to a 74\%
+reduction in WCET estimates over the simple bound. Similarly, for CFP, our
+method shows up to a 73\% improvement.  These results demonstrate that modeling
+the FIFO decoupling between the main and monitoring tasks is important for
+obtaining tight WCET estimates of parallel monitoring. 
+
+Finally, the last two rows in Table~\ref{tab:monitoring_wcet.evaluation.ratios}
+compare the WCET estimates with and without run-time monitoring.  The results
+show that the increase in WCET varies significantly depending on benchmark and
+monitoring technique. Benchmarks with infrequent monitoring events (forwarded
+instructions) show minimal overheads while ones with frequent monitoring can
+see significant impacts.  Also, the benchmarks with large WCET increases differ
+between UMC and CFP.  Therefore, when applying parallel run-time monitoring
+techniques to real-time systems, a careful WCET analysis for the given tasks
+and monitoring techniques needs to be performed. 
+
+The impact of run-time monitoring on the execution time in our experiments (up
+to 3.48x in UMC and 2.58x in CFP) is roughly in line with previous studies on
+multi-cores without any hardware support \cite{chen08-lba, nagarajan08-dift}.
+The performance overheads will be much lower for multi-cores with optimizations
+\cite{chen08-lba} or heterogeneous monitors \cite{flexcore-micro10}.  Our
+analysis technique does not depend on any specific monitoring core
 microarchitecture and is applicable to more optimized architectures.
-
-%Table~\ref{tab:evaluation.ratios} also compares the WCET estimated with each
-%monitoring extension versus the WCET estimated without monitoring. For UMC, the
-%WCET is increased by up to 3.48x and for CFP the WCET is increased up to 2.58x.
-%However, for both extensions, there also exist benchmarks where the WCET is not
-%increased. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % lp_solve time
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \subsection{Time to Solve Linear Programming Problem}
 \label{sec:monitoring_wcet.evaluation.lptime}
 
 % lp_solve time
-\begin{table*}[htb]
+\begin{table*}
   \begin{center}
-    \begin{small}
-    \input{tabs/monitoring_wcet/runtime}
-    \end{small}
+    \begin{tiny}
+    \input{monitoring_wcet/tabs/runtime}
+    \end{tiny}
     \caption{Running time of lp\_solve in seconds to determine worst-case stalls
     (stall), sequential bound (sequential), and worst-case execution times (wcet).}
     \label{tab:monitoring_wcet.evaluation.runtime}
@@ -160,22 +167,22 @@ The most time intensive portion of the WCET analysis is the actual solving of
 the linear programming (LP) problem. For our experiments, we used lp\_solve
 5.5.2.0 \cite{lpsolve} as our LP solver. These experiments were run on a 2.67
 GHz Xeon E5430 quad-core processor with 4 GB of RAM. The running times for
-lp\_solve are shown in Table~\ref{tab:monitoring_wcet.evaluation.runtime}.  The first set of rows
-show the running time for determining the worst-case stalls from the monitoring flow
-graph ({\tt stall}). The second set of rows show the lp\_solve running time for
-finding the sequential bounds. The final set of rows show the running time for
-determining the overall WCET ({\tt wcet}). For {\tt wcet-umc} and {\tt
-wcet-cfp}, this is for the ILP problem given the worst-case stalls .
+lp\_solve are shown in Table~\ref{tab:monitoring_wcet.evaluation.runtime}.  The
+first set of rows show the running time for determining the worst-case stalls
+from the monitoring flow graph ({\tt stall}). The second set of rows show the
+lp\_solve running time for finding the sequential bounds. The final set of rows
+show the running time for determining the overall WCET ({\tt wcet}). For {\tt
+wcet-umc} and {\tt wcet-cfp}, this is for the ILP problem given the worst-case
+stalls .
 
-The running times for the {\tt sequential} cases and the {\tt wcet} cases are very
-similar. This is because these cases are all solving essentially the same
+The running times for the {\tt sequential} cases and the {\tt wcet} cases are
+very similar. This is because these cases are all solving essentially the same
 problem with different numbers. That is, for a given benchmark, these different
 cases are all solving a linear programming problem for the same control flow
-graph (CFG). As a result, the number of variables and the set of
-constraints is the same, though the WCET for each basic block changes depending
-on the extension and the estimation method. The {\tt stall} cases have a longer
-running time.
-This is due to the fact that a MFG has more nodes than its corresponding CFG.
-The increased number of nodes also implies more variables and more constraints.
-
+graph (CFG). As a result, the number of variables and the set of constraints is
+the same, though the WCET for each basic block changes depending on the
+extension and the estimation method. The {\tt stall} cases have a longer
+running time.  This is due to the fact that a MFG has more nodes than its
+corresponding CFG.  The increased number of nodes also implies more variables
+and more constraints.
 
