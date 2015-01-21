@@ -74,17 +74,68 @@ instruction and determine how many cycles the main task may be stalled due to
 the FIFO being full. Here, we propose a mathematical model to express the load
 in the FIFO and estimate the worst-case stalls.
 
+% CFG, MFG
+\begin{figure} 
+  \begin{center} 
+    \begin{subfigure}[Control flow graph.]{
+      \includegraphics[width=2.9in]{monitoring_wcet/figs/cfg.pdf}
+      \label{fig:monitoring_wcet.wcet.cfg} 
+    }
+    \end{subfigure}
+    \hspace{-0.3in}
+    \begin{subfigure}[Monitoring flow graph.]{
+      \includegraphics[width=2.9in]{monitoring_wcet/figs/mfg.pdf}
+      \label{fig:monitoring_wcet.wcet.mfg} 
+    }
+    \end{subfigure}
+  \end{center} 
+  \caption{Example control flow graph and its corresponding monitoring flow
+  graph. Blue (dark) nodes include a forwarded instruction.}
+  \label{fig:monitoring_wcet.wcet.flow_graphs} 
+  \vspace{-0.2in}
+\end{figure}
+
 In this approach, the original control flow graph must be transformed so that
 each node contains at most one forwarded instruction which is located at the
 end of the code sequence represented by the node.  This transformed graph is
-called a {\em monitoring flow graph (MFG)}.  Intuitively, the analysis needs to
+called a {\em monitoring flow graph (MFG)} (see
+Figure~\ref{fig:monitoring_wcet.wcet.flow_graphs}).  Intuitively, the analysis
+needs to
 consider one forwarded instruction at a time in order to model the FIFO state
 on each forwarded instruction and capture all potential stalls from monitoring. 
 
+% Monitoring Load
+\begin{figure} 
+  \begin{center} 
+    \begin{subfigure}[Monitoring load associated with nodes.]{
+      \includegraphics[width=2.9in]{monitoring_wcet/figs/monitoring_load.pdf} 
+      \label{fig:monitoring_wcet.wcet.monitoring_load} 
+    }
+    \end{subfigure}
+    \hspace{-0.3in}
+    \begin{subfigure}[Block diagram of monitoring load model.]{
+      \includegraphics[width=2.9in]{monitoring_wcet/figs/monitoring_load_detailed.pdf}
+      \label{fig:monitoring_wcet.wcet.monitoring_load_detailed} 
+    }
+    \end{subfigure}
+  \end{center} 
+  \caption{Monitoring load is modeled for each node.}
+  \label{fig:monitoring_wcet.wcet.flow_graphs} 
+  \vspace{-0.2in}
+\end{figure}
+
 To model how full the FIFO is, we define the concept of \emph{monitoring load}.
 The monitoring load is the number of cycles required for the monitoring core to
-process all outstanding entries in the FIFO at a given point in time. The
-monitoring load increases when a new instruction is forwarded by the main task,
+process all outstanding entries in the FIFO at a given point in time. We model
+the input ($li_M$), output ($lo_M$), and change ($\Delta l_M$) in monitoring
+load for each node $M$ (see
+Figure~\ref{fig:monitoring_wcet.wcet.monitoring_load}). These are used to
+calculate the worst-case stall cycles ($s_M$) for each node.
+Figure~\ref{fig:monitoring_wcet.wcet.monitoring_load_detailed} shows a block
+diagram of the model for monitoring load which this section will describe in
+detail. 
+
+Monitoring load increases when a new instruction is forwarded by the main task,
 and decreases as the monitoring core processes forwarded instructions. For
 simplicity, the increase in monitoring load for any forwarded instruction is
 conservatively assumed to be the worst-case (maximum) monitoring task execution
