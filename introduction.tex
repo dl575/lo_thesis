@@ -12,22 +12,20 @@ safe and correct physical interactions. Similarly, even mobile and desktop
 systems, which are not traditionally considered real-time systems, are
 inherently time-sensitive because of their interaction with users.
 
-% Background on real-time systems
-These real-time systems introduce new design constraints that must be
-considered in order to ensure their safe and reliable operation.
-Real-time systems are typically specified as a set of tasks $\tau = \{\tau_1,
-\tau_2, \dots, \tau_n\}$. Each task has a deadline which it must finish before.
-Missing a deadline is considered an error. Extensive work has been done on how
-to schedule task sets in order to meet deadlines while optimizing various
-metrics such as CPU utilization. Another important topic of real-time system
-design is worst-case execution time (WCET) analysis. WCET analysis seeks to
-find the worst-case timing of tasks under all possible inputs and operating
-conditions. This worst-case execution time is used in various real-time
-scheduling algorithms and for giving strong guarantees on the ability to meet
-all deadlines.
+considered in order to ensure their safe and reliable operation.  Specifically,
+real-time systems are typically specified as a set of tasks which have
+real-time deadlines.  Correct operation involves both correct computation of
+outputs as well as finishing tasks before their deadlines.  Deadlines can
+either be considered hard deadlines, where a missed deadline indicates a fatal
+error, or soft deadlines, where deadlines are expected to be met but a missed
+deadline is not fatal. Extensive work has been done in the software design and
+analysis of real-time systems including real-time scheduling algorithms
+\cite{rtschedulingsurvey-csur11}, real-time operating systems (RTOS)
+\cite{rtossurvey-micro09, rtossurvey-icesc14}, and worst-case execution time
+(WCET) analysis \cite{wcetsurvey-tecs08}.
 
 % Thesis statement
-Traditionally, techniques proposed for improving
+On the other hand, traditional techniques proposed for improving
 hardware architectures are only evaluated for their average-case
 performance and are not designed to take into account the possibility of timing
 constraints. This thesis explore the development of hardware
@@ -68,13 +66,18 @@ fixed hardware loses the programmability of software. A fixed hardware
 implementation cannot be updated and cannot change the type of run-time
 monitoring performed. Thus, recent studies have proposed using programmable
 parallel hardware, such as extra cores in a multi-core system or FPGA
-coprocessors, for monitoring \cite{chen08-lba, deng-flexcore-micro10,
-deng-harmoni-dsn12}. Our work in this paper is targeted at these programmable
+coprocessors, for monitoring \cite{chen08-lba, flexcore-micro10,
+harmoni-dsn12}. Our work in this paper is targeted at these programmable
 parallel hardware monitors.
 
 % Monitoring WCET
-First, we developed a static analysis method to estimate the worst-case
-execution time (WCET) impact of run-time monitoring for real-time systems
+Traditional real-time design requires estimation of the worst-case execution
+time of tasks in order to guarantee schedulability. Although sequential (i.e.,
+binary instrumentation-based) monitoring can by analyzed using traditional WCET
+techniques, existing techniques cannot give tight WCET estimates for parallel
+monitoring.
+Thus, we first developed a static analysis method to estimate the worst-case
+execution time (WCET) impact of parallel run-time monitoring for real-time systems
 (Chapter~\ref{chap:monitoring_wcet}). This was done by extending the
 traditional integer-linear programming (ILP) formulation used for estimating
 WCET by adding new constraints in order to model the impact of run-time
@@ -91,10 +94,10 @@ This is possible by taking advantage of the dynamic slack that exists between
 average-case and worst-case performance.
 
 % Monitoring Soft Drop
-Soft real-time and interactive systems do not require strict timing guarantees
+Finally, soft real-time and interactive systems do not require strict timing guarantees
 but still look to achieve timely execution of programs. Thus, by building on
 our work in applying monitoring to hard real-time systems, we created an
-architecture that enables a trade-off between overheads and monitoring coverage
+architecture that enables a adjustable overheads by trading off monitoring coverage
 (Chapter~\ref{chap:monitoring_dift_drop}). 
 
 \section{Energy-Efficient Hardware Architectures for Real-Time Systems}
@@ -110,76 +113,24 @@ reduce energy usage at the cost of increased execution time.
 
 Traditional managers for these resource allocation techniques, such as DVFS,
 work in a best effort manner. They operate under the assumption that better
-performance is typically better and only attempt to decrease resources when the
+performance is desired and only attempt to decrease resources when the
 performance impact is minimal.  However, many applications or jobs have
 response-time requirements.  Finishing faster than this response-time
 requirement has no benefit. For example, responding to a user input faster than
 human reaction time does not improve user experience. Similarly, decoding video
-frames faster than the video frame rate has no added benefit. In this thesis,
-we propose to apply resource management techniques, such as DVFS, while taking
-into account response-time requirements in order to save energy with minimal or
-no impact on user experience.
+frames faster than the video frame rate has no added benefit. 
 
-There are several existing projects which have looked into the problem of
-resource management in the presence of timing requirements. One possible
-solution is to use DVFS in conjunction with a real-time operating system (RTOS)
-\cite{rtdvfs-systor12}. This is useful for hard real-time systems where timing
-requirements are strict. However, it requires considerable programmer expertise
-and effort in order to write applications in a form that is amenable to an RTOS
-and to perform the detailed timing analysis required. For soft real-time
-systems, such as the response-time requirements we are considering, it should
-be possible to use a more lightweight approach to handle the timing
-requirements. Zhu and Reddi \cite{zhu-hpca13} explored using DVFS and
-heterogeneous cores in order to lower energy usage while still meeting website
-loading times for a web browser. This was done by analyzing the relationship of
-various HTML and CSS metrics to loading time. They showed a 9\% average
-reduction in energy usage by using this information when selecting core and
-DVFS operating point compared to an OS scheduler that uses only utilization
-information.  However, their approach is specific to web browsing and does not
-generalize to other applications. PACORA \cite{pacora-hotpar11} looks at
-resource partitioning for datacenters while taking into account response-time
-requirements. It can dynamically alter these allocations but these are done on
-a course-grained level in order to detect changes in workload behavior rather
-than on a fine-grained per-job level. Recent work has shown that timing on a
-job-to-job basis can have large variations \cite{atlas-rtas13} and that
-fine-grained resource allocations can have a high impact on energy efficiency
-that is not captured by coarse-grained allocations \cite{padmanabha-micro13}.
-
-Given the previous work in this domain, our approach is unique in targeting the
-combination of several design objectives:
-\begin{enumerate}
-  \item \textbf{Generality: } The approach should work generally for any
-  application with response-time requirements. It should not require
-  application- or domain-specific knowledge.
-  \item \textbf{Minimal programmer effort: } The additional programmer effort
-  in order to enable this should be minimal. The only needed information from
-  the programmer is the code segments of interest and their response-time
-  requirement.
-  \item \textbf{Fine-grained decision: } The resource allocation decision
-  should be made on a per-job basis in order to handle job-to-job variation.
-  For example, recent work has shown that video decoding time can vary greatly
-  from frame-to-frame \cite{atlas-rtas13}. 
-  \item \textbf{Predictive decision: } Our approach looks to predict resource
-  allocations before a job is run. Since execution times can change largely
-  from job to job, it is important to predict the execution time for the next
-  job to run, rather than making decisions after poor response-time performance
-  is seen.
-\end{enumerate}
-
-As an initial study in designing such a system, we are attempting to use
-machine learning techniques in order to predict whether the execution time of a
-dynamic instance of a job is greater than or less than a response-time
-threshold. If the job is predicted to take longer than the response-time
-requirement, then resources should be increased in order to make the deadline.
-In order to make this prediction, we use the values of variables used in
-control flow decisions and as function arguments as these, intuitively, will
-have the most impact on execution time. In order to test the predictive power
-of this information, we have used a support vector machine (SVM) to predict
-execution time using this data. Initial results have shown accuracies of
-67\%-100\% depending on the response-time requirement. This is a promising
-start to our goal of developing an architecture that automatically takes
-advantage of response-time requirements in order to save energy through dynamic
-resource allocation.
+In this thesis, we take advantage of this slack in order to save energy without
+impacting user experience. Specifically, we present a method to prediction job
+execution time and use this to allocate resources in order to meet deadlines
+with minimal energy (Chapter~\ref{chap:exec_time_prediction}). We instrument a
+job in order to count the number of times loops and conditionals are
+taken. From this, we construct a program slice to create a lightweight code
+segment to calculate these features without performing the actual job
+computation. These features are used in a linear model to predict the execution
+time. By running this program slice before a job, the execution time can be
+predicted. With this prediction, we set the DVFS point appropriately to
+minimize energy usage while meeting the user response deadline.
 
 \section{Organization}
 The rest of the thesis is organized as follows.

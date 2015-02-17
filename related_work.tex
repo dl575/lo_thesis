@@ -1,2 +1,50 @@
 \chapter{Related Work}
 \label{chap:related_work}
+
+There are several existing projects which have looked into the problem of
+resource management in the presence of timing requirements. One possible
+solution is to use DVFS in conjunction with a real-time operating system (RTOS)
+\cite{rtdvfs-systor12}. This is useful for hard real-time systems where timing
+requirements are strict. However, it requires considerable programmer expertise
+and effort in order to write applications in a form that is amenable to an RTOS
+and to perform the detailed timing analysis required. For soft real-time
+systems, such as the response-time requirements we are considering, it should
+be possible to use a more lightweight approach to handle the timing
+requirements. Zhu and Reddi \cite{zhu-hpca13} explored using DVFS and
+heterogeneous cores in order to lower energy usage while still meeting website
+loading times for a web browser. This was done by analyzing the relationship of
+various HTML and CSS metrics to loading time. They showed a 9\% average
+reduction in energy usage by using this information when selecting core and
+DVFS operating point compared to an OS scheduler that uses only utilization
+information.  However, their approach is specific to web browsing and does not
+generalize to other applications. PACORA \cite{pacora-hotpar11} looks at
+resource partitioning for datacenters while taking into account response-time
+requirements. It can dynamically alter these allocations but these are done on
+a course-grained level in order to detect changes in workload behavior rather
+than on a fine-grained per-job level. Recent work has shown that timing on a
+job-to-job basis can have large variations \cite{atlas-rtas13} and that
+fine-grained resource allocations can have a high impact on energy efficiency
+that is not captured by coarse-grained allocations \cite{padmanabha-micro13}.
+
+Given the previous work in this domain, our approach is unique in targeting the
+combination of several design objectives:
+\begin{enumerate}
+  \item \textbf{Generality: } The approach should work generally for any
+  application with response-time requirements. It should not require
+  application- or domain-specific knowledge.
+  \item \textbf{Minimal programmer effort: } The additional programmer effort
+  in order to enable this should be minimal. The only needed information from
+  the programmer is the code segments of interest and their response-time
+  requirement.
+  \item \textbf{Fine-grained decision: } The resource allocation decision
+  should be made on a per-job basis in order to handle job-to-job variation.
+  For example, recent work has shown that video decoding time can vary greatly
+  from frame-to-frame \cite{atlas-rtas13}. 
+  \item \textbf{Predictive decision: } Our approach looks to predict resource
+  allocations before a job is run. Since execution times can change largely
+  from job to job, it is important to predict the execution time for the next
+  job to run, rather than making decisions after poor response-time performance
+  is seen.
+\end{enumerate}
+
+
