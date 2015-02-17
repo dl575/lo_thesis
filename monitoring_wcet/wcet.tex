@@ -4,8 +4,9 @@
 \subsection{Implicit Path Enumeration}
 \label{sec:monitoring_wcet.wcet.ipet}
 
-Most of the WCET analysis techniques today rely on an ILP formulation that is
-obtained from implicit path enumeration techniques \cite{li-ipet-dac95}.  In
+Most of the WCET analysis techniques today rely on an integer linear
+programming (ILP) formulation that is
+obtained from implicit path enumeration techniques (IPET) \cite{li-ipet-dac95}.  In
 this method, a program is converted to a control flow graph (CFG). From the
 control flow graph, an ILP problem is formulated that seeks to maximize
 \begin{align*}
@@ -105,31 +106,37 @@ consider one forwarded instruction at a time in order to model the FIFO state
 on each forwarded instruction and capture all potential stalls from monitoring. 
 
 % Monitoring Load
-\begin{figure} 
-  \begin{center} 
-    \begin{subfigure}[Monitoring load associated with nodes.]{
-      \includegraphics[width=2.9in]{monitoring_wcet/figs/monitoring_load.pdf} 
-      \label{fig:monitoring_wcet.wcet.monitoring_load} 
-    }
-    \end{subfigure}
-    \hspace{-0.3in}
-    \begin{subfigure}[Block diagram of monitoring load model.]{
-      \includegraphics[width=2.9in]{monitoring_wcet/figs/monitoring_load_detailed.pdf}
-      \label{fig:monitoring_wcet.wcet.monitoring_load_detailed} 
-    }
-    \end{subfigure}
-  \end{center} 
-  \caption{Monitoring load is modeled for each node.}
-  \label{fig:monitoring_wcet.wcet.flow_graphs} 
-  \vspace{-0.2in}
+% \begin{figure} 
+%   \begin{center} 
+%     \begin{subfigure}[Monitoring load associated with nodes.]{
+%       \includegraphics[width=2.9in]{monitoring_wcet/figs/monitoring_load.pdf} 
+%       \label{fig:monitoring_wcet.wcet.monitoring_load} 
+%     }
+%     \end{subfigure}
+%     \hspace{-0.3in}
+%     \begin{subfigure}[Block diagram of monitoring load model.]{
+%       \includegraphics[width=2.9in]{monitoring_wcet/figs/monitoring_load_detailed.pdf}
+%       \label{fig:monitoring_wcet.wcet.monitoring_load_detailed} 
+%     }
+%     \end{subfigure}
+%   \end{center} 
+%   \caption{Monitoring load is modeled for each node.}
+%   \label{fig:monitoring_wcet.wcet.flow_graphs} 
+%   \vspace{-0.2in}
+% \end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_wcet/figs/monitoring_load_detailed.pdf}
+    \caption{Monitoring load is modeled for each node.}
+    \label{fig:monitoring_wcet.wcet.monitoring_load_detailed}
+  \end{center}
 \end{figure}
 
 To model how full the FIFO is, we define the concept of \emph{monitoring load}.
 The monitoring load is the number of cycles required for the monitoring core to
 process all outstanding entries in the FIFO at a given point in time. We model
 the input ($li_M$), output ($lo_M$), and change ($\Delta l_M$) in monitoring
-load for each node $M$ (see
-Figure~\ref{fig:monitoring_wcet.wcet.monitoring_load}). These are used to
+load for each node $M$. These are used to
 calculate the worst-case stall cycles ($s_M$) for each node.
 Figure~\ref{fig:monitoring_wcet.wcet.monitoring_load_detailed} shows a block
 diagram of the model for monitoring load which this section will describe in
