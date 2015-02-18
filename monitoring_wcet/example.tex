@@ -12,17 +12,37 @@ monitoring.
 
 \subsection{Example Setup}
 
-% CFG
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=3.5in]{monitoring_wcet/figs/cfg_example.pdf}
-    \caption{Control flow graph of a main task.}
-    \label{fig:monitoring_wcet.example.cfg}
-  \end{center}
+% Code, CFG, MFG
+\begin{figure} 
+  \begin{center} 
+    \begin{subfigure}[Code example.]{
+      \includegraphics[]{monitoring_wcet/figs/code_example.pdf}
+      \label{fig:monitoring_wcet.example.code_example} 
+    }
+    \end{subfigure}
+    \hspace{-0.3in}
+    \begin{subfigure}[Control flow graph.]{
+      \includegraphics[]{monitoring_wcet/figs/cfg_example.pdf}
+      \label{fig:monitoring_wcet.example.cfg_example} 
+    }
+    \end{subfigure}
+    \hspace{-0.0in}
+    \begin{subfigure}[Monitoring flow graph.]{
+      \includegraphics[]{monitoring_wcet/figs/mfg_example.pdf}
+      \label{fig:monitoring_wcet.example.mfg_example} 
+    }
+    \end{subfigure}
+  \end{center} 
+  \caption{Code example with its corresponding control flow graph and
+  monitoring flow graph. Blue (dark) nodes include a forwarded ({\tt ldr}) instruction.}
+  \label{fig:monitoring_wcet.example.flow_graphs} 
+  \vspace{-0.2in}
 \end{figure}
 
-The control flow graph for an example main task is shown in
-Figure~\ref{fig:monitoring_wcet.example.cfg}. We assume that the worst-case
+An example code sequence is shown in
+Figure~\ref{fig:monitoring_wcet.example.code_example}. Its associated control
+flow graph is shown in
+Figure~\ref{fig:monitoring_wcet.example.cfg_example}. We assume that the worst-case
 execution time for each node has already been calculated using previous
 methods. These execution times are labeled as {\tt cB\_max} in the figure.
 
@@ -40,37 +60,12 @@ one entry ($n_F = 1$). Thus, $l_{max} = n_F \cdot t_{M, max} = 7$.
 The first step is to create the monitoring flow graph. For each node in the
 CFG, the code represented by that node is analyzed. After any forwarded
 instruction, in this case any load or store instructions, an edge is created,
-dividing a node into two nodes in the monitoring flow graph.  For example, the
-assembly-level code for node 1 in the CFG is shown below.
-\lstset{numbers=left, 
-  firstnumber=1, 
-  xleftmargin=2em, 
-  numbersep=1em, 
-  basicstyle=\ttfamily, 
-  title=node 1, 
-  } 
-\begin{lstlisting}[frame=tb]
-  add $t0, $t1, $t2
-  add $t3, $t4, $t5
-  lw  $t4, 0($t3)
-  add $t0, $t0, $t4
-\end{lstlisting}
-Since the third instruction is a load instruction, node 1 must be split into
-two nodes in the MFG. The first node represents the first three instructions
-and the second node represents the last instruction. 
+dividing a node into two nodes in the monitoring flow graph. 
+For example, the second instruction of node 0 in the CFG is a load instruction.
+Thus, node 0 is split into two nodes in the MFG. The first node represents the
+first two instructions and the second node represents the last two instruction. 
 
-% MFG
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=3.5in]{monitoring_wcet/figs/mfg_example.pdf}
-    \caption{Monitoring flow graph of the main task. Blue (dark) nodes indicate
-    ones with a forwarded instruction at the end. Yellow (light) nodes indicate
-    ones without a forwarded instruction.}
-    \label{fig:monitoring_wcet.example.mfg}
-  \end{center}
-\end{figure}
-
-The resulting MFG is shown in Figure~\ref{fig:monitoring_wcet.example.mfg}.
+The resulting MFG is shown in Figure~\ref{fig:monitoring_wcet.example.mfg_example}.
 Nodes that are blue (dark) include a forwarded instruction, which is located at
 the end of the node. Nodes that are yellow (light) do not include a forwarded
 instruction. The nodes in the graph are labeled with minimum ({\tt cB\_min})
