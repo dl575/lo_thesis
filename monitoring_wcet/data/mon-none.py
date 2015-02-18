@@ -28,7 +28,7 @@ attribute_dict = \
         'file_name' : 'mon-none.pdf',
         'paper_mode' : True,
         'figsize' : (3.5, 1.5),
-        'ylabel' : 'wcet : sim',
+        'ylabel' : 'wcet-mon : wcet-none',
         'legend_ncol' : 4,
         'legend_handlelength' : 1.0,
         'legend_columnspacing' : 0.8,

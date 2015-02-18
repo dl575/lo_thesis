@@ -14,8 +14,10 @@ for line in f:
   if line.strip():
     ls = line.split(',')
     cat.append(ls[0])
-    data.append([float(x) for x in ls[1:]])
+    data.append([1/float(x) for x in ls[1:]])
 f.close()
+
+print map(lambda x: 1-x, map(min, data)), " reduction in WCET"
 
 # Set up plotting options
 opts = tsg_plot.PlotOptions()
@@ -25,10 +27,10 @@ opts.labels = [cat, subcat]
 attribute_dict = \
     {
         'show' : False,
-        'file_name' : 'sequential-wcet.pdf',
+        'file_name' : 'wcet-sequential.pdf',
         'paper_mode' : True,
         'figsize' : (3.5, 1.5),
-        'ylabel' : 'wcet : sim',
+        'ylabel' : 'wcet : sequential',
         'legend_ncol' : 4,
         'legend_handlelength' : 1.0,
         'legend_columnspacing' : 0.8,

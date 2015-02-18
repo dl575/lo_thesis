@@ -1,9 +1,9 @@
-all: wcet-sim.pdf sequential-wcet.pdf mon-none.pdf
+all: wcet-sim.pdf wcet-sequential.pdf mon-none.pdf
 
 wcet-sim.pdf: wcet-sim.py wcet-sim.csv
 	./wcet-sim.py
-sequential-wcet.pdf: sequential-wcet.py sequential-wcet.csv
-	./sequential-wcet.py
+wcet-sequential.pdf: wcet-sequential.py sequential-wcet.csv
+	./wcet-sequential.py
 mon-none.pdf: mon-none.py mon-none.csv
 	./mon-none.py
 

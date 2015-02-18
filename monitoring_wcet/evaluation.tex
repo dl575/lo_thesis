@@ -47,6 +47,11 @@ transfer \cite{arora-runtime05}. In this technique, a compiler determines a set
 of valid targets for each branch and jump in the main task.  This information
 is stored on the monitoring core.  On a branch or jump, the monitoring core
 ensures that the target is contained in the list of valid targets.
+The WCET for UMC tasks was 7 cycles (i.e., $t_{M,max}$) and the WCET for CFP
+was 9 cycles. Thus, the max monitoring loads were 56 and 72 cycles for UMC and
+CFP respectively. These are relatively aggressive numbers that assume the
+monitoring core is set up to automatically jump to the appropriate task based
+on forwarded instruction type.
 
 \subsection{WCET Results}
 
@@ -70,16 +75,16 @@ different approaches: a bound from sequential monitoring ({\tt sequential}),
 our approach ({\tt wcet}), and simulations ({\tt sim}). The numbers indicate
 the number of clock cycles.
 
-% Calculated ratios
-\begin{table*}
-  \begin{center}
-    \begin{tiny}
-    \input{monitoring_wcet/tabs/ratios}
-    \end{tiny}
-    \caption{Ratios comparing results from different experiments.} 
-    \label{tab:monitoring_wcet.evaluation.ratios}
-  \end{center}
-\end{table*}
+% % Calculated ratios
+% \begin{table*}
+%   \begin{center}
+%     \begin{tiny}
+%     \input{monitoring_wcet/tabs/ratios}
+%     \end{tiny}
+%     \caption{Ratios comparing results from different experiments.} 
+%     \label{tab:monitoring_wcet.evaluation.ratios}
+%   \end{center}
+% \end{table*}
 
 % WCET vs. Simulation
 \begin{figure}
@@ -92,10 +97,10 @@ the number of clock cycles.
 % Sequential WCET vs. Parallel WCET
 \begin{figure}
   \begin{center}
-    \includegraphics{monitoring_wcet/data/sequential-wcet.pdf}
-    \caption{Ratio of WCET assuming sequential monitoring to WCET using our
-    proposed method.}
-    \label{fig:monitoring_wcet.evaluation.sequential-wcet}
+    \includegraphics{monitoring_wcet/data/wcet-sequential.pdf}
+    \caption{Ratio of WCET using our proposed method compared to assuming
+    sequential monitoring.}
+    \label{fig:monitoring_wcet.evaluation.wcet-sequential}
   \end{center}
 \end{figure}
 % Monitoring vs. None
@@ -107,10 +112,9 @@ the number of clock cycles.
   \end{center}
 \end{figure}
 
-Table~\ref{tab:monitoring_wcet.evaluation.ratios} shows relative comparisons
-between different configurations or WCET methods.  The first set of rows
-compare the WCET estimates from ILP or MILP formulations with the worst-case
-simulation cycles for each monitoring setup.  The results show that the
+Figure~\ref{fig:monitoring_wcet.evaluation.wcet-sim} shows the WCET estimates
+from ILP/MILP formulations with the worst-case simulation cycles for each
+monitoring setup.  The results show that the
 analytical WCET estimates from our proposed scheme are larger than the observed
 WCET by 0\% to 52\% for UMC and 0\% to 71\% for CFP, depending on the main
 task. This difference is comparable to the case without parallel run-time
@@ -120,15 +124,16 @@ difference is from the WCET estimate of the main task rather than the effects
 of monitoring.  This result suggests that our WCET approach is not
 significantly more conservative than the baseline WCET tool for the main task.
 
-The second set of rows compare the bound from sequential monitoring and the
-WCET from our proposed method. For UMC, our approach shows up to a 74\%
+Figure~\ref{fig:monitoring_wcet.evaluation.wcet-sequential} shows the WCET from
+our proposed method normalized to the WCET calculated assuming sequential
+monitoring.  For UMC, our approach shows up to a 43\%
 reduction in WCET estimates over the simple bound. Similarly, for CFP, our
-method shows up to a 73\% improvement.  These results demonstrate that modeling
+method shows up to a 42\% improvement.  These results demonstrate that modeling
 the FIFO decoupling between the main and monitoring tasks is important for
 obtaining tight WCET estimates of parallel monitoring. 
 
-Finally, the last two rows in Table~\ref{tab:monitoring_wcet.evaluation.ratios}
-compare the WCET estimates with and without run-time monitoring.  The results
+Finally, Figure~\ref{fig:monitoring_wcet.evaluation.mon-none}
+compares the WCET estimates with and without run-time monitoring.  The results
 show that the increase in WCET varies significantly depending on benchmark and
 monitoring technique. Benchmarks with infrequent monitoring events (forwarded
 instructions) show minimal overheads while ones with frequent monitoring can
@@ -137,13 +142,13 @@ between UMC and CFP.  Therefore, when applying parallel run-time monitoring
 techniques to real-time systems, a careful WCET analysis for the given tasks
 and monitoring techniques needs to be performed. 
 
-The impact of run-time monitoring on the execution time in our experiments (up
-to 3.48x in UMC and 2.58x in CFP) is roughly in line with previous studies on
-multi-cores without any hardware support \cite{chen08-lba, nagarajan08-dift}.
-The performance overheads will be much lower for multi-cores with optimizations
-\cite{chen08-lba} or heterogeneous monitors \cite{flexcore-micro10}.  Our
-analysis technique does not depend on any specific monitoring core
-microarchitecture and is applicable to more optimized architectures.
+% The impact of run-time monitoring on the execution time in our experiments (up
+% to 3.48x in UMC and 2.58x in CFP) is roughly in line with previous studies on
+% multi-cores without any hardware support \cite{chen08-lba, nagarajan08-dift}.
+% The performance overheads will be much lower for multi-cores with optimizations
+% \cite{chen08-lba} or heterogeneous monitors \cite{flexcore-micro10}.  Our
+% analysis technique does not depend on any specific monitoring core
+% microarchitecture and is applicable to more optimized architectures.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % lp_solve time
@@ -154,16 +159,17 @@ microarchitecture and is applicable to more optimized architectures.
 % lp_solve time
 \begin{table*}
   \begin{center}
-    \begin{tiny}
+    \begin{footnotesize}
     \input{monitoring_wcet/tabs/runtime}
-    \end{tiny}
+    \end{footnotesize}
     \caption{Running time of lp\_solve in seconds to determine worst-case stalls
     (stall), sequential bound (sequential), and worst-case execution times (wcet).}
     \label{tab:monitoring_wcet.evaluation.runtime}
   \end{center}
 \end{table*}
 
-The most time intensive portion of the WCET analysis is the actual solving of
+In this section, we evaluate the running time of our analysis method.
+The most time intensive portion of this analysis is solving of
 the linear programming (LP) problem. For our experiments, we used lp\_solve
 5.5.2.0 \cite{lpsolve} as our LP solver. These experiments were run on a 2.67
 GHz Xeon E5430 quad-core processor with 4 GB of RAM. The running times for
@@ -172,8 +178,8 @@ first set of rows show the running time for determining the worst-case stalls
 from the monitoring flow graph ({\tt stall}). The second set of rows show the
 lp\_solve running time for finding the sequential bounds. The final set of rows
 show the running time for determining the overall WCET ({\tt wcet}). For {\tt
-wcet-umc} and {\tt wcet-cfp}, this is for the ILP problem given the worst-case
-stalls .
+wcet-umc} and {\tt wcet-cfp}, this is for the ILP problem given that the worst-case
+stalls have already been found.
 
 The running times for the {\tt sequential} cases and the {\tt wcet} cases are
 very similar. This is because these cases are all solving essentially the same
@@ -181,8 +187,12 @@ problem with different numbers. That is, for a given benchmark, these different
 cases are all solving a linear programming problem for the same control flow
 graph (CFG). As a result, the number of variables and the set of constraints is
 the same, though the WCET for each basic block changes depending on the
-extension and the estimation method. The {\tt stall} cases have a longer
-running time.  This is due to the fact that a MFG has more nodes than its
-corresponding CFG.  The increased number of nodes also implies more variables
-and more constraints.
+extension and the estimation method. 
+
+The {\tt stall} cases, where we calculate the worst-case stalls using our
+MILP-based method, have a longer running time. This is due to the fact that a
+MFG has more nodes than its corresponding CFG. The increased number of nodes
+also implies more variables and more constraints. An interesting direction for
+future work would be to explore graph transformations to reduce the MFG size
+and thus reduce the analysis time.
 
