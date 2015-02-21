@@ -69,8 +69,8 @@ The resulting MFG is shown in Figure~\ref{fig:monitoring_wcet.example.mfg_exampl
 Nodes that are blue (dark) include a forwarded instruction, which is located at
 the end of the node. Nodes that are yellow (light) do not include a forwarded
 instruction. The nodes in the graph are labeled with minimum ({\tt cB\_min})
-rather than maximum execution times. It can be seen that node 1 from the CFG
-corresponds to nodes 1.0 and 1.1 in the MFG. In this example, nodes in the CFG
+rather than maximum execution times. It can be seen that node 2 from the CFG
+corresponds to nodes 2.0 and 2.1 in the MFG. In this example, nodes in the CFG
 were only transformed into at most two nodes in the MFG.  However, in general,
 a CFG node will be transformed into a number of nodes in the MFG equal to the
 number of forwarded instructions plus one.
@@ -88,33 +88,33 @@ First, we will determine the worst-case input monitoring load for node 3.0,
 $li_{3.0}$.  One set of constraints lower bounds the monitoring load by all
 possible incoming monitoring loads.
 \begin{align*}
-  li_{3.0} \geq& lo_{1.1} \\
-  li_{3.0} \geq& lo_{2.0} 
+  li_{3.0} \geq& lo_{1.0} \\
+  li_{3.0} \geq& lo_{2.1} 
 \end{align*}
 Then, a set of constraints upper bounds this input monitoring load.
 \begin{align*}
-  li_{3.0} - 1000 \delta_{1.1} \leq& lo_{1.1} \\
-  li_{3.0} - 1000 \delta_{2.0} \leq& lo_{2.0} \\
-  \delta_{1.1} + \delta_{2.0} =& 1
+  li_{3.0} - 1000 \delta_{1.0} \leq& lo_{1.0} \\
+  li_{3.0} - 1000 \delta_{2.1} \leq& lo_{2.1} \\
+  \delta_{1.0} + \delta_{2.1} =& 1
 \end{align*}
 Here, the value 1000 is chosen arbitrarily but is known to be greater than
-$|lo_{2.0} - lo_{1.1}|$.  A different value could have been chosen as long as
-this condition was true.  $\delta_{1.1}$ and $\delta_{2.0}$ are binary
+$|lo_{1.0} - lo_{2.1}|$.  A different value could have been chosen as long as
+this condition was true.  $\delta_{1.0}$ and $\delta_{2.1}$ are binary
 variables which can only assume values of $0$ or $1$.  To see how these
-constraints work, suppose that $li_{2.0} = 7$ and $li_{1.1} = 4$. The
+constraints work, suppose that $li_{1.0} = 4$ and $li_{2.1} = 7$. The
 constraints are then evaluated as
 \begin{align*}
   li_{3.0} \geq& 4 \\
   li_{3.0} \geq& 7 \\
-  li_{3.0} - 1000 \delta_{1.1} \leq& 4 \\
-  li_{3.0} - 1000 \delta_{2.0} \leq& 7 \\
-  \delta_{1.1} + \delta_{2.0} =& 1
+  li_{3.0} - 1000 \delta_{1.0} \leq& 4 \\
+  li_{3.0} - 1000 \delta_{2.1} \leq& 7 \\
+  \delta_{1.0} + \delta_{2.1} =& 1
 \end{align*}
 The first pair of constraints ensures that $li_{3.0} \geq 7$. This means that
-for the third constraint to hold, $\delta_{1.1} = 1$. If $\delta_{1.1} = 1$,
-then by the last constraint, $\delta_{2.0} = 0$. Plugging this value into the
+for the third constraint to hold, $\delta_{1.0} = 1$. If $\delta_{1.0} = 1$,
+then by the last constraint, $\delta_{2.1} = 0$. Plugging this value into the
 fourth constraint gives $li_{3.0} \leq 7$. Thus, the only possible solution is
-$li_{3.0} = 7$ which is the maximum of $lo_{1.1}$ and $lo_{2.0}$.
+$li_{3.0} = 7$ which is the maximum of $lo_{1.0}$ and $lo_{2.1}$.
 
 {\bf Calculating output monitoring load:}
 In order to determine the output monitoring load for node 3.0, we must first
