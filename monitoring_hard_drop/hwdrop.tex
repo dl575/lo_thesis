@@ -1,39 +1,42 @@
 \section{Hardware-Based Dropping Architecture}
-\label{sec:hwdrop}
+\label{sec:monitoring_hard_drop.hwdrop}
 
-In Section~\ref{sec:drop}, we presented a general framework for how to design a
-system that allows dropping of monitoring tasks to ensure the main task's
-execution time. However, implementing this framework in software still has
-significant impacts on the WCET as shown in Figure~\ref{fig:drop.wcet}.  In
-this section, we present a novel hardware architecture that eliminates these
-impacts to the main task's WCET.
+In Section~\ref{sec:monitoring_hard_drop.drop}, we presented a general
+framework for how to design a system that allows dropping of monitoring tasks
+to ensure the main task's execution time. However, implementing this framework
+in software still has significant impacts on the WCET as shown in
+Figure~\ref{fig:monitoring_hard_drop.drop.wcet}.  In this section, we present a
+novel hardware architecture that eliminates these impacts to the main task's
+WCET.
 
 There are two main sources that affect the main task's WCET: the additional
 code for keeping track of slack and the impact of the dropping task.  In
-Section~\ref{sec:hwdrop.slack}, we describe hardware to keep track of slack and
-to make the decision on whether to run the monitoring or dropping task.  In
-Section~\ref{sec:hwdrop.drop}, we present a hardware-based metadata
-invalidation scheme that allows dropping to be performed in a single cycle.  By
-handling the dropping in a single cycle, the throughput is able to match the
-throughput of the main core.  Section~\ref{sec:hwdrop.filter} builds upon the
+Section~\ref{sec:monitoring_hard_drop.hwdrop.slack}, we describe hardware to
+keep track of slack and to make the decision on whether to run the monitoring
+or dropping task.  In Section~\ref{sec:monitoring_hard_drop.hwdrop.drop}, we
+present a hardware-based metadata invalidation scheme that allows dropping to
+be performed in a single cycle.  By handling the dropping in a single cycle,
+the throughput is able to match the throughput of the main core.
+Section~\ref{sec:monitoring_hard_drop.hwdrop.filter} builds upon the
 hardware-based invalidation scheme to filter out monitoring tasks for invalid
 metadata in order to reserve slack for more useful cases of running the
-monitoring task. Finally, in Section~\ref{sec:hwdrop.full_arch} we show the
-full architecture.
+monitoring task. Finally, in
+Section~\ref{sec:monitoring_hard_drop.hwdrop.full_arch} we show the full
+architecture.
 
 \subsection{Slack Tracking}
-\label{sec:hwdrop.slack}
+\label{sec:monitoring_hard_drop.hwdrop.slack}
 
 % Slack tracking hardware
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\columnwidth]{monitoring_hard_drop/figs/slack_tracking.pdf}
+    \includegraphics{monitoring_hard_drop/figs/slack_tracking.pdf}
     \caption{Hardware modules for keeping track of slack and making a drop decision.}
-    \label{fig:hwdrop.slack_tracking} 
+    \label{fig:monitoring_hard_drop.hwdrop.slack_tracking} 
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:hwdrop.slack_tracking} shows a hardware slack tracking module
+Figure~\ref{fig:monitoring_hard_drop.hwdrop.slack_tracking} shows a hardware slack tracking module
 (STM). In order to keep track of slack, a watchdog timer is loaded with a
 sub-task's WCET at the start of a sub-task and counts down each cycle. At the
 end of a sub-task, the remaining time in this watchdog timer is added to the
@@ -52,14 +55,14 @@ monitoring core is signaled to perform the monitoring task. Otherwise, the
 monitoring event is dropped.
 
 \subsection{Metadata Invalidation Module}
-\label{sec:hwdrop.drop}
+\label{sec:monitoring_hard_drop.hwdrop.drop}
 
 % Metadata invalidation module
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\columnwidth]{monitoring_hard_drop/figs/mim.pdf}
+    \includegraphics{monitoring_hard_drop/figs/mim.pdf}
     \caption{Metadata invalidation module (MIM).}
-    \label{fig:hwdrop.mim}
+    \label{fig:monitoring_hard_drop.hwdrop.mim}
   \end{center}
 \end{figure}
 
@@ -71,9 +74,9 @@ redo the WCET analysis. In this section, we present a hardware architecture
 that can handle dropping monitoring events in a single cycle, matching the
 throughput of the main core.
 
-As mentioned in Section~\ref{sec:drop.dropping_tasks}, the dropping task must
+As mentioned in Section~\ref{sec:monitoring_hard_drop.drop.dropping_tasks}, the dropping task must
 invalidate metadata on a dropped monitoring event.  Thus, we have designed a
-hardware module to perform this invalidation. Figure~\ref{fig:hwdrop.mim} shows
+hardware module to perform this invalidation. Figure~\ref{fig:monitoring_hard_drop.hwdrop.mim} shows
 a block diagram of this module, which we call the metadata invalidation module
 (MIM).  When the slack tracking module indicates that a monitoring task must be
 dropped, the metadata invalidation module sets a bit in the metadata
@@ -134,14 +137,14 @@ used to directly express the register file taint metadata used for a Dynamic
 Information Flow Tracking (DIFT) scheme.
 
 \subsection{Filtering Invalid Metadata}
-\label{sec:hwdrop.filter}
+\label{sec:monitoring_hard_drop.hwdrop.filter}
 
 % Metadata filtering module
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\columnwidth]{monitoring_hard_drop/figs/mfm.pdf}
+    \includegraphics{monitoring_hard_drop/figs/mfm.pdf}
     \caption{Metadata filtering module (MFM).}
-    \label{fig:hwdrop.mfm}
+    \label{fig:monitoring_hard_drop.hwdrop.mfm}
   \end{center}
 \end{figure}
 
@@ -151,7 +154,7 @@ metadata is not useful. Thus, we can drop these monitoring tasks. By skipping
 these invalid monitoring tasks, slack can be reserved for monitoring tasks
 which operate on valid metadata. Determining when a monitoring event can be
 filtered out in this manner is done by the metadata filtering module (MFM)
-which is shown in Figure~\ref{fig:hwdrop.mfm}.
+which is shown in Figure~\ref{fig:monitoring_hard_drop.hwdrop.mfm}.
 
 We examined multiple monitoring schemes and found that most monitoring schemes
 read in up to two metadata, corresponding to the two input operands of an
@@ -169,19 +172,19 @@ MIM, the monitor also configures the MFM address calculations and the lookup
 table during initialization.
 
 \subsection{Full Architecture}
-\label{sec:hwdrop.full_arch}
+\label{sec:monitoring_hard_drop.hwdrop.full_arch}
 
 % Full hardware system
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\columnwidth]{monitoring_hard_drop/figs/full_hw.pdf}
+    \includegraphics{monitoring_hard_drop/figs/full_hw.pdf}
     \caption{Block diagram of full hardware architecture for opportunistic
     monitoring on hard real-time systems.}
-    \label{fig:hwdrop.full_hw}
+    \label{fig:monitoring_hard_drop.hwdrop.full_hw}
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:hwdrop.full_hw} shows a block diagram of the complete
+Figure~\ref{fig:monitoring_hard_drop.hwdrop.full_hw} shows a block diagram of the complete
 architecture.  Monitoring events from the main core are first enqueued in a
 FIFO. The events in the FIFO are dequeued and processed by the metadata
 filtering module. The MFM checks the MIT and/or MISP to decide whether the

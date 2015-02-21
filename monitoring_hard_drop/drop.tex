@@ -123,11 +123,11 @@ positives.
 % WCET for SW vs. HW vs. neither scheme
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\columnwidth]{monitoring_hard_drop/figs/timing_wcet.pdf}
+    \includegraphics{monitoring_hard_drop/data/sw_drop_wcet.pdf}
     \caption{WCET with original monitoring task, with software dropping task,
     and with no monitoring for UMC. Results are normalized to the WCET with no
     monitoring.}
-    \label{fig:monitoring_hard_drop.drop.wcet} 
+    \label{fig:monitoring_hard_drop.drop.sw_dropwcet} 
   \end{center}
 \end{figure}
 
@@ -138,7 +138,7 @@ to avoid false positives.  Thus, the main task's WCET estimation must be
 modified to take into account the worst-case impact due to the dropping task.
 By minimizing the dropping task's execution time, the impact on the main task's
 WCET can be much lower than the impact due to the monitoring task.
-Figure~\ref{fig:monitoring_hard_drop.drop.wcet} compares the original WCETs
+Figure~\ref{fig:monitoring_hard_drop.drop.sw_drop_wcet} compares the original WCETs
 with and without monitoring to the WCET with dropping tasks implemented in
 software for UMC. The WCETs are normalized to the WCET without monitoring.  The
 WCET with dropping is reduced by 43\% on average from the WCET without
