@@ -46,29 +46,67 @@ what is expected when a strictly conservative WCET is used.
 \subsection{Amount of Monitoring Performed}
 \label{sec:monitoring_hard_drop.evaluation.coverage}
 
-% Full monitoring at zero slack
-\begin{table}[tb]
-  \begin{center}
-    \caption{Number of monitored, dropped, and filtered monitoring events as a
-    percentage of the total number of monitoring events. These percentages are
-    shown for zero headstart slack.}
-    \begin{footnotesize}
-    \input{monitoring_hard_drop/tabs/zero_slack}
-    \end{footnotesize}
-    \label{tab:monitoring_hard_drop.evaluation.zero_slack}
-  \end{center}
-\end{table}
+% % Full monitoring at zero slack
+% \begin{table}
+%   \begin{center}
+%     \caption{Number of monitored, dropped, and filtered monitoring events as a
+%     percentage of the total number of monitoring events. These percentages are
+%     shown for zero headstart slack.}
+%     \begin{tiny}
+%     \input{monitoring_hard_drop/tabs/zero_slack}
+%     \end{tiny}
+%     \label{tab:monitoring_hard_drop.evaluation.zero_slack}
+%   \end{center}
+% \end{table}
+% 
+% % Coverage at zero slack
+% \begin{table}
+%   \begin{center}
+%     \caption{Percentage of checks that are not dropped or filtered. These percentages are shown for zero headstart slack.}
+%     \label{tab:monitoring_hard_drop.evaluation.zero_slack_coverage}
+%     \begin{tiny}
+%     \input{monitoring_hard_drop/tabs/zero_slack_coverage}
+%     \end{tiny}
+%   \end{center}
+% \end{table}
 
-% Coverage at zero slack
-\begin{table}[tb]
+% Monitoring event breakdown for UMC
+\begin{figure}
   \begin{center}
-    \caption{Percentage of checks that are not dropped or filtered. These percentages are shown for zero headstart slack.}
-    \label{tab:monitoring_hard_drop.evaluation.zero_slack_coverage}
-    \begin{footnotesize}
-    \input{monitoring_hard_drop/tabs/zero_slack_coverage}
-    \end{footnotesize}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_umc.pdf}
+    \caption{Percentage of monitored, dropped, and filtered monitoring events
+    for UMC with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_umc}
   \end{center}
-\end{table}
+\end{figure}
+% Monitoring event breakdown for LRC
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_lrc.pdf}
+    \caption{Percentage of monitored, dropped, and filtered monitoring events
+    for RAC with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_lrc}
+  \end{center}
+\end{figure}
+% Monitoring event breakdown for UMC
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_dift.pdf}
+    \caption{Percentage of monitored, dropped, and filtered monitoring events
+    for DIFT with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_dift}
+  \end{center}
+\end{figure}
+
+% Coverage
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_coverage.pdf}
+    \caption{Percentage of checks that are not dropped or filtered for zero
+    headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_coverage}
+  \end{center}
+\end{figure}
 
 %In this section, we first present results using only the STM and MIM. The MFM
 %is not enabled.
@@ -138,33 +176,102 @@ surprising as both had especially high WCET for performing monitoring without
 dropping (see Figure~\ref{fig:monitoring_hard_drop.drop.wcet}). With higher
 headstart slack, these benchmarks should also reach 100\% coverage.
 
+% Coverage for LRC
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/lrc_sweep.pdf}
+    \caption{Percentage of checks performed as headstart slack is varied for
+    RAC implemented on a processor core. Headstart slack is shown normalized
+    to the main task's WCET.}
+    \label{fig:monitoring_hard_drop.evaluation.lrc_sweep}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/flex_lrc_sweep.pdf}
+    \caption{Percentage of checks performed as headstart slack is varied for
+    RAC on an FPGA-based monitor. Headstart slack is shown normalized to the
+    main task's WCET.}
+    \label{fig:monitoring_hard_drop.evaluation.flex_lrc_sweep}
+  \end{center}
+\end{figure}
+
+This section shows how the coverage varies as headstart slack is changed for
+RAC. Figure~\ref{fig:monitoring_hard_drop.evaluation.lrc_sweep} shows the
+coverage for a processor core implementation of RAC while
+Figure~\ref{fig:monitoring_hard_drop.evaluation.flex_lrc_sweep} shows the
+coverage for an FPGA-based monitor. {\tt insertsort} and {\tt nsichneu} were
+omitted as they do not perform function calls. {\tt fir} is not shown for the
+FPGA-based monitor because it already achieves 100\% coverage with zero
+headstart slack. In both cases, we see that with a small amount of headstart
+slack, RAC is able to reach 100\% coverage for all benchmarks.
+
 \subsection{FPGA-based Monitor}
 \label{sec:monitoring_hard_drop.evaluation.fpga}
 
-% Full monitoring at zero slack on Flex
-\begin{table}[tb]
-  \begin{center}
-    \caption{Number of monitored, dropped, and filtered monitoring events as a
-    percentage of the total number of monitoring events for an FPGA-based
-    monitor. These percentages are shown for zero headstart slack.}
-    \begin{footnotesize}
-    \input{monitoring_hard_drop/tabs/zero_slack_flex}
-    \end{footnotesize}
-    \label{tab:monitoring_hard_drop.evaluation.zero_slack_flex}
-  \end{center}
-\end{table}
+% % Full monitoring at zero slack on Flex
+% \begin{table}[tb]
+%   \begin{center}
+%     \caption{Number of monitored, dropped, and filtered monitoring events as a
+%     percentage of the total number of monitoring events for an FPGA-based
+%     monitor. These percentages are shown for zero headstart slack.}
+%     \begin{footnotesize}
+%     \input{monitoring_hard_drop/tabs/zero_slack_flex}
+%     \end{footnotesize}
+%     \label{tab:monitoring_hard_drop.evaluation.zero_slack_flex}
+%   \end{center}
+% \end{table}
+% 
+% % Full monitoring at zero slack on Flex
+% \begin{table}[tb]
+%   \begin{center}
+%     \caption{Percentage of checks that are not dropped or filtered for an
+%     FPGA-based monitor. These percentages are shown for zero headstart slack.}
+%     \label{tab:monitoring_hard_drop.evaluation.zero_slack_flex_coverage}
+%     \begin{footnotesize}
+%     \input{monitoring_hard_drop/tabs/zero_slack_flex_coverage}
+%     \end{footnotesize}
+%   \end{center}
+% \end{table}
 
-% Full monitoring at zero slack on Flex
-\begin{table}[tb]
+% Monitoring event breakdown for UMC
+\begin{figure}
   \begin{center}
-    \caption{Percentage of checks that are not dropped or filtered for an
-    FPGA-based monitor. These percentages are shown for zero headstart slack.}
-    \label{tab:monitoring_hard_drop.evaluation.zero_slack_flex_coverage}
-    \begin{footnotesize}
-    \input{monitoring_hard_drop/tabs/zero_slack_flex_coverage}
-    \end{footnotesize}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_umc.pdf}
+    \caption{Percentage of monitored, dropped, and filtered monitoring events
+    for UMC on an FPGA-based monitor with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_umc}
   \end{center}
-\end{table}
+\end{figure}
+% Monitoring event breakdown for LRC
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_lrc.pdf}
+    \caption{Percentage of monitored, dropped, and filtered monitoring events
+    for RAC on an FPGA-based monitor with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_lrc}
+  \end{center}
+\end{figure}
+% Monitoring event breakdown for UMC
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_dift.pdf}
+    \caption{Percentage of monitored, dropped, and filtered monitoring events
+    for DIFT on an FPGA-based monitor with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_dift}
+  \end{center}
+\end{figure}
+
+% Coverage
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_coverage.pdf}
+    \caption{Percentage of checks that are not dropped or filtered on an
+    FPGA-based monitor for zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_coverage}
+  \end{center}
+\end{figure}
 
 Performing monitoring in software, although parallelized, can still incur high
 overheads since multiple instructions are needed to handle each monitoring
