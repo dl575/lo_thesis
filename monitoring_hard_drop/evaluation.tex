@@ -14,7 +14,7 @@ Uninitialized memory check was mentioned in
 Section~\ref{sec:monitoring_wcet.monitoring} and seeks to detect loading from
 memory locations that are not initialized first. Return address check protects
 against certain security attacks, such as return-oriented programming
-\cite{shacham-rop-ccs07}, by checking that the address returned to after a
+\cite{rop-ccs07}, by checking that the address returned to after a
 function completes matches the address that originally called the function.
 Dynamic information flow tracking is another security monitoring scheme. DIFT
 attempts to detect when information from untrusted sources is used to affect
@@ -162,19 +162,21 @@ an indirect jump instruction affect the coverage.
 
 For an underutilized system, if some headstart slack is given to a task
 initially, then the amount of monitoring that can be performed can be
-increased. As an example, Figure~\ref{fig:evaluation.umc_sweep} shows how the
+increased. As an example,
+Figure~\ref{fig:monitoring_hard_drop.evaluation.umc_sweep} shows how the
 coverage increases as we increase the headstart slack given to the main task
-for UMC. Figure~\ref{fig:evaluation.dift_sweep} shows how the coverage varies
-with headstart slack for DIFT. Results for RAC are similar and can be found in
-Section~\ref{sec:appendix.rac} of the Appendix.  The headstart slack is
-displayed as a percentage of the main task's WCET for each benchmark and is
-varied from 0\% to 600\%. With enough headstart slack, 100\% of the monitoring
-is able to be performed. For DIFT, only benchmarks which were not able to reach
-100\% coverage with zero headstart slack are shown.  {\tt compress} and {\tt
-statemate} do not reach 100\% coverage across the varied range. This is not
-surprising as both had especially high WCET for performing monitoring without
-dropping (see Figure~\ref{fig:monitoring_hard_drop.drop.wcet}). With higher
-headstart slack, these benchmarks should also reach 100\% coverage.
+for UMC. Figure~\ref{fig:monitoring_hard_drop.evaluation.dift_sweep} shows how
+the coverage varies with headstart slack for DIFT. Results for RAC are similar
+and can be found in Section~\ref{sec:appendix.rac} of the Appendix.  The
+headstart slack is displayed as a percentage of the main task's WCET for each
+benchmark and is varied from 0\% to 600\%. With enough headstart slack, 100\%
+of the monitoring is able to be performed. For DIFT, only benchmarks which were
+not able to reach 100\% coverage with zero headstart slack are shown.  {\tt
+compress} and {\tt statemate} do not reach 100\% coverage across the varied
+range. This is not surprising as both had especially high WCET for performing
+monitoring without dropping (see
+Figure~\ref{fig:monitoring_hard_drop.drop.sw_drop_wcet}). With higher headstart
+slack, these benchmarks should also reach 100\% coverage.
 
 % Coverage for LRC
 \begin{figure}
@@ -277,7 +279,7 @@ Performing monitoring in software, although parallelized, can still incur high
 overheads since multiple instructions are needed to handle each monitoring
 event. One possible solution to improve the performance of monitoring while
 maintaining programmability is to use an FPGA-based monitor
-\cite{deng-flexcore-micro10}. We model the FPGA-based monitor as being able to
+\cite{flexcore-micro10}. We model the FPGA-based monitor as being able to
 run at 250 MHz and handle up to one monitoring event each cycle. Note that this
 means that the FPGA-based monitor can process a monitoring event every two
 cycles of the main core which runs at 500 MHz.

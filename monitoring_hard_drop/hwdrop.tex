@@ -5,9 +5,9 @@ In Section~\ref{sec:monitoring_hard_drop.drop}, we presented a general
 framework for how to design a system that allows dropping of monitoring tasks
 to ensure the main task's execution time. However, implementing this framework
 in software still has significant impacts on the WCET as shown in
-Figure~\ref{fig:monitoring_hard_drop.drop.wcet}.  In this section, we present a
-novel hardware architecture that eliminates these impacts to the main task's
-WCET.
+Figure~\ref{fig:monitoring_hard_drop.drop.sw_drop_wcet}.  In this section, we
+present a novel hardware architecture that eliminates these impacts to the main
+task's WCET.
 
 There are two main sources that affect the main task's WCET: the additional
 code for keeping track of slack and the impact of the dropping task.  In
