@@ -1,3 +1,63 @@
 \section{Introduction}
 \label{sec:monitoring_hard_drop.introduction}
 
+% Run-time monitoring has high WCET.
+In the last chapter, we showed how the WCET of run-time monitoring could be
+estimated. By accounting for this WCET, this allows run-time monitoring to be
+implemented in traditional real-time frameworks while giving strong guarantees
+that deadlines will be met. However, the increase in WCET introduced by
+run-time monitoring can be quite high, requiring a large amount of slack in a
+system's schedule in order to support it. For example,
+Section~\ref{sec:monitoring_hard_drop.evaluation} showed that even an
+aggressive implementation of UMC showed increased WCET of 3.5x compared to
+without monitoring. A more realistic implementation that includes deciding
+which tasks to run in software can show increases of WCET of up to 12x compared
+to the baseline.  Thus, applying monitoring to real-time systems requires a
+large increase in the time allocated to tasks.  Currently, if a real-time
+system cannot support this extra utilization, then monitoring cannot be applied
+to the system.  
+
+% Our solution is based on dynamic slack.
+In this chapter, we describe a system that greatly decreases the amount of time
+that must be statically allocated to tasks in the worst case (i.e., WCET) in
+order to enable monitoring. Specifically, this system exploits dynamic slack in
+order to opportunistically perform as much monitoring as possible within the
+time constraints of the system. This is based on three key observations:
+\begin{enumerate}
+  \item Tasks often run faster than their worst-case time.
+  \item The performance impact of monitoring is rarely equal to the worst-case impact.
+  \item Performing partial monitoring can still provide some degree of protection.
+\end{enumerate}
+Since tasks typically run faster than their conservatively estimated WCET,
+there exists dynamic slack at run-time that can be used for monitoring.
+Similarly, the estimation of the WCET of monitoring is conservative. In
+actuality, the overheads of monitoring are much lower, as shown by the
+average-case performance impact. Finally, although performing all monitoring
+operations in full is preferred, performing only a portion of the monitoring
+still gives increased protection over a system with no monitoring applied.
+By shifting the decision of whether to enable or disable monitoring to
+run time, we are able to trade off monitoring coverage in order to reduce the
+WCET impact of monitoring. The system we present decides whether or not to
+perform monitoring based on whether there is enough dynamic slack to account
+for the worst-case performance impact of the monitoring.
+
+% Key issue is false positives
+A main challenge in skipping monitoring operations is ensuring that the monitor
+can still run in a useful manner. Although we trade off the coverage provided
+by monitoring in order to meet timing requirements, we must also  guarantee
+that no false positives occur in order to prevent false alarms.
+We prevent false positives through the use of a dropping task that invalidates
+metadata when monitoring is skipped.
+With hardware optimizations, this invalidation can be handled with no impact on
+the task's WCET. In addition, the hardware architecture we present skips
+monitoring on invalidated metadata, saving dynamic slack to be used for useful
+monitoring on valid metadata.
+
+The rest of this chapter is organized as follows. In
+Section~\ref{sec:monitoring_hard_drop.drop}, we discuss how to decide when to
+skip monitoring and how to handle this in a safe manner. Hardware optimizations
+for handling this dropping operation are presented in
+Section~\ref{sec:monitoring_hard_drop.hwdrop}. We present our evaluation
+methodology and experimental results in
+Section~\ref{sec:monitoring_hard_drop.evaluation}. 
+
