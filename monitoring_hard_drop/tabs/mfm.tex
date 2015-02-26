@@ -1,0 +1,24 @@
+% Operation of MFM
+
+\begin{tabular}{|l|l||l|l|}
+\hline
+
+{\bf Monitor} & {\bf Event} & {\bf Filter Condition} & {\bf Filter Operation} \\ \hline \hline
+
+\multirow{2}{*}{UMC}  
+& Store & Never & - \\ \cline{2-4}
+& Load & Invalid metadata & Do nothing \\ 
+\hline\hline
+
+\multirow{2}{*}{RAC}  
+& Call & Never & - \\ \cline{2-4}
+& Return & Invalid metadata & Decrement stack pointer \\ 
+\hline\hline
+
+\multirow{4}{*}{DIFT}  
+& ALU & Always & Perform propagation \\ \cline{2-4}
+& Load & Invalid metadata & Clear taint in MISP \\ \cline{2-4}
+& Store & Never & - \\ \cline{2-4}
+& Indirect jump & Invalid metadata & Do nothing \\ \hline
+
+\end{tabular}

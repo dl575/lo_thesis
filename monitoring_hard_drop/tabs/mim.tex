@@ -1,0 +1,24 @@
+% Operation of MIM
+
+\begin{tabular}{|l|l||l|}
+\hline
+
+{\bf Monitor} & {\bf Event} & {\bf Invalidation} \\ \hline \hline
+
+\multirow{2}{*}{UMC}  
+& Store & Set invalidation flag \\ \cline{2-3}
+& Load & Do nothing \\ 
+\hline\hline
+
+\multirow{2}{*}{RAC}  
+& Call & Invalidate metadata, increment metadata address \\ \cline{2-3}
+& Return & Decrement metadata address \\ 
+\hline\hline
+
+\multirow{4}{*}{DIFT}  
+& ALU & Clear taint in MISP \\ \cline{2-3}
+& Load & Clear taint in MISP \\ \cline{2-3}
+& Store & Invalidate metadata \\ \cline{2-3}
+& Indirect jump & Do nothing \\ \hline
+
+\end{tabular}

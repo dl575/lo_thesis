@@ -1,0 +1,150 @@
+\section{Monitoring Extensions}
+\label{sec:monitoring_hard_drop.extensions}
+
+% Monitoring task classification
+\begin{table}
+  \begin{center}
+    \caption{Monitoring tasks for UMC, RAC, and DIFT.}
+    \begin{footnotesize}
+    \input{monitoring_hard_drop/tabs/tasks}
+    \end{footnotesize}
+    \label{tab:monitoring_hard_drop.extensions.tasks}
+  \end{center}
+\end{table}
+
+% Hardware operations
+\begin{table}
+  \begin{center}
+    \caption{Operation of the MIM for UMC, RAC, and DIFT.}
+    \begin{footnotesize}
+    \input{monitoring_hard_drop/tabs/mim}
+    \end{footnotesize}
+    \label{tab:monitoring_hard_drop.extensions.mim}
+  \end{center}
+\end{table}
+\begin{table}
+  \begin{center}
+    \caption{Operation of the MFM for UMC, RAC, and DIFT.}
+    \begin{footnotesize}
+    \input{monitoring_hard_drop/tabs/mfm}
+    \end{footnotesize}
+    \label{tab:monitoring_hard_drop.extensions.mfm}
+  \end{center}
+\end{table}
+
+In this section, we detail how our architecture works for the three different
+monitoring schemes we evaluated: uninitialized memory check (UMC), return
+address check (RAC), and dynamic information flow tracking (DIFT).
+Table~\ref{tab:monitoring_hard_drop.extensions.tasks} shows a summary of the
+monitoring tasks for these monitoring schemes and
+Tables~\ref{tab:monitoring_hard_drop.extensions.mim} and
+\ref{tab:monitoring_hard_drop.extensions.mfm} shows how the MIM and MFM
+operate. 
+
+\subsection{Uninitialized Memory Check}
+\label{sec:monitoring_hard_drop.extensions.umc}
+
+As described in Section~\ref{sec:monitoring_wcet.monitoring},
+uninitialized memory check (UMC) is a monitoring scheme that checks that memory
+is written to before it is read from.
+Table~\ref{tab:monitoring_hard_drop.extensions.tasks} summarizes the monitoring
+tasks for UMC.
+
+Tables~\ref{tab:monitoring_hard_drop.extensions.mim} and
+\ref{tab:monitoring_hard_drop.extensions.mfm} shows the operations of
+the MIM and MFM. The monitoring task performed on a load instruction is a check
+operation.  Thus, it can simply be skipped without causing any false positives.
+However, the monitoring task on a store updates metadata. On a dropped store
+event, the MIM calculates the metadata address and sets an invalidation flag
+corresponding to this address in the MIT to indicate that the metadata for this
+word is invalid.
+
+In terms of using the metadata filtering module, on a load, if the metadata is
+invalid, then performing the check is useless. Thus, if the filtering module
+detects that the metadata invalidation flag corresponding to the memory access
+address is invalid, then the monitoring event is dropped and no operation is
+performed.  For a store event, the source operand of the operation is a
+register value which is always valid. Thus, the MFM never filters a store
+event. Instead, if the store event is not dropped, the monitor will set the
+metadata bit and can clear the corresponding invalidation flag.
+
+\subsection{Return Address Check}
+\label{sec:monitoring_hard_drop.extensions.lrc}
+
+Several security attacks, such as return-oriented programming (ROP)
+\cite{rop-ccs07}, attempt to manipulate the return address of a
+function so that the control flow of a program is diverted. One method to
+prevent these types of attacks is to use monitoring to save the return address
+on a call to a function and to check on the return that the correct return
+address is used. We refer to this type of monitoring scheme as a return address
+check (RAC). On a call instruction, RAC pushes the correct return address for
+the function onto a stack data structure. On a return instruction, RAC pops an
+address of the stack and checks that this saved address matches the address the
+main task is returning to (Table~\ref{tab:monitoring_hard_drop.extensions.tasks}).
+
+In the case of UMC, the metadata that we cared about was a function of
+information from the monitoring event. For RAC, the metadata entry that we care
+about is based on the current stack pointer for the return address stack that
+the monitor maintains.  The MIM maintains the previous metadata address used in
+a register and we can use this register to maintain the stack pointer between
+the monitoring task and the MIM. The monitoring task updates this register as
+necessary to ensure that the MIM has the correct metadata stack pointer. On a
+call instruction that needs to be dropped, the MIM marks the metadata at the
+current stack pointer (i.e., the previous metadata address) as invalid and
+increments the stack pointer. On a return, the MIM decrements the stack pointer
+and simply skips the check operation
+(Table~\ref{tab:monitoring_hard_drop.extensions.mim}).
+
+On a call instruction, the source of our monitoring operation is the return
+address from the monitoring event. This is always valid, so call instructions
+are never processed by the MFM. On a return instruction, if the stored return
+address is marked as invalid, then the check can be skipped. Thus, if the MFM
+detects that the stored return address is invalid, then the stack pointer will
+be decremented but no check will occur, similar to the invalidation case.
+
+\subsection{Dynamic Information Flow Tracking}
+\label{sec:monitoring_hard_drop.extensions.dift}
+
+Dynamic information flow tracking (DIFT) \cite{suh-dift-asplos04} is a security
+monitoring scheme that seeks to detect when information from untrusted sources
+is used to affect the control flow.  In its simplest form, DIFT keeps a 1-bit
+metadata tag for each memory location and each register, indicating tainted or
+untainted. Multi-bit versions of DIFT have been proposed to track more detailed
+semantic information about data. When data is read from an untrusted source, it
+is marked as tainted. As this data is used for other operations, the results of
+these operations are also marked as tainted. On an indirect jump, the taint bit
+of the register used is checked. If the register is found to be tainted, then
+an error is detected. These monitoring task operations are summarized in
+Table~\ref{tab:monitoring_hard_drop.extensions.tasks}.
+
+In the case of DIFT, since the registers have associated metadata and these are
+used very often, we use the MISP to avoid aliasing. Also, in this discussion,
+we are considering a 1-bit taint, so the MISP can be used to store the exact
+taint value, rather than an invalidation flag. This shows some of the
+flexibility in how these hardware structures can be used for specific
+monitoring schemes. For more complicated multi-bit DIFT schemes, the MISP would
+be used to store invalidation flags as before.  For ALU and load instructions
+which have a register as a destination, the MIM will clear the register's taint
+in the MISP on a dropped monitoring event. This is safe because an error is
+only raised for a tainted data value. On a store instruction, which writes to
+memory as a destination, the MIM invalidates the associated memory address in
+the MIT, similar to how UMC operates. Finally, on an indirect jump, only a
+check operation is performed. Thus, this can be dropped without any extra
+invalidation. 
+
+The MFM operates similar to the UMC case for some of these monitoring events
+(Table~\ref{tab:monitoring_hard_drop.extensions.mfm}).  For an indirect jump,
+if the metadata is found to be invalid, then the event is filtered and no check
+is performed. For a load instruction, if the loaded data has its metadata
+marked as invalid, then the MFM will clear the taint bit for the target
+register, as in the invalidation case. For a store instruction, the source is
+from a register, which always has a valid taint bit in the MISP, so these are
+never filtered out. The most interesting case is for ALU instructions. The MFM
+is able to read the taint bits from the MISP and then signal to the MIM to
+write to the MISP, so we can actually perform the entire monitoring task in
+hardware. The MFM reads the taint bits from the MISP for both source registers.
+These are fed into the filter lookup table (see
+Figure~\ref{fig:monitoring_hard_drop.hwdrop.mfm}) which is configured to signal
+the MIM to set or clear the taint bit in the MISP for the destination register
+depending on the read taint bits.
+

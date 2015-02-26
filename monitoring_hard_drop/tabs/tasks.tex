@@ -1,0 +1,25 @@
+
+% Classification of monitoring tasks
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+
+{\bf Monitor} & {\bf Event} & {\bf Task} & {\bf Operation} \\ \hline \hline
+
+\multirow{2}{*}{UMC}  
+ & Store & Set metadata tag (data initialized) & Update \\ \cline{2-4}
+ & Load & Check that metadata tag is set & Check \\ 
+\hline\hline
+
+\multirow{2}{*}{RAC}  
+ & Call & Push return address & Update \\ \cline{2-4}
+ & Return & Pop return address and check & Update \& Check \\ 
+\hline\hline
+
+\multirow{4}{*}{DIFT}  
+ & ALU & Set the output tag as the OR of the input tags & Update \\ \cline{2-4}
+ & Load & Set the register tag as the tag of the loaded data & Update \\ \cline{2-4}
+ & Store & Set the memory tag as the register tag & Update \\ \cline{2-4}
+ & Indirect jump & Check that tag is not set (data is untainted) & Check \\ \hline
+
+\end{tabular}
