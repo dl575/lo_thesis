@@ -1,0 +1,139 @@
+\section{Partial Run-Time Monitoring}
+\label{sec:monitoring_dift_drop.monitoring}
+
+% Previous work overheads
+\begin{table}
+  \begin{center}
+    \begin{tiny}
+    \input{monitoring_dift_drop/tabs/previous_overheads}
+    \end{tiny}
+    \caption{Trade-off between performance overhead and flexibility/complexity
+    of run-time monitoring systems.}
+    \label{tab:monitoring_dift_drop.monitoring.previous_overheads}
+  \end{center}
+\end{table}
+
+\subsection{Overhead of Run-Time Monitoring}
+
+There have been a number of proposals for run-time monitoring systems exploring
+various design points.
+Table~\ref{tab:monitoring_dift_drop.monitoring.previous_overheads} summarizes
+some of the representative designs and their reported performance overheads.
+The previous studies clearly show that there exist trade-offs between
+efficiency, flexibility, and hardware costs.  For example, a run-time
+monitoring scheme can often be realized with fairly low performance overhead
+(less than 20\%) if implemented with custom hardware that is designed only for
+one monitor or a narrow set of monitors. However, the custom hardware monitors
+cannot be modified or updated, and require dedicated silicon area.  On the
+other hand, flexible systems that support a wide range of monitors lead to
+noticeable performance overhead, often too high for wide deployment in
+practice.  Software-only implementations \cite{nagarajan-interact08,
+lift-micro06, purify-usenix92, taintcheck-ndsss05} or multi-core monitors with
+minimal hardware changes \cite{lba-asid06} are reported to have severalfold
+slowdowns.  On-chip FPGA monitors \cite{flexcore-micro10} and cores with
+monitoring accelerators \cite{lba-isca08, fade-hpca14} can reduce overhead
+significantly, but still show slowdowns of several tens of percents in some
+cases.  In today's monitoring systems, the overhead is also unpredictable
+because it depends heavily on the characteristics of applications and
+monitoring operations.  In summary, users currently need to either pay
+noticeable overhead or the cost of custom hardware in order to use fine-grained
+run-time monitoring in deployed systems.
+
+\subsection{Partial Monitoring for Adjustable Overhead}
+
+In this paper, we aim to develop a general framework that enables monitoring
+overhead to be dynamically adjusted by dropping a portion of monitoring
+operations if necessary. In essence, this framework adds a new dimension to the
+monitor design space by allowing coverage or accuracy to be traded off for
+lower overhead. For example, the capability to adjust overhead allows users to
+use monitoring with partial coverage in order to reduce performance or energy
+overhead. Alternatively, partial monitoring allows designers to use less
+expensive hardware for a given performance overhead budget.
+
+In this framework, a user specifies how much monitoring should be done in the
+form of a target overhead budget, a target coverage, a percentage of monitoring
+operations to be performed, etc.  Then, the framework dynamically drops a
+portion of monitoring operations to match the target. In particular, this paper
+focuses on matching a performance overhead target while maximizing the
+coverage. Given that the overhead of custom hardware monitors can already be
+quite low, the focus is on enabling the trade-off in {\em general-purpose}
+monitoring systems that support a wide range of monitors.  We also consider the
+target overhead as a soft constraint and do not aim to provide a strict
+worst-case guarantee.
+
+\subsection{Applications and Metrics}
+
+While it is ideal if run-time monitoring can be performed in full, we believe
+that the capability to trade-off coverage/accuracy for lower
+performance/hardware overhead will be useful in many application scenarios
+where full monitoring is not a viable option.  Here, we briefly discuss example
+applications of partial monitoring and the metrics that are important in each
+case.
+
+{\bf Cooperative testing, debugging, and protection:} 
+Recent studies have shown that software testing, debugging, or attack detection
+may be done in a cooperative fashion across a large number of systems
+\cite{liblit-pldi05, chilimbi-asplos04, greathouse-cgo11, testudo-micro08}. In
+this case, each system is only willing to pay very low overhead (e.g., a few
+percent) and only performs a small subset of checks.  High coverage is achieved
+by having different systems check different parts of a program.  The partial
+monitoring framework allows high-overhead monitoring to be used in a
+cooperative fashion.  The main metric that represents the effectiveness of
+monitoring in this case is the coverage (the percentage of checks that were
+performed) over multiple runs.
+
+{\bf Monitoring of soft real-time systems:}
+Soft real-time systems or interactive systems need to meet deadlines or
+response-time requirements. Unfortunately, the overhead of run-time monitoring
+is often unpredictable and varies significantly depending on the application
+and monitor characteristics. The partial monitoring framework allows monitoring
+to be performed while providing a level of guarantee on its impact on the
+execution time.  In this case, it is important that the system can closely
+match the desired overhead target while maximizing the effectiveness of
+monitoring.
+
+{\bf Partial protection for low overhead:}
+Even without real-time constraints, systems may have tight budgets for the
+performance, energy, or hardware overhead that they can tolerate for run-time
+monitoring. In such cases, full monitoring cannot be enabled unless its
+overhead is low enough. Adjustable monitoring allows partial protection on such
+systems. For example, array bounds may be checked for a subset of memory
+accesses. For dynamic information flow tracking (DIFT), a subset of information
+flows may be tracked for partial attack detection. In this scenario, the
+effectiveness of partial monitoring can be measured as the percentage of
+run-time checks that are performed on each program run, which reflects how
+likely it is for a bug or an attack to be detected for a system. 
+
+{\bf Profiling:} 
+The run-time monitoring system can be used to implement various profiling tools
+to collect statistics on program behavior for performance optimizations as well
+as security protection. For example, a recent study showed that an instruction
+mix can be used to identify malware from normal programs \cite{demme-isca13,
+tang-raid14}.  In such profiling tools, the partial monitoring framework can be
+used to obtain statistical samples rather than complete counts of all program
+events, essentially trading off accuracy for lower overhead.
+
+\subsection{Design Challenges}
+
+While conceptually simple, designing a general framework to dynamically adjust
+monitoring overhead introduces new challenges that need to be addressed.  The
+following summarizes the main design goals and associated design challenges.
+
+\begin{enumerate}
+  \item \textbf{General:} Since we mainly target flexible run-time monitoring
+  systems, which often have high overhead, the framework also needs to be
+  general enough to be applicable to a wide range of monitoring schemes.
+
+  \item \textbf{No false positive:} The framework needs to ensure that dropping
+  a portion of monitoring operations does not lead to a false positive. We
+  found that a dataflow engine that tracks invalid metadata can serve as a
+  general solution to this problem
+  (Section~\ref{sec:monitoring_dift_drop.dropping}).
+
+  \item \textbf{Intelligent dropping:} The framework needs to match the
+  overhead budget while maximizing the effectiveness of monitoring. To this
+  end, partial monitoring needs to carefully choose which operations to drop
+  and when. We address this problem by studying different dropping policies
+  (Section~\ref{sec:monitoring_dift_drop.policies}) and their trade-offs.
+\end{enumerate}
+
