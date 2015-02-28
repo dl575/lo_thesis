@@ -3,7 +3,7 @@
 
 % Run-time monitoring has high WCET.
 In the last chapter, we showed how the WCET of run-time monitoring could be
-estimated. By accounting for this WCET, this allows run-time monitoring to be
+estimated. By accounting for this WCET, run-time monitoring can be
 implemented in traditional real-time frameworks while giving strong guarantees
 that deadlines will be met. However, the increase in WCET introduced by
 run-time monitoring can be quite high, requiring a large amount of slack in a
@@ -57,7 +57,9 @@ The rest of this chapter is organized as follows. In
 Section~\ref{sec:monitoring_hard_drop.drop}, we discuss how to decide when to
 skip monitoring and how to handle this in a safe manner. Hardware optimizations
 for handling this dropping operation are presented in
-Section~\ref{sec:monitoring_hard_drop.hwdrop}. We present our evaluation
+Section~\ref{sec:monitoring_hard_drop.hwdrop}.
+Section~\ref{sec:monitoring_hard_drop.extensions} details how our architecture
+applies to three different monitoring techniques.  We present our evaluation
 methodology and experimental results in
 Section~\ref{sec:monitoring_hard_drop.evaluation}. 
 

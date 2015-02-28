@@ -79,7 +79,7 @@ on a call to a function and to check on the return that the correct return
 address is used. We refer to this type of monitoring scheme as a return address
 check (RAC). On a call instruction, RAC pushes the correct return address for
 the function onto a stack data structure. On a return instruction, RAC pops an
-address of the stack and checks that this saved address matches the address the
+address off the stack and checks that this saved address matches the address the
 main task is returning to (Table~\ref{tab:monitoring_hard_drop.extensions.tasks}).
 
 In the case of UMC, the metadata that we cared about was a function of

@@ -37,9 +37,9 @@ architecture.
 \end{figure}
 
 Figure~\ref{fig:monitoring_hard_drop.hwdrop.slack_tracking} shows a hardware slack tracking module
-(STM). In order to keep track of slack, a watchdog timer is loaded with a
+(STM). In order to keep track of slack, a countdown timer is loaded with a
 sub-task's WCET at the start of a sub-task and counts down each cycle. At the
-end of a sub-task, the remaining time in this watchdog timer is added to the
+end of a sub-task, the remaining time in this countdown timer is added to the
 current dynamic slack which is stored in a register. At the start of a task,
 the dynamic slack register is cleared and set to the headstart slack if one is
 specified.  In addition, whenever the main task is stalled due to the
@@ -132,9 +132,9 @@ valid or invalid with a 1-bit flag. However, in general the MIM simply sets or
 clears a bit based on a calculated address. We expect that for certain
 monitoring schemes, designers may be able to use the MIM in new ways such as
 using the MIT and MISP to directly express certain metadata.
-Section~\ref{sec:extensions.dift} of the Appendix shows how the MISP can be
-used to directly express the register file taint metadata used for a Dynamic
-Information Flow Tracking (DIFT) scheme.
+Section~\ref{sec:monitoring_hard_drop.extensions} shows how the MISP can be
+used to directly express the register file taint metadata used for a dynamic
+information flow tracking (DIFT) scheme.
 
 \subsection{Filtering Invalid Metadata}
 \label{sec:monitoring_hard_drop.hwdrop.filter}
