@@ -59,14 +59,14 @@ on how to handle such an error such as raising an exception, notifying the
 user, or switching to a simple, more trusted main task \cite{sha-simplex-sw01}.
 
 % Pipeline diagram to show stalls
-\begin{figure*}
+\begin{figure}
   \begin{center}
-    \includegraphics[width=\linewidth]{monitoring_wcet/figs/pipeline.pdf}
+    \includegraphics{monitoring_wcet/figs/pipeline.pdf}
     \caption{Pipeline diagram of monitoring. The main core stalls due to the
     slower throughput of the monitor.}
     \label{fig:monitoring_wcet.monitoring.pipeline}
   \end{center}
-\end{figure*}
+\end{figure}
 
 In order to decouple the execution of the main task and the monitoring task, a
 dedicated hardware FIFO is used to buffer monitoring events between the main
@@ -91,6 +91,7 @@ the example code sequence shown, three monitoring stall cycles occur, two for
 instruction 4 and one for instruction 5.
 
 \subsection{Example Monitoring Scheme}
+\label{sec:monitoring_wcet.monitoring.example}
 
 There are many possible monitoring schemes that can be implemented on this type
 of fine-grained parallel monitoring architecture such as memory protection
@@ -107,13 +108,13 @@ addition, this base and bound metadata is propagated on ALU and memory
 instructions to track the corresponding array pointers.
 
 % Example monitor (BC)
-\begin{figure*}
+\begin{figure}
   \begin{center}
-    \includegraphics[width=\linewidth]{monitoring_wcet/figs/example_full.pdf}
+    \includegraphics{monitoring_wcet/figs/example_full.pdf}
     \caption{Example of array bounds check monitor.}
     \label{fig:monitoring_wcet.monitoring.example_full}
   \end{center}
-\end{figure*} 
+\end{figure} 
 
 Figure~\ref{fig:monitoring_wcet.monitoring.example_full} shows an example
 pseudo-code segment, its assembly level instructions, and the corresponding
