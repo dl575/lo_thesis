@@ -1,0 +1,390 @@
+\section{Evaluation}
+\label{sec:monitoring_dift_drop.evaluation}
+
+\subsection{Experimental Setup}
+\label{sec:monitoring_dift_drop.evaluation.setup}
+
+We implemented our dataflow-guided monitoring architecture by modifying the ARM
+version of the gem5 simulator \cite{gem5} to support parallel run-time
+monitoring. We implement the monitor as a software-based monitor running on a
+parallel processor core, similar to LBA \cite{lba-asid06}.  We model the main
+and monitoring cores as running at 2.5 GHz with 4-way set-associative 32 kB
+private L1 I/D caches and a shared 8-way 2 MB L2 cache. This setup is similar
+to the Snapdragon 801 processor commonly found in mobile systems. The dataflow
+engine uses a 1 kB cache for invalidation and null flags.
+
+In order to explore the generality of the architecture for different monitors,
+we implemented five different monitors: uninitialized memory check (UMC), array
+bounds check (BC), dynamic information flow tracking (DIFT), instruction-mix
+profiling (IMP), and LockSet-based race detection (LS).  Since we implement the
+monitor using a processor core and our dataflow engine was designed to be
+generally applicable, the same hardware platform supports all of these
+monitoring techniques.  Uninitialized memory check seeks to detect loading from
+memory locations that are not initialized first. Array bounds check, as
+described in Section~\ref{sec:monitoring_dift_drop.dropping}, is a monitoring
+scheme that aims to detect buffer overflows where memory accesses go beyond the
+boundaries of an array. We modify the implementation of {\tt malloc} to set
+base and bound metadata information. Dynamic information flow tracking is a
+security monitoring scheme which detects when information from untrusted
+sources is used to affect the program control flow (i.e., indirect control
+instructions). For the benchmarks we consider, we mark data read from files as
+untrusted. We implemented a multi-bit DIFT scheme which marks untrusted data
+with a 32-bit metadata identifier so that if an error is detected, it is
+possible to have information about where the data originated from.
+Instruction-mix profiling counts the number of ALU, load, store, and control
+instructions that are executed. This profiling information can be useful for
+performing optimizations or to detect malicious software \cite{tang-raid14}.
+LockSet \cite{eraser-tocs97} attempts to detect possible race conditions in
+multi-threaded programs by tracking metadata about which locks are protecting
+shared memory locations. If a shared memory location is accessed while
+unprotected then a race condition may exist.
+
+We tested our system using benchmarks from SPECint CPU2006 \cite{spec2006}.
+Since our implementation of BC depends on the modification of {\tt malloc} to
+set array bounds information, we focus on the C SPECint benchmarks. Although we
+do not show results for the C++ benchmarks, we note that the results for UMC,
+DIFT, and IMP for these benchmarks are similar to the other results shown.  We
+fast-forwarded each benchmark for 1 billion instructions and then simulated for
+2 billion instructions. 
+
+Since LockSet race detection requires multi-threaded programs, we tested it
+using the applications from the SPLASH-2 benchmark set \cite{splash-isca95}.
+Each benchmark was run using 2 main cores to run the benchmark application.
+{\tt fmm} and {\tt raytrace} were run without fast-forwarding because they ran
+to completion in under 2 billion instructions.  Each main core was connected to
+a dataflow engine and a monitoring core.
+
+\subsection{Baseline Monitoring Overhead}
+
+% Filter monitoring overheads
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/filter_mon.pdf}
+    \caption{Monitoring overhead with null metadata filtering.}
+    \label{fig:monitoring_dift_drop.evaluation.filter_mon}
+  \end{center}
+\end{figure}
+
+Figure~\ref{fig:monitoring_dift_drop.evaluation.filter_mon} shows the execution
+times of performing monitoring with null filtering enabled normalized to the
+execution time of the benchmarks without monitoring. UMC sees normalized
+execution times of 2.6-9.8x with an average of 5.7x.  For BC, normalized
+execution times are 2.7x on average and range from 1.02x to 13.6x.  DIFT sees
+an average of 1.1x slowdown with a maximum slowdown of 1.3x with null metadata
+filtering. This low overhead is due to the fact that for our implementation of
+DIFT on SPEC benchmarks, we only mark data read from files as tainted. Instead,
+if we targeted network or streaming applications, which have larger amounts of
+untrusted input data, we would observe higher overhead. IMP shows normalized
+execution times of 1.6-9.5x with an average of 5.8x. Overheads for LS (not
+pictured) applied to the SPLASH-2 benchmarks are 1.04-1.29x after null metadata
+filtering and the average overhead observed is 1.13x.  Our baseline system and
+overheads are similar to previous multi-core monitoring systems such as
+LBA-accelerated \cite{lba-isca08} and FADE \cite{fade-hpca14} (see
+Table~\ref{tab:monitoring_dift_drop.monitoring.previous_overheads}). In
+Section~\ref{sec:monitoring_dift_drop.evaluation.fpga}, we also evaluate a
+higher performance, FPGA-based monitor that shows low tens of percent of
+overhead. 
+
+\subsection{Coverage with Adjustable Partial Monitoring}
+
+% BC sweep
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/hb_sweep.pdf}
+    \caption{Coverage vs. varying overhead budget for BC.}
+    \label{fig:monitoring_dift_drop.evaluation.bc_sweep}
+  \end{center}
+\end{figure}
+
+% UMC sweep
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/umc_sweep.pdf}
+    \caption{Coverage vs. varying overhead budget for UMC.}
+    \label{fig:monitoring_dift_drop.evaluation.umc_sweep}
+  \end{center}
+\end{figure}
+
+% LS sweep
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/ls_sweep.pdf}
+    \caption{Coverage vs. varying overhead budget for LS.}
+    \label{fig:monitoring_dift_drop.evaluation.ls_sweep}
+  \end{center}
+\end{figure}
+
+% IMP sweep
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/imp_sweep.pdf}
+    \caption{Average error vs. varying overhead budget for instruction-mix
+    profiling. Whisker bars show min and max errors.}
+    \label{fig:monitoring_dift_drop.evaluation.imp_sweep}
+  \end{center}
+\end{figure}
+
+In this section, we evaluate the effectiveness of using partial monitoring to
+trade-off coverage for reduced overhead.  For these results, we use a
+slack-based, unrestricted dropping policy.
+Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_sweep} shows the monitoring
+coverage achieved by array bounds checking as we vary the overhead budget.  We
+define \emph{monitoring coverage} as the percentage of dynamic checks that are
+performed (indirect jumps in DIFT, loads in UMC, and memory accesses in BC and
+LS).  The metric is chosen to understand how likely an error/attack instance is
+to be detected on an individual system, assuming that errors/attacks are
+uniformly distributed across checks. This may not necessarily be true for
+actual errors/attacks and so the reported coverage may not be the same as the
+probability of detecting actual errors/attacks.  However, we believe this
+metric provides a good initial estimate of the detection capabilities of the
+system.  In the figure, the bottom portion of each bar shows the coverage for a
+1.1x overhead target and the additional coverage for increased overhead targets
+are stacked above this.
+
+We see that by varying the overhead budget, the coverage achieved also varies.
+With only a 1.1x overhead target, array bounds check still achieves over 80\%
+monitoring coverage on average. The high coverage achieved with such low
+overhead is due to two main effects.  The first is that monitoring can be done
+in parallel, providing a certain level of monitoring coverage without
+introducing overhead. The second effect is that there may still exist a large
+number of monitoring events that do not lead to bounds checks. As a result,
+dropping these events can reduce overhead without a large impact on monitoring
+coverage.
+
+Figure~\ref{fig:monitoring_dift_drop.evaluation.umc_sweep} shows the analogous
+graph for UMC. Again we see that varying overhead budgets enables partial
+monitoring.  With a 2x overhead target, UMC achieves 22\% monitoring coverage
+on average and with a 4x overhead target, this increases to 49\%.  Even higher
+coverage can be achieved by allowing higher overhead budgets.  Similarly,
+Figure~\ref{fig:monitoring_dift_drop.evaluation.ls_sweep} shows the coverage
+achieved by LS.  With only a 1.01x overhead, LS achieves 30\% coverage on
+average. This increases to 71\% coverage with a 1.1x overhead budget.  For DIFT
+(not pictured), an overhead target of 1.05x is enough for all benchmarks tested
+to reach 100\% coverage.  Note that the overheads shown are the target
+overhead. In some cases, a high overhead target is needed in order to achieve
+100\% coverage. For example, for {\tt mcf} with UMC monitoring, a 12x overhead
+target is needed to achieve 100\% coverage while the overheads of performing
+monitoring in full were 2.6x (see
+Figure~\ref{fig:monitoring_dift_drop.evaluation.filter_mon}). This is due to
+the fact that we accumulate slack gradually and so bursty monitoring events may
+require a higher overhead target in order for all monitoring to be performed.
+However, the actual overheads seen are in-line with the overhead of performing
+monitoring without dropping (e.g., {\tt mcf} with UMC monitoring at a 12x
+overhead target shows a 2.6x overhead).
+
+The instruction-mix profiling monitor does not perform check operations. Thus,
+the concept of coverage is not applicable here. Instead, for each instruction
+type profiled, we calculate its count as a percentage of the total instructions
+monitored. We take the difference of these percentages compared to the case
+when full monitoring is performed to calculate the error.
+Figure~\ref{fig:monitoring_dift_drop.evaluation.imp_sweep} shows the min, max,
+and average error across instruction types for each benchmark and for varying
+overhead. We see that with a 1.1x overhead, a max error of 9\% is observed
+across the benchmarks and the average error across instruction types and
+benchmarks is 3\%. 
+
+\subsection{FPGA-based Monitor}
+\label{sec:monitoring_dift_drop.evaluation.fpga}
+
+% Flex UMC sweep
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/fpga_umc_sweep.pdf}
+    \caption{Coverage versus varying overhead budget for UMC running on an FPGA-based monitor.}
+    \label{fig:monitoring_dift_drop.evaluation.fpga_umc_sweep}
+  \end{center}
+\end{figure}
+
+In addition to evaluating our system for a core-based monitor, we also
+evaluated partial monitoring on a higher performance FPGA-based monitor. This
+setup is based on the FlexCore \cite{flexcore-micro10} setup and uses a
+fully-pipelined monitor running on an FPGA fabric at half the frequency of the
+main core. We only show results for UMC due to space constraints, though other
+monitors show similar trends. In this case, the full overheads of monitoring
+range from 1.1-1.9x with an average overhead of 1.4x.
+Figure~\ref{fig:monitoring_dift_drop.evaluation.fpga_umc_sweep} shows the
+coverage achieved as we sweep the overhead target from 1.01-2.0x. We see that
+partial monitoring can allow the overhead of such a system to be pushed to 1.1x
+while still providing 45\% coverage.
+
+\subsection{Comparing Dropping Policies}
+
+\begin{figure}
+  \begin{center}
+  \begin{subfigure}[Overhead budget error.]{
+    \includegraphics{monitoring_dift_drop/data/umc_overhead.pdf}
+    \label{fig:monitoring_dift_drop.evaluation.umc_exec_time}
+  }
+  \end{subfigure}
+  \\
+  \begin{subfigure}[Coverage.]{
+    \includegraphics{monitoring_dift_drop/data/umc_coverage.pdf}
+    \label{fig:monitoring_dift_drop.evaluation.umc_coverage}
+  }
+  \end{subfigure}
+  \caption{Comparing dropping policies for UMC.}
+  \label{fig:monitoring_dift_drop.evaluation.umc_policies}
+  \end{center}
+\end{figure}
+
+In this section, we evaluate the trade-offs between different dropping
+policies.  Figure~\ref{fig:monitoring_dift_drop.evaluation.umc_exec_time} shows
+the difference between the overhead budget and the run-time monitoring overhead
+for UMC when the overhead target is set to 2.0x. A positive value means that
+the overhead target was overshot while a negative value indicates that the
+overhead budget was met. For most benchmarks, we see similar results for
+unrestricted dropping and source-only dropping due to the fact that UMC
+consists of a large number of short, independent monitoring dependence chains.
+Source-only dropping causes overshoot of the overhead target for {\tt hmmer}
+and {\tt h264ref}.
+Figure~\ref{fig:monitoring_dift_drop.evaluation.umc_coverage} shows the
+coverage of UMC for unrestricted dropping and source-only dropping. We see
+that, in several cases, source-only dropping achieves higher coverage than
+unrestricted dropping while still closely matching the overhead target. For
+example, {\tt perlbench} shows a 10\% increase in coverage and {\tt libquantum}
+shows an 18\% increase in coverage by using source-only dropping. This is due
+to the fact that some of the overhead of monitoring for unrestricted dropping
+is being spent on wasted work as discussed in
+Section~\ref{sec:monitoring_dift_drop.policies.which}.
+
+\begin{figure}
+  \begin{center}
+  \begin{subfigure}[Overhead budget error.]{
+    \includegraphics{monitoring_dift_drop/data/hb_overhead.pdf}
+    \label{fig:monitoring_dift_drop.evaluation.bc_exec_time}
+  }
+  \end{subfigure}
+  \\
+  \begin{subfigure}[Coverage.]{
+    \includegraphics{monitoring_dift_drop/data/hb_coverage.pdf}
+    \label{fig:monitoring_dift_drop.evaluation.bc_coverage}
+  }
+  \end{subfigure}
+  \caption{Comparing dropping policies for BC.}
+  \label{fig:monitoring_dift_drop.evaluation.bc_policies}
+  \end{center}
+\end{figure}
+
+Next, we evaluate these trade-offs between source-only dropping and
+unrestricted dropping for BC.
+Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_exec_time} shows the
+overhead differences for BC and
+Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_coverage} shows the coverage
+for BC.  Here, the overhead target is 1.5x.  From
+Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_exec_time}, we see that for
+several benchmarks, source-only dropping fails to meet the specified overhead
+target.  The overshoot of the overhead target is quite high with overhead
+differences over 100\% for {\tt bzip2}, {\tt hmmer}, and {\tt h264ref}.  Since
+only infrequently occurring array allocations are considered as source events
+for BC, it can be difficult for source-only dropping to match overhead targets.
+Although Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_coverage} shows
+higher coverage for source-only dropping, this is largely due to the fact that
+it is running with higher overhead.
+
+From these results, we see that depending on the monitor and the program
+behavior, source-only dropping can provide better coverage than unrestricted
+dropping with the same overhead. However, unrestricted dropping is better at
+meeting an overhead target.  Thus, for applications where staying within an
+overhead target is especially important, such as soft real-time systems, a
+slack-based, unrestricted dropping policy is more appropriate. On the other
+hand, if maximum coverage is desired and occasional slowdowns are acceptable,
+then source-only dropping can provide better coverage on average.
+
+The results for the sub-flow dropping policy are not included in these graphs
+because our profiling infrastructure to identify sub-flow nodes currently does
+not support fast-forwarding. Instead, we compared the sub-flow dropping with
+other policies by running simulations for 1 billion instructions without
+fast-forwarding. The results (not shown) showed that sub-flow dropping produced
+similar coverage and overhead target matching to unrestricted dropping for the
+benchmarks and monitors that we tested.
+
+\subsection{Multiple-Run Coverage}
+
+% Multi-run coverage with unrestricted dropping
+\begin{figure}
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/data/multi_run.pdf}
+    \caption{Coverage over multiple runs for BC with a 10\% probability to not drop events.}
+    \label{fig:monitoring_dift_drop.evaluation.multirun}
+  \end{center}
+\end{figure}
+
+One application of partial monitoring with low overhead is to enable
+cooperative debugging.  The idea with cooperative debugging is to use partial
+monitoring with very low overhead across a large number of users or runs. By
+varying the pattern of partial monitoring done on each run, the goal is to
+achieve high coverage across multiple runs. Varying the monitoring that is done
+for different runs can be achieved by using a probabilistic dropping policy.
+Figure~\ref{fig:monitoring_dift_drop.evaluation.multirun} shows the total
+coverage achieved over multiple runs for array bounds check using unrestricted,
+sub-flow, and source-only dropping policies with probabilistic dropping.  These
+numbers are averaged across all benchmarks. Here, we use a 10\% probability
+that events are not dropped.  Each run was simulated for 500 million
+instructions.  Since the effectiveness of cooperative debugging is often
+measured by code coverage, coverage here is measured as the percentage of
+static instructions which are monitored in at least one of the runs.  We see
+that for the unrestricted dropping policy there is almost no increase in
+coverage.  This is due to the fact that it is likely that at least one
+monitoring event in a metadata dependence chain will be dropped with the
+unrestricted dropping policy.  Instead, sub-flow dropping and source-only
+dropping are much better suited for achieving high coverage over multiple runs.
+Source-only dropping shows a 6\% increase in coverage with only eight runs
+while sub-flow dropping shows a 1\% increase in coverage over eight runs.
+While sub-flow dropping shows a slower increase in coverage than source-only
+dropping, sub-flow dropping is better able to meet overhead targets.  With
+enough runs, both sub-flow dropping and source-only dropping should be able to
+reach 100\% code coverage.
+
+\subsection{Area and Power Overheads}
+
+% Area and Power Overheads
+\begin{table}[tb]
+  \begin{center}
+    \begin{footnotesize}
+    \input{monitoring_dift_drop/tabs/area_power}
+    \end{footnotesize}
+    \caption{Average power overhead for dropping hardware. Percentages 
+    are normalized to the main core power.}
+    \label{tab:monitoring_dift_drop.evaluation.area_power}
+  \end{center}
+\end{table}
+
+Adding the dataflow engine in order to enable filtering and partial monitoring adds
+overheads in terms of area and power consumption. We use McPat \cite{mcpat-micro09} to get
+a first-order estimate of these area and power overheads in a 40 nm technology
+node. McPat estimates the main core area as 2.71 mm$^2$ and the peak power usage as
+965 mW averaged across all benchmarks. The average runtime power usage was 385 
+mW. These area and power numbers consist of the core and
+L1 cache, but do not include L2 cache, memory controller, and other
+peripherals. The power numbers include dynamic as well as static (leakage)
+power. For the dataflow engine, we modeled the ALUs used for address
+calculation, the dataflow flag register file and cache, the configuration
+tables, and the filter decision table. These were modeled using the
+corresponding memory and ALU objects in McPat. We
+note that this is only a rough area and power estimate since components such as the
+wires connecting these modules have not been modeled. However, this gives a
+sense of the order-of-magnitude overheads involved with implementing our
+approach.
+
+Our results show that an additional 0.197 mm$^2$ of silicon area is needed, an
+increase of 7\% of the main core area. Table~\ref{tab:evaluation.area_power}
+shows the peak and runtime power overheads averaged across all benchmarks running with
+a 1.5x monitoring overhead target. The peak power is 31-72 mW, which is
+less than 8\% of the main core's peak power usage. Similarly, the average runtime power is 13-43
+mW, corresponding to 4-11\% of the main core's runtime power.
+
+% Runtime power of monitoring core
+\begin{table}[tb]
+  \begin{center}
+    \begin{footnotesize}
+    \input{monitoring_dift_drop/tabs/monitor_power}
+    \end{footnotesize}
+    \caption{Average runtime power of the monitoring core.}
+    \label{tab:monitoring_dift_drop.evaluation.monitor_power}
+  \end{center}
+\end{table}
+
+Table~\ref{tab:evaluation.monitor_power} shows the runtime power usage of the
+monitoring core averaged across all benchmarks. These results are shown for an
+overhead target of 1.5x as well as when full monitoring is performed.
+
