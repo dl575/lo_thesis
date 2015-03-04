@@ -1,2 +1,39 @@
 \section{Introduction}
 \label{sec:monitoring_dift_drop.introduction}
+
+In the last chapter, we described a hardware architecture that dynamically
+limits the amount of monitoring performed in order to meet hard real-time
+deadlines. This allows run-time monitoring to be implemented even when the
+worst-case impact of performing full monitoring cannot be tolerated. Similarly,
+even outside the context of real-time systems, the overheads of run-time
+monitoring may be prohibitive for certain monitoring schemes or certain
+applications. Thus, in this chapter, we explore the use of similar hardware
+techniques in order to enable a new trade-off dimension for run-time monitor
+designs.  We propose to enable low overhead monitors by using partial
+monitoring. In essence, this enables a trade-off between overhead and
+monitoring coverage or accuracy. 
+
+We enable partial monitoring with adjustable overhead by dynamically dropping
+monitoring operations when the overhead exceeds a specified overhead budget.
+Similar to the architecture presented in
+Chapter~\ref{chap:monitoring_hard_drop}, we must again be careful to prevent
+false positives due to out-of-date metadata information. In order to prevent
+these false positives, we use an invalidation-based approach as before.
+However, here we back up the invalidation flags to memory and do not have
+aliasing. The result is that the hardware effectively acts as a dataflow
+tracking engine. We show how a simple extension to this dataflow engine can
+enable null metadata filtering. In addition, we investigate different policies
+for deciding which events to drop for partial monitoring.  These different
+policies show a trade-off between closely matching the overhead budget and
+increasing the monitoring coverage.
+
+This chapter is organized as follows.
+Section~\ref{sec:monitoring_dift_drop.monitoring} introduces the notion of
+adjustable overhead through partial monitoring.
+Section~\ref{sec:monitoring_dift_drop.dropping} discusses the hardware
+architecture that enables partial monitoring using our dataflow tracking
+engine.  Section~\ref{sec:monitoring_dift_drop.policies} investigates the
+design space for dropping policies that determine when and which monitoring
+operations to drop.  Section~\ref{sec:monitoring_dift_drop.evaluation} presents
+our evaluation methodology and results. 
+
