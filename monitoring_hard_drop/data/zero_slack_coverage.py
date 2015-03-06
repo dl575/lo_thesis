@@ -36,7 +36,7 @@ attribute_dict = \
         'legend_handletextpad' : 0.5,
         'legend_bbox' : [-0.05, 1.05, 1, 0.1],
         'ylabel' : 'Checks [%]',
-        'rotate_labels' : True,
+        'rotate_labels' : False,
         'rotate_labels_angle' : -30,
         'fontsize' : 8,
         'bar_width' : 0.8,
