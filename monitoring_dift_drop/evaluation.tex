@@ -349,29 +349,29 @@ reach 100\% code coverage.
   \end{center}
 \end{table}
 
-Adding the dataflow engine in order to enable filtering and partial monitoring adds
-overheads in terms of area and power consumption. We use McPat \cite{mcpat-micro09} to get
-a first-order estimate of these area and power overheads in a 40 nm technology
-node. McPat estimates the main core area as 2.71 mm$^2$ and the peak power usage as
-965 mW averaged across all benchmarks. The average runtime power usage was 385 
-mW. These area and power numbers consist of the core and
-L1 cache, but do not include L2 cache, memory controller, and other
-peripherals. The power numbers include dynamic as well as static (leakage)
-power. For the dataflow engine, we modeled the ALUs used for address
-calculation, the dataflow flag register file and cache, the configuration
-tables, and the filter decision table. These were modeled using the
-corresponding memory and ALU objects in McPat. We
-note that this is only a rough area and power estimate since components such as the
-wires connecting these modules have not been modeled. However, this gives a
-sense of the order-of-magnitude overheads involved with implementing our
-approach.
+Adding the dataflow engine in order to enable filtering and partial monitoring
+adds overheads in terms of area and power consumption. We use McPat
+\cite{mcpat-micro09} to get a first-order estimate of these area and power
+overheads in a 40 nm technology node. McPat estimates the main core area as
+2.71 mm$^2$ and the peak power usage as 965 mW averaged across all benchmarks.
+The average runtime power usage was 385 mW. These area and power numbers
+consist of the core and L1 cache, but do not include L2 cache, memory
+controller, and other peripherals. The power numbers include dynamic as well as
+static (leakage) power. For the dataflow engine, we modeled the ALUs used for
+address calculation, the dataflow flag register file and cache, the
+configuration tables, and the filter decision table. These were modeled using
+the corresponding memory and ALU objects in McPat. We note that this is only a
+rough area and power estimate since components such as the wires connecting
+these modules have not been modeled. However, this gives a sense of the
+order-of-magnitude overheads involved with implementing our approach.
 
 Our results show that an additional 0.197 mm$^2$ of silicon area is needed, an
-increase of 7\% of the main core area. Table~\ref{tab:evaluation.area_power}
-shows the peak and runtime power overheads averaged across all benchmarks running with
-a 1.5x monitoring overhead target. The peak power is 31-72 mW, which is
-less than 8\% of the main core's peak power usage. Similarly, the average runtime power is 13-43
-mW, corresponding to 4-11\% of the main core's runtime power.
+increase of 7\% of the main core area.
+Table~\ref{tab:monitoring_dift_drop.evaluation.area_power} shows the peak and
+runtime power overheads averaged across all benchmarks running with a 1.5x
+monitoring overhead target. The peak power is 31-72 mW, which is less than 8\%
+of the main core's peak power usage. Similarly, the average runtime power is
+13-43 mW, corresponding to 4-11\% of the main core's runtime power.
 
 % Runtime power of monitoring core
 \begin{table}[tb]
@@ -384,7 +384,8 @@ mW, corresponding to 4-11\% of the main core's runtime power.
   \end{center}
 \end{table}
 
-Table~\ref{tab:evaluation.monitor_power} shows the runtime power usage of the
-monitoring core averaged across all benchmarks. These results are shown for an
-overhead target of 1.5x as well as when full monitoring is performed.
+Table~\ref{tab:monitoring_dift_drop.evaluation.monitor_power} shows the runtime
+power usage of the monitoring core averaged across all benchmarks. These
+results are shown for an overhead target of 1.5x as well as when full
+monitoring is performed.
 
