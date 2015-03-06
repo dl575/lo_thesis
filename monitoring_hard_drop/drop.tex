@@ -75,8 +75,7 @@ By accumulating this slack as the task runs, we can determine whether
 monitoring can be performed while still meeting the real-time constraints. If
 the worst-case impact of a monitoring task on the main task is less than the
 accrued slack, then the monitoring task can execute.  If running the monitoring
-task causes the main task to stall, as in the example shown in
-Figure~\ref{fig:monitoring_wcet.monitoring.pipeline}, then slack is consumed.
+task causes the main task to stall, then slack is consumed.
 Slack was initially generated since the main task was running ahead of its
 WCET, so stalling up to the slack time will not cause the main task to exceed
 its WCET (see Figure~\ref{fig:monitoring_hard_drop.drop.task_slack}). In the

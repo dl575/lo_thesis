@@ -107,7 +107,7 @@ Section~\ref{sec:monitoring_hard_drop.extensions.dift}. This optimization
 allows us to use the MIM and MFM to
 perform certain monitoring tasks. These correct metadata updates are counted as
 ``Monitored'' in the statistics while events are counted as dropped or filtered
-only if they were due to insufficient slack.
+only if they were handled by the dropping hardware due to insufficient slack.
 
 % Coverage
 \begin{figure}
@@ -260,7 +260,7 @@ run at 250 MHz and handle up to one monitoring event each cycle. Note that this
 means that the FPGA-based monitor can process a monitoring event every two
 cycles of the main core which runs at 500 MHz.
 Figures~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_umc},
-\ref{fig:monitoring_hard_drop.evaluation.zero_slack_lrc}, and
+\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_lrc}, and
 \ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_dift} show the
 number of monitored, dropped, and filtered events with no headstart slack for
 this FPGA-based monitor. UMC and RAC are able to run 67\% of their monitoring
@@ -349,7 +349,8 @@ shows the peak and runtime power overheads with zero headstart slack for both a
 processor-based monitor as well as an FPGA-based monitor. The peak power is
 5-17 mW, which is 3-11\% of the main core's peak power usage. The average
 runtime power is 5-9 mW, corresponding to 7-12\% of the main core's runtime
-power. For UMC and DIFT, the core-based monitor has lower power usage due to
+power. For UMC and DIFT, the dropping hardware has lower power usage with the
+processor-based monitor due to
 more monitoring events being filtered out that do not require invalidation.
 This reduces the activity of the Metadata Invalidation Module which reduces the
 power usage.
