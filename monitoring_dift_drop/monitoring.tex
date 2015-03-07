@@ -4,9 +4,9 @@
 % Previous work overheads
 \begin{table}
   \begin{center}
-    \begin{tiny}
-    \input{monitoring_dift_drop/tabs/previous_overheads}
-    \end{tiny}
+    \begin{footnotesize}
+    \input{monitoring_dift_drop/tabs/previous_overheads2}
+    \end{footnotesize}
     \caption{Trade-off between performance overhead and flexibility/complexity
     of run-time monitoring systems.}
     \label{tab:monitoring_dift_drop.monitoring.previous_overheads}
@@ -41,7 +41,7 @@ run-time monitoring in deployed systems.
 
 \subsection{Partial Monitoring for Adjustable Overhead}
 
-In this paper, we aim to develop a general framework that enables monitoring
+Our goal is to develop a general framework that enables monitoring
 overhead to be dynamically adjusted by dropping a portion of monitoring
 operations if necessary. In essence, this framework adds a new dimension to the
 monitor design space by allowing coverage or accuracy to be traded off for
@@ -53,8 +53,8 @@ expensive hardware for a given performance overhead budget.
 In this framework, a user specifies how much monitoring should be done in the
 form of a target overhead budget, a target coverage, a percentage of monitoring
 operations to be performed, etc.  Then, the framework dynamically drops a
-portion of monitoring operations to match the target. In particular, this paper
-focuses on matching a performance overhead target while maximizing the
+portion of monitoring operations to match the target. In particular, we
+focus on matching a performance overhead target while maximizing the
 coverage. Given that the overhead of custom hardware monitors can already be
 quite low, the focus is on enabling the trade-off in {\em general-purpose}
 monitoring systems that support a wide range of monitors.  We also consider the

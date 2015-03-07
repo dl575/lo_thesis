@@ -12,7 +12,7 @@
 
 In this section, we present our hardware architecture that enables partial
 monitoring for adjustable overhead. We will revisit the array bounds check
-monitoring and example code sequence shown in
+monitor and example code sequence that was shown in
 Figure~\ref{fig:monitoring_wcet.monitoring.example_full} from
 Section~\ref{sec:monitoring_wcet.monitoring.example}. This example is repeated
 in Figure~\ref{fig:monitoring_dift_drop.dropping.example_full} for easy
@@ -68,7 +68,9 @@ skipping monitoring operations that update metadata can lead to false positives
 and false negatives.  Essentially, when an update operation is skipped, we can
 no longer trust the corresponding metadata. Thus, our general approach for
 preventing false positives is to associate a 1-bit invalidation flag with each
-metadata in order to mark these metadata as valid or invalid. Furthermore, this
+metadata in order to mark these metadata as valid or invalid, as was done for
+the hard real-time monitoring architecture presented in
+Chapter~\ref{chap:monitoring_hard_drop}. Furthermore, this
 invalidation information is propagated in the same way that metadata is.
 Figure~\ref{fig:monitoring_dift_drop.dropping.example_invalid} shows an example
 of associating invalidation flags with metadata. Suppose that the monitoring
@@ -128,7 +130,12 @@ filtered. A third address generation unit is used to optionally specify a
 target to propagate the invalidation information. The module includes a
 register file to store invalidation flags corresponding to register file
 metadata. In addition, it uses a small memory-backed cache to handle
-invalidation flags corresponding to memory metadata.
+invalidation flags corresponding to memory metadata. The fact that the dataflow
+flags are backed to memory differs from the design presented in
+Chapter~\ref{chap:monitoring_hard_drop} for hard real-time systems. This allows
+the architecture to have perfect invalidation information without aliasing. In
+the worst-case, misses in the dataflow flag cache can cause high overheads for
+dropping. However, we expect misses to be rare.
 
 Since different monitoring operations are performed based on instruction type,
 the dataflow engine is also configured based on instruction type. The source

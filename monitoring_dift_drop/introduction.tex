@@ -4,13 +4,13 @@
 In the last chapter, we described a hardware architecture that dynamically
 limits the amount of monitoring performed in order to meet hard real-time
 deadlines. This allows run-time monitoring to be implemented even when the
-worst-case impact of performing full monitoring cannot be tolerated. Similarly,
-even outside the context of real-time systems, the overheads of run-time
-monitoring may be prohibitive for certain monitoring schemes or certain
-applications. Thus, in this chapter, we explore the use of similar hardware
+worst-case impact of performing full monitoring cannot be tolerated. 
+For some of these monitoring techniques, even the average or typical case
+overheads can be prohibitively high depending on the application and system
+requirements.  Thus, in this chapter, we explore the use of similar hardware
 techniques in order to enable a new trade-off dimension for run-time monitor
 designs.  We propose to enable low overhead monitors by using partial
-monitoring. In essence, this enables a trade-off between overhead and
+monitoring. This enables a trade-off between overhead and
 monitoring coverage or accuracy. 
 
 We enable partial monitoring with adjustable overhead by dynamically dropping

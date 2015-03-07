@@ -10,7 +10,8 @@ monitoring. We implement the monitor as a software-based monitor running on a
 parallel processor core, similar to LBA \cite{lba-asid06}.  We model the main
 and monitoring cores as running at 2.5 GHz with 4-way set-associative 32 kB
 private L1 I/D caches and a shared 8-way 2 MB L2 cache. This setup is similar
-to the Snapdragon 801 processor commonly found in mobile systems. The dataflow
+to the Snapdragon 801 processor commonly found in mobile systems. A 16-entry
+FIFO was used to connect the main core to the monitoring core. The dataflow
 engine uses a 1 kB cache for invalidation and null flags.
 
 In order to explore the generality of the architecture for different monitors,
@@ -20,8 +21,7 @@ profiling (IMP), and LockSet-based race detection (LS).  Since we implement the
 monitor using a processor core and our dataflow engine was designed to be
 generally applicable, the same hardware platform supports all of these
 monitoring techniques.  Uninitialized memory check seeks to detect loading from
-memory locations that are not initialized first. Array bounds check, as
-described in Section~\ref{sec:monitoring_dift_drop.dropping}, is a monitoring
+memory locations that are not initialized first. Array bounds check is a monitoring
 scheme that aims to detect buffer overflows where memory accesses go beyond the
 boundaries of an array. We modify the implementation of {\tt malloc} to set
 base and bound metadata information. Dynamic information flow tracking is a
@@ -34,7 +34,7 @@ possible to have information about where the data originated from.
 Instruction-mix profiling counts the number of ALU, load, store, and control
 instructions that are executed. This profiling information can be useful for
 performing optimizations or to detect malicious software \cite{tang-raid14}.
-LockSet \cite{eraser-tocs97} attempts to detect possible race conditions in
+Finally, LockSet \cite{eraser-tocs97} attempts to detect possible race conditions in
 multi-threaded programs by tracking metadata about which locks are protecting
 shared memory locations. If a shared memory location is accessed while
 unprotected then a race condition may exist.
@@ -199,8 +199,7 @@ In addition to evaluating our system for a core-based monitor, we also
 evaluated partial monitoring on a higher performance FPGA-based monitor. This
 setup is based on the FlexCore \cite{flexcore-micro10} setup and uses a
 fully-pipelined monitor running on an FPGA fabric at half the frequency of the
-main core. We only show results for UMC due to space constraints, though other
-monitors show similar trends. In this case, the full overheads of monitoring
+main core. In this case, the full overheads of monitoring
 range from 1.1-1.9x with an average overhead of 1.4x.
 Figure~\ref{fig:monitoring_dift_drop.evaluation.fpga_umc_sweep} shows the
 coverage achieved as we sweep the overhead target from 1.01-2.0x. We see that
@@ -280,6 +279,9 @@ for BC, it can be difficult for source-only dropping to match overhead targets.
 Although Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_coverage} shows
 higher coverage for source-only dropping, this is largely due to the fact that
 it is running with higher overhead.
+On the other hand, UMC showed higher coverage while matching overhead well with
+source-only dropping because UMC monitoring consists of a large number of short,
+independent dependences (i.e, store to load dependence).
 
 From these results, we see that depending on the monitor and the program
 behavior, source-only dropping can provide better coverage than unrestricted

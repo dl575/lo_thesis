@@ -37,7 +37,10 @@ overhead budget is specified as a percentage of the main program's execution
 cycles without monitoring. In order to estimate the overhead at run-time, we
 define \emph{slack} as the number of cycles of monitoring overhead that can be
 incurred while staying within the budget target. Slack is essentially the
-difference between the actual overhead seen and the budget specified. Slack is
+difference between the actual overhead seen and the budget specified. Note that
+this definition differs slightly from the one used in
+Chapter~\ref{chap:monitoring_hard_drop} where dynamic slack was the difference
+between actual execution time and the worst-case execution time. Slack is
 generated as the main program runs and consumed as monitoring overheads occur.
 For example, if no monitoring overheads occur during 1000 cycles of the main
 program's execution and the designer sets a 20\% overhead target, then the
@@ -50,7 +53,17 @@ slack can change over time.  In this slack-based policy, if the slack falls
 below zero (i.e., the overhead budget is exceeded), then monitoring events are
 dropped.
 
-Slack can be easily measured in hardware by using a counter that increments on
+% Slack tracking module
+\begin{figure} 
+  \begin{center}
+    \includegraphics{monitoring_dift_drop/figs/slack_tracking.pdf} 
+    \caption{Slack tracking and drop decision hardware.}
+    \label{fig:monitoring_dift_drop.policies.slack_tracking} 
+  \end{center} 
+\end{figure}
+
+Figure~\ref{fig:monitoring_dift_drop.policies.slack_tracking} shows how slack
+can be easily measured in hardware by using a counter that increments on
 every $k$-th cycle of the main core (e.g., every 5th cycle for a 20\% target
 budget). The value of this counter is the accumulated slack. Whenever the main
 core is stalled due to the monitor, the measured slack is decremented. It is
