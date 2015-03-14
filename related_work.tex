@@ -4,7 +4,11 @@
 \section{Real-Time Architectures}
 \label{sec:related_work.realtime}
 
-There has been previous work at building hardware targeted at real-time systems.
+There has been previous work at building hardware targeted at real-time
+systems. All of this work looks at how techniques for improving the performance
+of processors can be applied to real-time systems. Instead, in this thesis, we
+have explored how techniques for security and energy-efficiency can be adapted
+for real-time systems.
 
 Virtual Simple Architecture (VISA) \cite{visa-isca03,
 multi_task_visa-rtss04} proposes an architecture that combines a simple and
@@ -13,20 +17,39 @@ without guarantees. The system runs in the high-performance mode as long as
 there is slack and switches to the simple mode if slack runs out in order to
 guarantee that deadlines are met.
 
-FlexPRET \cite{flexpret-rtas14}, Precision-Timed ARM (PTARM) \cite{ptarm-iccd12}, PRET \cite{pret-cases08, pret-dac07}
+%FlexPRET \cite{flexpret-rtas14}, Precision-Timed ARM (PTARM) \cite{ptarm-iccd12}, PRET \cite{pret-cases08, pret-dac07}
+The Precision Timed (PRET) Machines project \cite{pret-dac07, pret-cases08,
+ptarm-iccd12, flexpret-rtas14} takes advantage of fine-grained multi-threading
+in order to improve system performance while isolating threads in order to
+allow each thread's performance to be easily analyzable.
 
-Patmos \cite{patmos-ppes2011}
+Patmos \cite{patmos-ppes2011} is a dual-issue RISC processor that achieves
+tight WCET bounds through static scheduling of instructions and modifications
+to the memory hierarchy for predictability. This requires compiler support in
+order to be effective.
 
-Java Optimized Processor (JOP) \cite{jop-jsa07}
+The Java Optimized Processor (JOP) \cite{jop-jsa07} is a 4-stage pipelined
+processor that runs Java bytecode. Microcode instructions always take one cycle
+so WCET analysis for the JOP depends only control flow and not pipeline or data
+dependencies.
 
-MCGREP \cite{mcgrep-rtss06}. Trace scratchpads on MCGREP-2 \cite{mcgrep2-rtas08}
+\textbf{Check more}
+The Microprogrammed Coarse Grained REconfigurable Processor (MCGREP)
+\cite{mcgrep-rtss06} uses a simple two-stage pipeline for predictability. It
+includes coarse-grained reconfigurable arrays (CGRAs) which offer predictable
+improved performance. Trace scratchpads on MCGREP-2 \cite{mcgrep2-rtas08}
 
-CarCores \cite{carcores-arcs10}
+CarCores \cite{carcores-arcs10} uses simultaneous multi-threading (SMT) to
+allow a highest priority thread to run with same execution time as in non-SMT
+and thus be predictable. Additional non-real time threads can be schedule for
+improved system utilization but do not have guarantees.
 
-Multi-core system with shared bus/memory \cite{paolieri-isca09}
+%Multi-core system with shared bus/memory \cite{paolieri-isca09}
 
-Adapting out-of-order for real-time \cite{whitham-comp10}
-
+Whitham et al. \cite{whitham-comp10} take advantage of the fact that if a
+pipeline is flushed at the beginning of a basic block, then execution time is
+deterministic. They use the idea of virtual traces in order to create
+effectively larger basic blocks to take advantage of this.
 
 \section{Security and Reliability}
 \label{sec:related_work.security}
