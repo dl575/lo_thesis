@@ -51,6 +51,19 @@ pipeline is flushed at the beginning of a basic block, then execution time is
 deterministic. They use the idea of virtual traces in order to create
 effectively larger basic blocks to take advantage of this.
 
+SPEAR \cite{spear-ecrts03} presents a predictable processor architecture by
+using a simple 3-stage pipelined in-order processor that includes predication
+and hardware support for predictable interrupt handling (exception vector
+table).
+
+The Merasa Project \cite{merasa-micro10} explored a design of a multi-core
+processor for real-time systems. Each core is 4-way SMT with one hard real-time
+thread that has priority and 3 non-hard real-time threads. The hard real-time
+thread uses scratchpads while the other threads use caches. To handle
+multi-core interference, they use a shared bus that has bounded delay for hard
+real-time threads, dynamic cache partitioning, and an analyzable memory
+controller.
+
 \section{Security and Reliability}
 \label{sec:related_work.security}
 
