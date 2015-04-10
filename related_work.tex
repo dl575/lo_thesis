@@ -4,6 +4,23 @@
 \section{Real-Time Architectures}
 \label{sec:related_work.realtime}
 
+Previous work has looked at designing processor architectures for real-time
+systems. These projects focus on improving performance in predictable ways in
+order to improve the worst-case execution time. For example, simple pipelines
+that allow for static scheduling of instructions are easily analyzable
+\cite{spear-ecrts03, mcgrep-rtss06, jop-jsa07, patmos-ppes2011}. Other projects
+have explored using fine-grained simultaneous multi-threading (SMT) in order to
+improve performance by isolating hard real-time threads from each other
+\cite{pret-dac07, pret-cases08, ptarm-iccd12} or from soft or non-real-time
+threads \cite{merasa-micro10, carcores-arcs10, flexpret-rtas14}. Whitham et al.
+explored reducing the unpredictability of control flow co-designing software
+and hardware to execute traces \cite{whitham-comp10}. Finally, the Virtual
+Simple Architecture (VISA) \cite{visa-isca03, multi_task_visa-rtss04}
+opportunistically runs in a high-performance mode that is not guaranteed to
+meet its deadline, but will switch to a lower performance mode if slack runs
+out. This is similar to our use of slack to opportunistically perform
+monitoring but in the context of improving performance.
+
 There has been previous work at building hardware targeted at real-time
 systems. All of this work looks at how techniques for improving the performance
 of processors can be applied to real-time systems. Instead, in this thesis, we
@@ -33,11 +50,12 @@ processor that runs Java bytecode. Microcode instructions always take one cycle
 so WCET analysis for the JOP depends only control flow and not pipeline or data
 dependencies.
 
-\textbf{Check more}
 The Microprogrammed Coarse Grained REconfigurable Processor (MCGREP)
-\cite{mcgrep-rtss06} uses a simple two-stage pipeline for predictability. It
-includes coarse-grained reconfigurable arrays (CGRAs) which offer predictable
-improved performance. Trace scratchpads on MCGREP-2 \cite{mcgrep2-rtas08}
+\cite{mcgrep-rtss06} uses a simple two-stage pipeline with two execution units
+for predictability. By microprogramming the two execution units, in a manner
+similar to VLIW, they are able to achieve predictable speedup due to
+parallelism, the lack of decode needed for microcode, and fast on-chip
+microcode store. 
 
 CarCores \cite{carcores-arcs10} uses simultaneous multi-threading (SMT) to
 allow a highest priority thread to run with same execution time as in non-SMT
