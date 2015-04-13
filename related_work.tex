@@ -85,6 +85,183 @@ controller.
 \section{Security and Reliability}
 \label{sec:related_work.security}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% monitoring-wcet
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This paper aims to enable parallel monitoring techniques on real-time systems
+by providing a general WCET analysis framework that can be applied to a broad
+range of monitoring techniques. While there exist many parallel monitoring
+schemes where our WCET analysis can be applied to, we briefly discuss some
+recent parallel platforms here as examples.  For example, INDRA
+\cite{indra-isca06} uses a checker core to monitor coarse-grained events on a
+computation core such as function call/return, code origin inspection, and
+control flow inspection. Nagarajan et al.  studied implementing DIFT on
+multi-cores \cite{nagarajan08-dift}.  Chen et al. proposed hardware
+acceleration techniques for multi-core systems and showed that a set of
+parallel monitoring techniques for security and software debugging can be
+realized with low performance overheads (tens of percents) \cite{chen08-lba}.
+FlexCore \cite{flexcore-micro10} shows that parallel monitoring can be made
+even more efficient by utilizing heterogeneous accelerators implemented on FPGA
+fabric.  These previous studies demonstrate that parallel monitoring can
+significantly improve system security and reliability with minimal overheads.
+
+Estimating the worst-case execution time of a sequential program on a
+single-core system is a well studied problem. A survey paper by Wilhelm et al.
+\cite{wcetsurvey-tecs08} provides an overview of existing methods and tools in
+this context.  However, to the best of our knowledge, this paper represents the
+first study on the WCET of parallel monitoring.  Researchers have recently
+started studying the WCET problem for multi-core systems.  For example,
+Paolieri et al. proposed a multi-core hardware architecture for hard real-time
+systems and analyzed its WCET behavior \cite{paolieri-isca09}.  McAiT is a tool
+that has been developed for WCET analysis of multi-core real-time software
+\cite{mcait-rtss10}.  These studies focused on the contention between parallel
+programs for shared resources such as memory.  However, the loosely coupled
+link between the main core and parallel monitoring hardware represents a
+producer-consumer relationship rather than shared resources. Thus, we found
+that previously developed techniques were not directly applicable or easily
+adaptable to provide a tight WCET bound for a system with parallel monitoring.
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% monitoring_hard_drop
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Monitoring
+The architecture we present in this paper is applicable to a wide range of
+parallel hardware run-time monitoring techniques. We briefly mention some recent
+platforms as examples. For example, INDRA \cite{indra-isca06} uses a checker
+core to monitor coarse-grained events on a computation core such as function
+call/return, code origin inspection, and control flow inspection.  Nagarajan et
+al. studied implementing DIFT on a multi-core system \cite{nagarajan08-dift}.
+Chen et al. proposed hardware acceleration techniques for multi-core systems
+and showed that a set of parallel monitoring techniques for security and
+software debugging can be realized with low performance overheads (tens of
+percents) \cite{chen08-lba}. The FlexCore \cite{flexcore-micro10} and
+Harmoni \cite{harmoni-dsn12} architectures showed that parallel monitoring
+can be made even more efficient by implementing monitors on reconfigurable
+hardware. SecureCore \cite{yoon-securecore-rtas13} is a monitoring scheme
+targeted specifically at real-time systems which attempts to detect code
+injection attacks by detecting anomalous timing behavior. However, the
+architecture assumes enough buffering so that the timing behavior of the main
+task is not affected. Overall, these previous
+studies demonstrate that parallel monitoring can be used to significantly
+improve system security and reliability with minimal overheads.
+
+There have been several projects that have looked into performing limited
+monitoring. 
+Testudo \cite{testudo-micro08} performs
+limited monitoring across many users in order to limit the performance impact
+of monitoring. The Quality Virtual Machine (QVM) is a modification of the Java
+Virtual Machine that supports run-time monitoring with controllable overheads
+\cite{qvm-oopsla08}. QVM enables and disables monitoring in an attempt to match
+the specified target overhead. 
+Similarly, Huang et al. created a framework for controlling the overheads of
+software-based monitoring \cite{huang-sttt12}. 
+These projects provide no strict guarantees on the performance impact and thus
+are not applicable to hard real-time systems.
+In contrast, our architecture is able to provide a strict guarantee on the
+worst-case overheads. In addition, these projects enable and disable monitoring
+at a coarse granularity in order to guarantee that false positives do not occur. Instead, we have
+presented an invalidation-based mechanism to prevent false positives. This 
+allows the decision of whether to perform monitoring to be extremely
+fine-grained (i.e., per monitoring event).
+
+% WCET
+As mentioned earlier, there is existing work for statically estimating the WCET of
+monitoring using an MILP-based method \cite{lo-monitoring_wcet-dac12} \textbf{[Refer back to Chapter 2]}. In
+general there has been a multitude of work in analyzing WCET \cite{wcetsurvey-tecs08},
+including for multi-core architectures \cite{chattopadhyay-rtas12,
+mcait-rtss10}.  However, since these methods are static, they can be overly
+conservative and require redoing the timing analysis when any changes are made
+to the main or monitoring tasks. Instead, the architecture we presented in this
+paper takes advantage of run-time behavior to perform monitoring while
+maintaining timing guarantees.
+
+% RT Architectures
+There has also been a host of work on hardware architectures for real-time
+systems.  The VISA architecture \cite{visa-isca03} uses dynamic
+slack to run in a faster but
+difficult to analyze mode. It switches to a simpler mode under which timing
+analysis and WCET is calculated when there is not enough slack. We use a
+similar method to keep track of slack. However, we use slack for monitoring
+rather than for running under a different mode. The PRET
+architecture \cite{ptarm-iccd12} seeks to have a processor design that is both high performance and
+easy to analyze in terms of timing. Paolieri et al. proposed an analyzable
+multi-core hardware architecture for hard real-time systems
+\cite{paolieri-isca09}. These architectures all design hardware
+with real-time system requirements in mind, but ours is the first work that we
+know of that designs a hardware architecture for parallel hardware run-time monitoring
+on real-time systems.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% monitoring_dift_drop
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Previous work on sampling for monitoring
+\begin{table}[t]
+  \begin{center}
+    \begin{normalsize}
+    \input{tabs/previous_sampling}
+    \end{normalsize}
+    \caption{Previous work on partial run-time monitoring.}
+    \label{tab:related.previous_sampling}
+  \end{center}
+\end{table}
+
+There exists a number of previous projects that have looked into performing
+partial monitoring in order to reduce the performance overhead. These
+platforms differ from ours in a number of ways including how monitoring is
+implemented and the monitoring techniques targeted. However, we note three main
+properties that differentiates our work:
+\begin{enumerate}
+  \item \textbf{Generality:} Our architecture applies to a variety of monitoring techniques.
+  \item \textbf{Adjustable Overhead:} Our architecture allows an overhead to be
+  targeted. Other work performs sampling to reduce overhead but does not try
+  to bound overhead, which we have shown can vary greatly.
+  \item \textbf{Prevent False Positives:} We present a mechanism to prevent
+  false positives. Previous work either has false positives or targets monitoring
+  techniques which degrade gracefully with sampling rather than exhibit false
+  positives.
+\end{enumerate}
+Our work is the first that we know of to present a hardware platform for partial
+monitoring that is general, allows an overhead target to be specified, and
+explicitly prevents false positives. In contrast, previous work on
+partial monitoring achieves only some, but not all, of these properties.
+Table~\ref{tab:related.previous_sampling} summarizes these differences. 
+
+For example, there exists previous work for using statistical sampling to
+reduce the performance overhead of various debugging techniques. These include
+sampling for bug isolation \cite{liblit-pldi05}, memory leak detection
+\cite{chilimbi-asplos04}, race detection \cite{literace-pldi09, pacer-pldi10},
+and information flow tracking \cite{testudo-micro08, greathouse-cgo11}. These
+techniques modify the monitoring to support statistical sampling and so are not
+generalizable. For those that prevent false positives, this is also done with
+monitor-specific modifications. Finally, with the exception of the work by
+Greathouse et al. \cite{greathouse-cgo11}, they do not allow an overhead target
+to be specified.
+
+There also exists several projects that have looked into more general partial
+monitoring platforms. Arnold and Ryder \cite{arnold-pldi01} presented a general
+platform for sampling of instrumented code, but do not allow an overhead target
+to be specified and do not prevent false positives. Huang et al.
+\cite{huang-sttt12} proposed a general framework for controlling the overhead
+of software-based monitoring. However, they also do not explicitly address
+false positives and only target monitors which degrade gracefully when
+performed partially. Lo et al. \cite{lo-rtas14} \textbf{[Refer back to Chapter 3]} designed a hardware
+architecture for performing monitoring on hard real-time systems that also
+prevents false positives. Their architecture is designed to meet real-time
+deadlines rather than enable adjustable overheads. In addition, in order to give strong
+guarantees, the coverage achieved is lower than our system. Finally, QVM
+\cite{qvm-oopsla08} proposes a modification to the Java Virtual Machine (JVM) to
+support monitoring with adjustable overhead. 
+QVM is limited to monitoring for code run on a JVM which limits its
+generalizability while our framework works for any binary. QVM prevents false
+positives by enabling or disabling monitoring on a per-object basis. This
+limits the monitoring schemes that can be implemented. Also, this method of
+preventing false positives is similar to the idea of performing source-only
+dropping which our results show can lead to overshooting the overhead target
+depending on the monitoring technique. 
+
 \section{Energy-Efficiency}
 \label{sec:related_work.energy}
 
