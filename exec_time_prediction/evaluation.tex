@@ -1,0 +1,299 @@
+\section{Evaluation}
+\label{sec:evaluation}
+
+\subsection{Experimental Setup}
+\label{sec:evaluation.setup}
+
+% Benchmark descriptions
+\begin{table*}
+  \begin{center}
+    \begin{small}
+    \input{exec_time_prediction/tabs/benchmarks.tex}
+    \end{small}
+    \caption{Benchmark descriptions and execution time statistics when running at maximum frequency.}
+    \label{tab:evaluation.benchmarks}
+  \end{center}
+\end{table*}
+
+We applied our framework for prediction-based DVFS control to a set of eight benchmark
+applications including three games, a web browser, speech recognition, a video decoder and
+two applications from the MiBench suite \cite{mibench}.
+Table~\ref{tab:evaluation.benchmarks} lists and describes these benchmarks.
+It also shows the minimum, average, and maximum
+job execution times for these benchmarks when run at maximum frequency.
+
+We ran our experiments on an ODROID-XU3 \cite{odroid} development board running
+Ubuntu 14.04. The ODROID-XU3 includes a Samsung Exynos5422 SoC with ARM
+Cortex-A15 and Cortex-A7 cores. We show results here for running on the more
+power-efficient A7 core but we saw similar trends when running on the A15
+core. In order to isolate measurements for the application of interest, we
+pinned the benchmark to run on the A7 core while using the A15 to run OS and
+background jobs. We measured power using the on-board power sensors with a
+sampling rate of 213 samples per second and integrated over time to calculate
+energy usage.
+
+We compare our proposed prediction-based DVFS controller with existing
+controllers and previously proposed control schemes. Specifically, we measure
+results for the following DVFS schemes:
+\begin{enumerate}
+  \item \textbf{performance}: The Linux performance governor
+  \cite{linux_governors} always runs at the maximum frequency. We normalize our
+  energy results to this case.
+  \item \textbf{interactive}: The Linux interactive governor
+  \cite{linux_governors} was designed for interactive mobile applications. It
+  samples CPU utilization every 80 milliseconds and changes to maximum
+  frequency if CPU utilization is above 85\%.
+  \item \textbf{pid}: The PID-based controller uses previous prediction errors
+  with a PID control algorithm in order to predict the execution time of the next
+  job \cite{gu-dac08}. The PID parameters are trained offline and are optimized
+  to reduce deadline misses.
+  \item \textbf{prediction}: This is our prediction-based controller as
+  described in this paper.
+  %\item \textbf{oracle}: We implement an ``oracle'' controller which uses the
+  %recorded execution times one run as the predicted execution times for a run
+  %using the same inputs.
+\end{enumerate}
+
+\subsection{Energy Savings and Deadline Misses}
+
+% Energy, deadline misses
+\begin{figure*}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/em_summary.pdf}
+    \caption{Normalized energy usage and deadline misses.}
+    \label{fig:evaluation.em_summary}
+  \end{center}
+\end{figure*}
+
+Figure~\ref{fig:evaluation.em_summary} compares energy consumption and deadline
+misses for the different DVFS controllers across our benchmark set. These
+experiments are run with a time budget of 50 ms per job as running faster than
+this is not noticeable to a user \cite{lindgaard-bit06, eqos-hpca15}.
+pocketsphinx takes at least 100s of milliseconds to run (see
+Table~\ref{tab:evaluation.benchmarks}) so we use a 4 second deadline. This
+corresponds to the time limit that a user is willing to wait for a response
+\cite{miller-afips68}.  Energy
+numbers are normalized to the energy usage of the performance governor.
+Deadline misses are reported as the percentage of jobs that miss their
+deadline. 
+
+We see that, on average, our prediction-based controller saves 56\% energy
+compared to running at max frequency. This is 27\% more savings than the
+interactive governor and 1\% more savings than the PID-based controller.
+For ldecode, pocketsphinx, and rijndael, prediction-based control shows higher energy
+consumption than PID-based control. However, if we look at deadline misses,
+we see that PID-based control shows a large number of misses for these
+benchmarks. On average, the interactive governor shows 2\% deadline misses and the
+PID-based controller shows 13\% misses. In contrast, our prediction-based controller
+shows 0.1\% deadline misses for curseofwar and no deadline misses for the other
+benchmarks tested.
+Overall, we see that the interactive governor
+has a low number of deadline misses, but achieves this with high energy
+consumption. On the other hand, PID-based control shows lower energy usage than
+the prediction-based controller in some cases, but this comes at the cost of a large number of deadline misses.
+Instead, on average, our prediction-based control is able to achieve
+both better energy consumption and less deadline misses than the interactive
+governor and PID-based control.
+
+% Deadline sweeps
+\begin{figure*}
+  \begin{center}
+  \begin{subfigure}[2048]{
+    \includegraphics{exec_time_prediction/data/2048.pdf}
+  }
+  \end{subfigure}
+  \begin{subfigure}[curseofwar]{
+    \includegraphics{exec_time_prediction/data/curseofwar.pdf}
+  }
+  \end{subfigure}
+
+  \begin{subfigure}[ldecode]{
+    \includegraphics{exec_time_prediction/data/ldecode.pdf}
+  }
+  \end{subfigure}
+  \begin{subfigure}[pocketsphinx]{
+    \includegraphics{exec_time_prediction/data/pocketsphinx.pdf}
+  }
+  \end{subfigure}
+
+  \begin{subfigure}[rijndael]{
+    \includegraphics{exec_time_prediction/data/rijndael.pdf}
+  }
+  \end{subfigure}
+  \begin{subfigure}[sha]{
+    \includegraphics{exec_time_prediction/data/sha.pdf}
+  }
+  \end{subfigure}
+
+  \begin{subfigure}[uzbl]{
+    \includegraphics{exec_time_prediction/data/uzbl.pdf}
+  }
+  \end{subfigure}
+  \begin{subfigure}[xpilot]{
+    \includegraphics{exec_time_prediction/data/xpilot.pdf}
+  }
+  \end{subfigure}
+
+  \caption{Normalized energy usage and deadline misses as time budget is varied.}
+  \label{fig:evaluation.sweeps}
+  \end{center}
+\end{figure*}
+
+Since our prediction-based controller takes the time budget into account, it is
+able to save more energy with longer time budgets. Similarly, with shorter time
+budgets, it will spend more energy to attempt to meet the tighter deadlines.
+In order to study this trade-off, we swept the time budget around the point
+where we expect to start seeing deadline misses. Specifically, we set a
+normalized budget of 1 to correspond to the maximum execution time seen for the
+task when running at maximum frequency (see
+Table~\ref{tab:evaluation.benchmarks}). This corresponds to the tightest budget
+such that all jobs are able to meet their deadline.
+Figure~\ref{fig:evaluation.sweeps} shows the energy usage and deadline misses
+for the various benchmarks as the normalized budget is swept below and above 1. 
+We see that our prediction-based controller is able to save more energy with
+longer time budgets and continues to outperform the interactive governor and
+the PID-based controller for varying time budgets.
+For normalized budgets less than 1, our prediction-based controller shows
+deadline misses. However, the number of misses is typically close to
+the number seen with the performance governor.  This implies that the only
+deadline misses are the ones that are impossible to meet at the specified time
+budget, even with running at the maximum frequency.
+
+\subsection{Analysis of Overheads and Error}
+\label{sec:evaluation.overheads}
+
+%% Overhead time
+%\begin{figure*}
+%  \begin{center}
+%    \subfloat[Average time to run prediction slice and switch DVFS levels.]{
+%      \includegraphics[width=\columnwidth]{data/overhead_time.pdf}
+%      \label{fig:evaluation.overhead_time}
+%    }
+%    \hfill
+%    \subfloat[Normalized energy usage and deadline misses with overheads removed and oracle prediction.]{
+%      \includegraphics[width=\columnwidth]{data/overhead_comparison.pdf}
+%      \label{fig:evaluation.overhead_comparison}
+%    }
+%    \vspace{-0.1in}
+%    \caption{Analysis of overheads and prediction error.}
+%    \vspace{-0.1in}
+%    \label{fig:easdfvaluation.overhead_time}
+%  \end{center}
+%\end{figure*}
+
+% Overhead time
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/overhead_time.pdf}
+    \caption{Average time to run prediction slice and switch DVFS levels.}
+    \label{fig:evaluation.overhead_time}
+  \end{center}
+\end{figure}
+
+Figure~\ref{fig:evaluation.overhead_time} shows the average times for executing
+the predictor and for switching DVFS levels. 
+On average, the predictor takes 3.2 ms to execute and DVFS switching takes 0.8 ms.
+Excluding pocketsphinx, the average total overhead is less than 1 ms which is
+2\% of a 50 ms time budget.
+pocketsphinx shows a long execution time for the predictor. However, this time
+is negligible compared to the execution time of pocketsphinx jobs which are on
+the order of seconds.
+
+% Results w/o overhead
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/overhead_comparison.pdf}
+    \caption{Normalized energy usage and deadline misses with overheads removed
+    and oracle prediction. }
+    \label{fig:evaluation.overhead_comparison}
+  \end{center}
+\end{figure}
+
+% On our prototype platform, DVFS levels are changed by writing to a device file.
+% A more direct interface and/or faster DVFS switching circuits
+% \cite{booster-hpca12, shortstop-vlsic13, fgsync-micro14} could reduce this
+% overhead. Switching times on the order of tens of nanoseconds have been
+% reported.
+The overheads of executing the predictor and DVFS switching decrease the energy
+savings achievable. This is due to the energy consumed to perform these
+operations as well as the decrease in effective budget.
+Better program slicing and/or feature selection could reduce the predictor execution time.
+Similarly, faster DVFS switching circuits \cite{booster-hpca12,
+shortstop-vlsic13, fgsync-micro14} have shown switching times on the order of
+tens of nanoseconds. In order to explore the limits of what is achievable, we
+evaluated our prediction-based control when the overheads of the predictor and
+DVFS switching are ignored.
+Figure~\ref{fig:evaluation.overhead_comparison} shows the energy and deadline
+misses when these overheads are removed. These results are shown for a time
+budget of 4 s for pocketsphinx and 50 ms for all other benchmarks.
+On average,
+we see a 3\% decrease in
+energy consumption when removing the overheads of DVFS switching. Removing the
+overhead of running the predictor shows negligible improvement past
+removing the DVFS switching overhead.
+
+% Prediction error
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/prediction_error.pdf}
+    \caption{Box-and-whisker plots of prediction error. Positive number
+    correspond to over-prediction and negative numbers correspond to
+    under-prediction.}
+    \label{fig:evaluation.prediction_error}
+  \end{center}
+\end{figure}
+
+In addition to these overheads, the accuracy of our prediction limits the
+effectiveness of the prediction-based controller. 
+Figure~\ref{fig:evaluation.prediction_error} shows box-and-whisker plots of the prediction error.
+The box indicates the first and third quartiles and the line in the box marks
+the median value. Outliers (values over 1.5 times the inner quartile range past
+the closest box end) are marked with an ``x'' and the non-outlier range is
+marked by the whiskers.
+Positive values represent over-prediction and
+negative-numbers represent under-prediction. We can see that the prediction
+skews toward over-prediction with average errors greater than 0.
+Most benchmarks show prediction errors of less than 5 ms, which is only 10\% of
+a 50 ms time budget. ldecode and rijndael show higher prediction errors, which
+limits the energy savings possible. pocketsphinx (not shown) has errors ranging
+from 60 ms under-prediction to 2 seconds over-prediction with an average of 880
+ms over-prediction. Although these errors are larger in
+absolute terms than the other benchmarks, they are on the same order of
+magnitude when when compared to the execution time of pocketsphinx jobs.
+
+In order to explore the possible improvements with perfect prediction, 
+we implemented an ``oracle'' controller that uses recorded job times from a previous
+run with the same inputs to predict the execution time of jobs.
+Figure~\ref{fig:evaluation.overhead_comparison} also includes these oracle
+results. We see than an additional 11\% energy savings are achievable with
+oracle on top of removing the predictor and DVFS switching overheads. Note that
+we do not have oracle results for uzbl and xpilot as non-deterministic
+variations in the ordering of jobs across runs made it difficult to implement a
+good oracle controller.
+
+\subsection{Under-prediction Trade-off}
+
+% Under-predict trade-off
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/underpredict_sweep.pdf}
+    \caption{Energy vs. deadline misses for various under-predict penalty
+    weights ($\alpha$) for ldecode.}
+    \label{fig:evaluation.underpredict_sweep}
+  \end{center}
+\end{figure}
+
+In Section~\ref{sec:prediction.model}, we discussed how we can vary the
+penalty weight for under-prediction, $\alpha$, when we fit our execution time
+prediction model. Placing greater penalty on under-prediction increases the
+energy usage but reduces the likelihood of deadline misses.
+Figure~\ref{fig:evaluation.underpredict_sweep} shows the energy and deadline
+misses for varying under-predict penalty weights for ldecode. We see that as
+the weight is decreased, energy consumption decreases but
+deadline misses increase. Reducing the weight from 1000 to 100 keep misses
+at 0, but reducing the weight to 10 introduces a small number of deadline
+misses (0.03\%). Other benchmarks show similar trends and
+we found that across the benchmarks we tested, an under-predict penalty weight
+of 100 provided good energy savings without sacrificing deadline misses. The
+results in this paper have been shown with a weight of 100.
+
