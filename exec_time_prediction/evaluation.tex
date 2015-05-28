@@ -7,12 +7,23 @@
 % Benchmark descriptions
 \begin{table*}
   \begin{center}
-    \begin{small}
+    \begin{footnotesize}
     \input{exec_time_prediction/tabs/benchmarks.tex}
-    \end{small}
-    \caption{Benchmark descriptions and execution time statistics when running
-    at maximum frequency.}
+    \end{footnotesize}
+    \caption{Benchmark descriptions and task of interest.}
     \label{tab:exec_time_prediction.evaluation.benchmarks}
+  \end{center}
+\end{table*}
+
+% Benchmark execution times
+\begin{table*}
+  \begin{center}
+    \begin{footnotesize}
+    \input{exec_time_prediction/tabs/job_statistics.tex}
+    \end{footnotesize}
+    \caption{Execution time statistics when running
+    at maximum frequency.}
+    \label{tab:exec_time_prediction.evaluation.job_statistics}
   \end{center}
 \end{table*}
 
@@ -20,8 +31,10 @@ We applied our framework for prediction-based DVFS control to a set of eight
 benchmark applications including three games, a web browser, speech
 recognition, a video decoder and two applications from the MiBench suite
 \cite{mibench}.  Table~\ref{tab:exec_time_prediction.evaluation.benchmarks}
-lists and describes these benchmarks.  It also shows the minimum, average, and
-maximum job execution times for these benchmarks when run at maximum frequency.
+lists and describes these benchmarks and the task of interest for each.
+Table~\ref{tab:exec_time_prediction.evaluation.job_statistics} shows the
+minimum, average, and maximum job execution times for these benchmarks when run
+at maximum frequency.
 
 We ran our experiments on an ODROID-XU3 \cite{odroid} development board running
 Ubuntu 14.04. The ODROID-XU3 includes a Samsung Exynos5422 SoC with ARM
