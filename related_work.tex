@@ -1,8 +1,10 @@
 \chapter{Related Work}
 \label{chap:related_work}
 
-\section{Real-Time Architectures}
+\section{Real-Time Systems}
 \label{sec:related_work.realtime}
+
+\subsection{Hardware Architectures for Real-Time Systems}
 
 Previous work has looked at designing processor architectures for real-time
 systems. These projects focus on improving performance in predictable ways in
@@ -13,220 +15,164 @@ have explored using fine-grained simultaneous multi-threading (SMT) in order to
 improve performance by isolating hard real-time threads from each other
 \cite{pret-dac07, pret-cases08, ptarm-iccd12} or from soft or non-real-time
 threads \cite{merasa-micro10, carcores-arcs10, flexpret-rtas14}. Whitham et al.
-explored reducing the unpredictability of control flow co-designing software
+explored reducing the unpredictability of control flow by co-designing software
 and hardware to execute traces \cite{whitham-comp10}. Finally, the Virtual
-Simple Architecture (VISA) \cite{visa-isca03, multi_task_visa-rtss04}
-opportunistically runs in a high-performance mode that is not guaranteed to
-meet its deadline, but will switch to a lower performance mode if slack runs
-out. This is similar to our use of slack to opportunistically perform
-monitoring but in the context of improving performance.
+Simple Architecture (VISA) \cite{visa-isca03, multi_task_visa-rtss04} uses
+dynamic slack to run in a faster but difficult to analyze mode. It switches to
+a simpler mode under which timing analysis and WCET is calculated when there is
+not enough slack. This is similar to our use of slack to opportunistically
+perform monitoring but in the context of improving performance.
+These architecture all look to improve on the analyzable worst-case
+performance. Instead, our work has looked at designing hardware architectures
+to improve on security, reliability, and energy-efficiency in the context of
+real-time deadlines.
 
-There has been previous work at building hardware targeted at real-time
-systems. All of this work looks at how techniques for improving the performance
-of processors can be applied to real-time systems. Instead, in this thesis, we
-have explored how techniques for security and energy-efficiency can be adapted
-for real-time systems.
-
-Virtual Simple Architecture (VISA) \cite{visa-isca03,
-multi_task_visa-rtss04} proposes an architecture that combines a simple and
-real-time analyzable mode of operation with a higher-performance mode
-without guarantees. The system runs in the high-performance mode as long as
-there is slack and switches to the simple mode if slack runs out in order to
-guarantee that deadlines are met.
+%There has been previous work at building hardware targeted at real-time
+%systems. All of this work looks at how techniques for improving the performance
+%of processors can be applied to real-time systems. Instead, in this thesis, we
+%have explored how techniques for security and energy-efficiency can be adapted
+%for real-time systems.
+%
+%Virtual Simple Architecture (VISA) \cite{visa-isca03,
+%multi_task_visa-rtss04} proposes an architecture that combines a simple and
+%real-time analyzable mode of operation with a higher-performance mode
+%without guarantees. The system runs in the high-performance mode as long as
+%there is slack and switches to the simple mode if slack runs out in order to
+%guarantee that deadlines are met.
 
 %FlexPRET \cite{flexpret-rtas14}, Precision-Timed ARM (PTARM) \cite{ptarm-iccd12}, PRET \cite{pret-cases08, pret-dac07}
-The Precision Timed (PRET) Machines project \cite{pret-dac07, pret-cases08,
-ptarm-iccd12, flexpret-rtas14} takes advantage of fine-grained multi-threading
-in order to improve system performance while isolating threads in order to
-allow each thread's performance to be easily analyzable.
+%The Precision Timed (PRET) Machines project \cite{pret-dac07, pret-cases08,
+%ptarm-iccd12, flexpret-rtas14} takes advantage of fine-grained multi-threading
+%in order to improve system performance while isolating threads in order to
+%allow each thread's performance to be easily analyzable.
 
-Patmos \cite{patmos-ppes2011} is a dual-issue RISC processor that achieves
-tight WCET bounds through static scheduling of instructions and modifications
-to the memory hierarchy for predictability. This requires compiler support in
-order to be effective.
+%Patmos \cite{patmos-ppes2011} is a dual-issue RISC processor that achieves
+%tight WCET bounds through static scheduling of instructions and modifications
+%to the memory hierarchy for predictability. This requires compiler support in
+%order to be effective.
 
-The Java Optimized Processor (JOP) \cite{jop-jsa07} is a 4-stage pipelined
-processor that runs Java bytecode. Microcode instructions always take one cycle
-so WCET analysis for the JOP depends only control flow and not pipeline or data
-dependencies.
+% The Java Optimized Processor (JOP) \cite{jop-jsa07} is a 4-stage pipelined
+% processor that runs Java bytecode. Microcode instructions always take one cycle
+% so WCET analysis for the JOP depends only control flow and not pipeline or data
+% dependencies.
+% 
+% The Microprogrammed Coarse Grained REconfigurable Processor (MCGREP)
+% \cite{mcgrep-rtss06} uses a simple two-stage pipeline with two execution units
+% for predictability. By microprogramming the two execution units, in a manner
+% similar to VLIW, they are able to achieve predictable speedup due to
+% parallelism, the lack of decode needed for microcode, and fast on-chip
+% microcode store. 
+% 
+% CarCores \cite{carcores-arcs10} uses simultaneous multi-threading (SMT) to
+% allow a highest priority thread to run with same execution time as in non-SMT
+% and thus be predictable. Additional non-real time threads can be schedule for
+% improved system utilization but do not have guarantees.
+% 
+% %Multi-core system with shared bus/memory \cite{paolieri-isca09}
+% 
+% Whitham et al. \cite{whitham-comp10} take advantage of the fact that if a
+% pipeline is flushed at the beginning of a basic block, then execution time is
+% deterministic. They use the idea of virtual traces in order to create
+% effectively larger basic blocks to take advantage of this.
+% 
+% SPEAR \cite{spear-ecrts03} presents a predictable processor architecture by
+% using a simple 3-stage pipelined in-order processor that includes predication
+% and hardware support for predictable interrupt handling (exception vector
+% table).
+% 
+% The Merasa Project \cite{merasa-micro10} explored a design of a multi-core
+% processor for real-time systems. Each core is 4-way SMT with one hard real-time
+% thread that has priority and 3 non-hard real-time threads. The hard real-time
+% thread uses scratchpads while the other threads use caches. To handle
+% multi-core interference, they use a shared bus that has bounded delay for hard
+% real-time threads, dynamic cache partitioning, and an analyzable memory
+% controller.
 
-The Microprogrammed Coarse Grained REconfigurable Processor (MCGREP)
-\cite{mcgrep-rtss06} uses a simple two-stage pipeline with two execution units
-for predictability. By microprogramming the two execution units, in a manner
-similar to VLIW, they are able to achieve predictable speedup due to
-parallelism, the lack of decode needed for microcode, and fast on-chip
-microcode store. 
-
-CarCores \cite{carcores-arcs10} uses simultaneous multi-threading (SMT) to
-allow a highest priority thread to run with same execution time as in non-SMT
-and thus be predictable. Additional non-real time threads can be schedule for
-improved system utilization but do not have guarantees.
-
-%Multi-core system with shared bus/memory \cite{paolieri-isca09}
-
-Whitham et al. \cite{whitham-comp10} take advantage of the fact that if a
-pipeline is flushed at the beginning of a basic block, then execution time is
-deterministic. They use the idea of virtual traces in order to create
-effectively larger basic blocks to take advantage of this.
-
-SPEAR \cite{spear-ecrts03} presents a predictable processor architecture by
-using a simple 3-stage pipelined in-order processor that includes predication
-and hardware support for predictable interrupt handling (exception vector
-table).
-
-The Merasa Project \cite{merasa-micro10} explored a design of a multi-core
-processor for real-time systems. Each core is 4-way SMT with one hard real-time
-thread that has priority and 3 non-hard real-time threads. The hard real-time
-thread uses scratchpads while the other threads use caches. To handle
-multi-core interference, they use a shared bus that has bounded delay for hard
-real-time threads, dynamic cache partitioning, and an analyzable memory
-controller.
-
-\section{Security and Reliability}
-\label{sec:related_work.security}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-% monitoring-wcet
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-This paper aims to enable parallel monitoring techniques on real-time systems
-by providing a general WCET analysis framework that can be applied to a broad
-range of monitoring techniques. While there exist many parallel monitoring
-schemes where our WCET analysis can be applied to, we briefly discuss some
-recent parallel platforms here as examples.  For example, INDRA
-\cite{indra-isca06} uses a checker core to monitor coarse-grained events on a
-computation core such as function call/return, code origin inspection, and
-control flow inspection. Nagarajan et al.  studied implementing DIFT on
-multi-cores \cite{nagarajan08-dift}.  Chen et al. proposed hardware
-acceleration techniques for multi-core systems and showed that a set of
-parallel monitoring techniques for security and software debugging can be
-realized with low performance overheads (tens of percents) \cite{chen08-lba}.
-FlexCore \cite{flexcore-micro10} shows that parallel monitoring can be made
-even more efficient by utilizing heterogeneous accelerators implemented on FPGA
-fabric.  These previous studies demonstrate that parallel monitoring can
-significantly improve system security and reliability with minimal overheads.
+\subsection{Worst-Case Execution Time Analysis}
 
 Estimating the worst-case execution time of a sequential program on a
 single-core system is a well studied problem. A survey paper by Wilhelm et al.
 \cite{wcetsurvey-tecs08} provides an overview of existing methods and tools in
-this context.  However, to the best of our knowledge, this paper represents the
-first study on the WCET of parallel monitoring.  Researchers have recently
-started studying the WCET problem for multi-core systems.  For example,
+this context.  However, to the best of our knowledge, we were the
+first to study the WCET of parallel monitoring.  Researchers have recently
+started studying the WCET problem for multi-core systems. For example,
 Paolieri et al. proposed a multi-core hardware architecture for hard real-time
 systems and analyzed its WCET behavior \cite{paolieri-isca09}.  McAiT is a tool
 that has been developed for WCET analysis of multi-core real-time software
-\cite{mcait-rtss10}.  These studies focused on the contention between parallel
-programs for shared resources such as memory.  However, the loosely coupled
-link between the main core and parallel monitoring hardware represents a
-producer-consumer relationship rather than shared resources. Thus, we found
+\cite{mcait-rtss10}. Chattopadhyay et al. developed an ILP-based approach for
+multi-core WCET analysis including shared caches and buses
+\cite{chattopadhyay-rtas12}. These studies focused on the contention between
+parallel programs for shared resources such as memory. However, the loosely
+coupled link between the main core and parallel monitoring hardware represents
+a producer-consumer relationship rather than shared resources. Thus, we found
 that previously developed techniques were not directly applicable or easily
 adaptable to provide a tight WCET bound for a system with parallel monitoring.
 
-%%%%%%%%%%%%%%%%%%%%%%%%
-% monitoring_hard_drop
-%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Security and Reliability}
+\label{sec:related_work.security}
+
+\subsection{Run-Time Monitoring}
 
 % Monitoring
-The architecture we present in this paper is applicable to a wide range of
-parallel hardware run-time monitoring techniques. We briefly mention some recent
-platforms as examples. For example, INDRA \cite{indra-isca06} uses a checker
-core to monitor coarse-grained events on a computation core such as function
-call/return, code origin inspection, and control flow inspection.  Nagarajan et
-al. studied implementing DIFT on a multi-core system \cite{nagarajan08-dift}.
-Chen et al. proposed hardware acceleration techniques for multi-core systems
-and showed that a set of parallel monitoring techniques for security and
-software debugging can be realized with low performance overheads (tens of
-percents) \cite{chen08-lba}. The FlexCore \cite{flexcore-micro10} and
-Harmoni \cite{harmoni-dsn12} architectures showed that parallel monitoring
-can be made even more efficient by implementing monitors on reconfigurable
-hardware. SecureCore \cite{yoon-securecore-rtas13} is a monitoring scheme
-targeted specifically at real-time systems which attempts to detect code
-injection attacks by detecting anomalous timing behavior. However, the
-architecture assumes enough buffering so that the timing behavior of the main
-task is not affected. Overall, these previous
-studies demonstrate that parallel monitoring can be used to significantly
-improve system security and reliability with minimal overheads.
+In this thesis, we have explored applying run-time monitoring to real-time
+systems. Our work has been designed to be applicable to a wide range of
+parallel hardware run-time monitoring techniques.  We briefly mention some
+recent parallel monitoring platforms as examples. For example, INDRA
+\cite{indra-isca06} uses a checker core to monitor coarse-grained events on a
+computation core such as function call/return, code origin inspection, and
+control flow inspection.  Nagarajan et al. studied implementing DIFT on a
+multi-core system \cite{nagarajan08-dift}.  Chen et al. proposed hardware
+acceleration techniques for multi-core systems and showed that a set of
+parallel monitoring techniques for security and software debugging can be
+realized with low performance overheads (tens of percents) \cite{chen08-lba}.
+The FlexCore \cite{flexcore-micro10} and Harmoni \cite{harmoni-dsn12}
+architectures showed that parallel monitoring can be made even more efficient
+by implementing monitors on reconfigurable hardware. SecureCore
+\cite{yoon-securecore-rtas13} is a monitoring scheme targeted specifically at
+real-time systems which attempts to detect code injection attacks by detecting
+anomalous timing behavior. However, the architecture assumes enough buffering
+so that the timing behavior of the main task is not affected. Overall, these
+previous studies demonstrate that parallel monitoring can be used to
+significantly improve system security and reliability with minimal overheads.
 
-There have been several projects that have looked into performing limited
-monitoring. 
-Testudo \cite{testudo-micro08} performs
-limited monitoring across many users in order to limit the performance impact
-of monitoring. The Quality Virtual Machine (QVM) is a modification of the Java
-Virtual Machine that supports run-time monitoring with controllable overheads
-\cite{qvm-oopsla08}. QVM enables and disables monitoring in an attempt to match
-the specified target overhead. 
-Similarly, Huang et al. created a framework for controlling the overheads of
-software-based monitoring \cite{huang-sttt12}. 
-These projects provide no strict guarantees on the performance impact and thus
-are not applicable to hard real-time systems.
-In contrast, our architecture is able to provide a strict guarantee on the
-worst-case overheads. In addition, these projects enable and disable monitoring
-at a coarse granularity in order to guarantee that false positives do not occur. Instead, we have
-presented an invalidation-based mechanism to prevent false positives. This 
-allows the decision of whether to perform monitoring to be extremely
-fine-grained (i.e., per monitoring event).
-
-% WCET
-As mentioned earlier, there is existing work for statically estimating the WCET of
-monitoring using an MILP-based method \cite{lo-monitoring_wcet-dac12} \textbf{[Refer back to Chapter 2]}. In
-general there has been a multitude of work in analyzing WCET \cite{wcetsurvey-tecs08},
-including for multi-core architectures \cite{chattopadhyay-rtas12,
-mcait-rtss10}.  However, since these methods are static, they can be overly
-conservative and require redoing the timing analysis when any changes are made
-to the main or monitoring tasks. Instead, the architecture we presented in this
-paper takes advantage of run-time behavior to perform monitoring while
-maintaining timing guarantees.
-
-% RT Architectures
-There has also been a host of work on hardware architectures for real-time
-systems.  The VISA architecture \cite{visa-isca03} uses dynamic
-slack to run in a faster but
-difficult to analyze mode. It switches to a simpler mode under which timing
-analysis and WCET is calculated when there is not enough slack. We use a
-similar method to keep track of slack. However, we use slack for monitoring
-rather than for running under a different mode. The PRET
-architecture \cite{ptarm-iccd12} seeks to have a processor design that is both high performance and
-easy to analyze in terms of timing. Paolieri et al. proposed an analyzable
-multi-core hardware architecture for hard real-time systems
-\cite{paolieri-isca09}. These architectures all design hardware
-with real-time system requirements in mind, but ours is the first work that we
-know of that designs a hardware architecture for parallel hardware run-time monitoring
-on real-time systems.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% monitoring_dift_drop
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Partial Monitoring}
 
 % Previous work on sampling for monitoring
-\begin{table}[t]
+\begin{table}[tb]
   \begin{center}
-    \begin{normalsize}
+    \begin{footnotesize}
     \input{tabs/previous_sampling}
-    \end{normalsize}
+    \end{footnotesize}
     \caption{Previous work on partial run-time monitoring.}
     \label{tab:related.previous_sampling}
   \end{center}
 \end{table}
 
 There exists a number of previous projects that have looked into performing
-partial monitoring in order to reduce the performance overhead. These
-platforms differ from ours in a number of ways including how monitoring is
-implemented and the monitoring techniques targeted. However, we note three main
-properties that differentiates our work:
+partial monitoring in order to reduce the performance overhead. These platforms
+differ from the architectures we have presented in
+Chapter~\ref{chap:monitoring_hard_drop} and \ref{chap:monitoring_dift_drop} in a
+number of ways including how monitoring is implemented and the monitoring
+techniques targeted. However, we note three main properties that differentiates
+our work:
 \begin{enumerate}
-  \item \textbf{Generality:} Our architecture applies to a variety of monitoring techniques.
-  \item \textbf{Adjustable Overhead:} Our architecture allows an overhead to be
-  targeted. Other work performs sampling to reduce overhead but does not try
-  to bound overhead, which we have shown can vary greatly.
-  \item \textbf{Prevent False Positives:} We present a mechanism to prevent
-  false positives. Previous work either has false positives or targets monitoring
-  techniques which degrade gracefully with sampling rather than exhibit false
-  positives.
+  \item \textbf{Generality:} Our architectures apply to a variety of
+  monitoring techniques.
+  \item \textbf{Adjustable Overhead:} Our architectures allow an overhead or
+  deadline to be targeted. The architecture presented in
+  Chapter~\ref{chap:monitoring_hard_drop} provides hard guarantees on the
+  overhead while the architecture from Chapter~\ref{chap:monitoring_dift_drop}
+  relaxes the strict guarantee. Other work performs sampling to reduce overhead
+  but does not try to bound overhead, which we have shown can vary greatly.
+  \item \textbf{Prevent False Positives:} We have presented an
+  invalidation-based mechanism to prevent false positives. Previous work either
+  has false positives or targets monitoring techniques which degrade gracefully
+  with sampling rather than exhibit false positives.
 \end{enumerate}
-Our work is the first that we know of to present a hardware platform for partial
-monitoring that is general, allows an overhead target to be specified, and
-explicitly prevents false positives. In contrast, previous work on
-partial monitoring achieves only some, but not all, of these properties.
+Our work is the first that we know of to present a hardware platform for
+partial monitoring that is general, allows a deadline or overhead target to be
+specified, and explicitly prevents false positives. In contrast, previous work
+on partial monitoring achieves only some, but not all, of these properties.
 Table~\ref{tab:related.previous_sampling} summarizes these differences. 
 
 For example, there exists previous work for using statistical sampling to
@@ -247,175 +193,232 @@ to be specified and do not prevent false positives. Huang et al.
 \cite{huang-sttt12} proposed a general framework for controlling the overhead
 of software-based monitoring. However, they also do not explicitly address
 false positives and only target monitors which degrade gracefully when
-performed partially. Lo et al. \cite{lo-rtas14} \textbf{[Refer back to Chapter 3]} designed a hardware
-architecture for performing monitoring on hard real-time systems that also
-prevents false positives. Their architecture is designed to meet real-time
-deadlines rather than enable adjustable overheads. In addition, in order to give strong
-guarantees, the coverage achieved is lower than our system. Finally, QVM
-\cite{qvm-oopsla08} proposes a modification to the Java Virtual Machine (JVM) to
-support monitoring with adjustable overhead. 
-QVM is limited to monitoring for code run on a JVM which limits its
+performed partially. Finally, QVM \cite{qvm-oopsla08} proposes a modification
+to the Java Virtual Machine (JVM) to support monitoring with adjustable
+overhead. QVM is limited to monitoring for code run on a JVM which limits its
 generalizability while our framework works for any binary. QVM prevents false
 positives by enabling or disabling monitoring on a per-object basis. This
 limits the monitoring schemes that can be implemented. Also, this method of
 preventing false positives is similar to the idea of performing source-only
-dropping which our results show can lead to overshooting the overhead target
-depending on the monitoring technique. 
+dropping (see Section~\ref{sec:monitoring_dift_drop.policies.which}) which our
+results show can lead to overshooting the overhead target depending on the
+monitoring technique. 
 
-\section{Energy-Efficiency}
+\section{Performance-Energy Trade-off}
 \label{sec:related_work.energy}
 
-Mantis \cite{mantis-atc13} performs execution time prediction in a manner
-similar to ours. They also instrument loops and conditionals to use as
-features. Our predictor differs in that it enforces conservativeness which is
-useful in our application in order to meet deadlines. In addition, we show how
-such execution time prediction can be used to improve energy-efficiency.
+\subsection{Dynamic Voltage and Frequency Scaling}
 
-Gu and Chakraborty \cite{gu-dac08} use a PID-based controller to adjust DVFS
-for a game. They show less deadline misses than a history-based controller but
-deadline misses still occur because the PID prediction lags phase changes.
+There have been many designs for DVFS controllers. Most controllers look to
+decrease frequency when the performance impact is minimal. For example, the
+built-in Linux governors \cite{linux_governors} adjust DVFS based on CPU
+utilization.  However, these controllers do not take into account performance
+requirements or deadlines.
 
-Paragon \cite{paragon-asplos13} attempts to predict performance of datacenter
-workloads due to server heterogeneity and interference. This does not
-specifically aim to keep execution times under some target.
+DVFS has been studied in the context of hard real-time systems
+\cite{rtdvfs-systor12}. For these systems, deadlines are strict requirements
+that cannot be violated. Thus, lowering frequency must be done in a
+conservative manner.  By relaxing this strict requirement, our prediction-based
+controller is able to achieve higher energy savings.
 
-Previous work targets using heterogeneous cores to improve performance
-\cite{paragon-asplos13, pie-isca12, heteroscouts-sigmetrics11} or EDP \cite{chen-dac09}.
+A number of reactive DVFS controllers have been proposed that use the past
+history of job execution times to predict the execution time of future jobs.
+Choi et al. \cite{choi-iccad02} used moving averages of job execution time
+history to predict execution times for an MPEG decoder. Similarly, Pegasus
+\cite{pegasus-isca14} used instantaneous and average job execution times to
+make DVFS decisions. Nachiappan et al. \cite{nachiappan-hpca15} used a moving
+average to set DVFS for multiple IP cores. Gu and Chakraborty \cite{gu-dac08}
+used a PID-based controller to predict execution times of frames in a game.
+These history-based, reactive controllers are not able to adapt fast enough to
+job-to-job variations in execution time, resulting in either high energy usage
+or deadline misses. In fact, our results show that prediction-based control
+outperforms PID-based control.
 
-There are several existing projects which have looked into the problem of
-resource management in the presence of timing requirements. One possible
-solution is to use DVFS in conjunction with a real-time operating system (RTOS)
-\cite{rtdvfs-systor12}. This is useful for hard real-time systems where timing
-requirements are strict. However, it requires considerable programmer expertise
-and effort in order to write applications in a form that is amenable to an RTOS
-and to perform the detailed timing analysis required. For soft real-time
-systems, such as the response-time requirements we are considering, it should
-be possible to use a more lightweight approach to handle the timing
-requirements. Zhu and Reddi \cite{zhu-hpca13} explored using DVFS and
-heterogeneous cores in order to lower energy usage while still meeting website
-loading times for a web browser. This was done by analyzing the relationship of
-various HTML and CSS metrics to loading time. They showed a 9\% average
-reduction in energy usage by using this information when selecting core and
-DVFS operating point compared to an OS scheduler that uses only utilization
-information.  However, their approach is specific to web browsing and does not
-generalize to other applications. PACORA \cite{pacora-hotpar11} looks at
-resource partitioning for datacenters while taking into account response-time
-requirements. It can dynamically alter these allocations but these are done on
-a course-grained level in order to detect changes in workload behavior rather
-than on a fine-grained per-job level. Recent work has shown that timing on a
-job-to-job basis can have large variations \cite{atlas-rtas13} and that
-fine-grained resource allocations can have a high impact on energy efficiency
-that is not captured by coarse-grained allocations \cite{padmanabha-micro13}.
+Prediction-based approaches have been designed for specific applications. Gu
+and Chakraborty \cite{gu-rtas08} predicted the rendering time for a game frame
+based on the number of objects in the scene. Zhu et al. used prediction-based
+control to select core and DVFS levels for a web browser based on HTML and CSS
+features \cite{zhu-hpca13} and event types \cite{eqos-hpca15}. Adrenaline
+\cite{adrenaline-hpca15} looked to reduce the tail latency of datacenter
+applications including web search and Memcached by classifying jobs by query
+type. These predictive approaches required careful analysis of the applications
+of interest in order to identify features and create predictive models.  Our
+approach presents an automated approach to create these DVFS predictors for a
+wide range of applications. For example, for the web browser we tested, our
+approach automatically identifies event types as a feature because of changes
+in control flow depending on event type.
 
-Given the previous work in this domain, our approach is unique in targeting the
-combination of several design objectives:
-\begin{enumerate}
-  \item \textbf{Generality: } The approach should work generally for any
-  application with response-time requirements. It should not require
-  application- or domain-specific knowledge.
-  \item \textbf{Minimal programmer effort: } The additional programmer effort
-  in order to enable this should be minimal. The only needed information from
-  the programmer is the code segments of interest and their response-time
-  requirement.
-  \item \textbf{Fine-grained decision: } The resource allocation decision
-  should be made on a per-job basis in order to handle job-to-job variation.
-  For example, recent work has shown that video decoding time can vary greatly
-  from frame-to-frame \cite{atlas-rtas13}. 
-  \item \textbf{Predictive decision: } Our approach looks to predict resource
-  allocations before a job is run. Since execution times can change largely
-  from job to job, it is important to predict the execution time for the next
-  job to run, rather than making decisions after poor response-time performance
-  is seen.
-\end{enumerate}
+\subsection{Execution Time Prediction}
 
-\subsection{}
+Worst-case execution time analysis is a well-studied problem in hard real-time
+systems \cite{wcetsurvey-tecs08}. This analysis looks at the problem of
+estimating execution time of a program in the worst-case. This can be used as a
+conservative bound for setting DVFS in order to meet deadlines, but it does not
+predict the changes in job execution time based on specific inputs or program
+state.
 
-Most previous work that looking at using heterogeneous systems for energy
-saving do this by using a smaller core when the performance impact is minimal
-\cite{padmanabha-micro13, heteroscouts-sigmetrics11, pie-isca12} or by
-optimizing for energy-delay product (EDP) \cite{cong-islped12, kumar-micro03,
-chen-dac09}.
-Guimbretiere et al. \cite{guimbretiere-tecs11} use a smaller core to save
-energy for portions of the program where the impact on user experience is
-minimal. This made statically by the programmer.
+ATLAS \cite{atlas-rtas13} looked at predicting execution time in the context of
+soft real-time scheduling. Their approach uses programmer-marked features in a
+linear model in order to predict execution time. Instead, our approach is able
+to automatically identify features without programmer assistance.  Mantis
+\cite{mantis-atc13} presents an automated approach for predicting execution
+time, similar to the approach we have presented. However, neither Mantis nor
+ATLAS looks at execution time prediction in the context of DVFS control.
+Applying execution time prediction to DVFS allocation with deadlines required
+creating a prediction method that placed greater penalty on under-prediction
+and extending the predictor to select a DVFS level.
 
-There has been work in real-time systems in applying dynamic frequency and
-voltage scaling (DVFS) to reduce energy usage while still meeting deadlines
-\cite{rtdvfs-systor12}. However, this require dividing applications into
-explicit tasks and using a real-time operating system (RTOS).
-
-
-The goal of ATLAS \cite{atlas-rtas13} is to remove the need for a programmer to
-estimate the execution time of tasks for scheduling on a soft real-time system.
-Instead, the programmer submits workload metrics to the ATLAS scheduler at the
-start of a job. ATLAS uses these metrics and measured execution times to create
-a linear regression model. Using the regression model, it is able to predict
-job execution times and schedule them accordingly. ATLAS does not take into
-account energy-efficiency or resource allocation.
-
-PACORA \cite{pacora-hotpar11} performs resource allocation while taking into
-account the response-time requirements of multiple workloads.  Timing
-constraints are modeled using penalty functions. Penalty before a deadline is 0
-and penalty after a deadline is a linear function with steeper slopes
-indicating that a task is more time-critical. Execution time is modeled based
-on cache and core allocations. Using the execution times and response-time
-penalty functions, a convex optimization problem is constructed that decides
-the cache and core allocations for each program in order to minimize penalty
-(deadline misses).
-
-Paragon \cite{paragon-asplos13} maximizes the number of workloads that meet a
-Quality-of-Service (QoS) (e.g., 5\% overhead compared to running alone) target
-when running together on a group of servers. This is done taking into account
-both heterogeneity of servers and interference among workloads. Paragon uses
-singular value decomposition (SVD) and PQ-reconstruction to predict the
-performance of workloads on different server configurations and after only
-profiling the workload on 2 server configurations by using previous profiling
-data.
-
-Zhu and Reddi \cite{zhu-hpca13} investigated meeting response times for 
-web browsing.  Specifically, they create a scheduler that predicts what core
-and DVFS configuration to use in order to meet a website loading time
-constraint for a web browser application. This is done by creating a regression
-model based on HTML and CSS metrics in order to predict website loading times.
-
-\subsection{HPCA 2015}
-
-Octopus-Man \cite{octopusman-hpca15} scales core allocation both in number and
-in type (wimpy vs. brawny) in order to save energy while staying with in a QoS
-target. This attempts to capture energy savings when queries per second are
-low. They show good results with a deadzone state machine controller. This
-captures coarser-grained variations that exist in servers due to diurnal
-patterns but cannot take advantage of the finer grained execution time
-differences (i.e., job to job) found in the interactive applications we
-studied.
-
-Quasar \cite{quasar-asplos14} extends Paragon's \cite{paragon-asplos13}
-performance prediction to also include the effect of scale-up and scale-out on
-server workloads. They use this to perform allocation and assignment of
-datacenter resources and show improved resource utilization as a result.
-
-Nachiappan et al. \cite{nachiappan-hpca15} look at setting DVFS for multiple
-IPs in order to save energy and meet deadlines. Their applications showed
-little variation in execution time from job to job and so a history-based
-predictor was sufficient. For the applications we looked at, large variations
-exited between jobs and so it was necessary to use a proactive predictor.
-
-Pegasus \cite{pegasus-isca14} looks to scale DVFS to meet service level
-objectives (SLOs) in datacenters. They use a history-based controller that
-scales resources up/down based on whether the instantaneous and average (30 second window)
-latencies measured are above/below thresholds. This captures phase-type
-behavior but not the fine-grained variation in execution time that we see in
-interactive tasks.
-
-Adrenaline \cite{adrenaline-hpca15} uses fast voltage-frequency scaling (10s of
-nanoseconds) in order to speed up slow jobs for datacenter applications. Slow
-jobs are identified based on query type and found through profiling. For
-example, for Memcached ``SET'' queries are boosted and for web search, short
-queries of less than 6 keywords are boosted.
-
-Zhu et al. \cite{eqos-hpca15} also looked at using event handlers in a web
-browser to predict how to set DVFS and big/little core allocation.
-
-Pack \& Cap \cite{packandcap-micro44} and FG-SYNC+ \cite{fgsync-micro14} seek
-to improve performance with a set power budget by speeding up some cores and
-slowing down others.
+% Mantis \cite{mantis-atc13} performs execution time prediction in a manner
+% similar to ours. They also instrument loops and conditionals to use as
+% features. Our predictor differs in that it enforces conservativeness which is
+% useful in our application in order to meet deadlines. In addition, we show how
+% such execution time prediction can be used to improve energy-efficiency.
+% 
+% Gu and Chakraborty \cite{gu-dac08} use a PID-based controller to adjust DVFS
+% for a game. They show less deadline misses than a history-based controller but
+% deadline misses still occur because the PID prediction lags phase changes.
+% 
+% Paragon \cite{paragon-asplos13} attempts to predict performance of datacenter
+% workloads due to server heterogeneity and interference. This does not
+% specifically aim to keep execution times under some target.
+% 
+% Previous work targets using heterogeneous cores to improve performance
+% \cite{paragon-asplos13, pie-isca12, heteroscouts-sigmetrics11} or EDP \cite{chen-dac09}.
+% 
+% There are several existing projects which have looked into the problem of
+% resource management in the presence of timing requirements. One possible
+% solution is to use DVFS in conjunction with a real-time operating system (RTOS)
+% \cite{rtdvfs-systor12}. This is useful for hard real-time systems where timing
+% requirements are strict. However, it requires considerable programmer expertise
+% and effort in order to write applications in a form that is amenable to an RTOS
+% and to perform the detailed timing analysis required. For soft real-time
+% systems, such as the response-time requirements we are considering, it should
+% be possible to use a more lightweight approach to handle the timing
+% requirements. Zhu and Reddi \cite{zhu-hpca13} explored using DVFS and
+% heterogeneous cores in order to lower energy usage while still meeting website
+% loading times for a web browser. This was done by analyzing the relationship of
+% various HTML and CSS metrics to loading time. They showed a 9\% average
+% reduction in energy usage by using this information when selecting core and
+% DVFS operating point compared to an OS scheduler that uses only utilization
+% information.  However, their approach is specific to web browsing and does not
+% generalize to other applications. PACORA \cite{pacora-hotpar11} looks at
+% resource partitioning for datacenters while taking into account response-time
+% requirements. It can dynamically alter these allocations but these are done on
+% a course-grained level in order to detect changes in workload behavior rather
+% than on a fine-grained per-job level. Recent work has shown that timing on a
+% job-to-job basis can have large variations \cite{atlas-rtas13} and that
+% fine-grained resource allocations can have a high impact on energy efficiency
+% that is not captured by coarse-grained allocations \cite{padmanabha-micro13}.
+% 
+% Given the previous work in this domain, our approach is unique in targeting the
+% combination of several design objectives:
+% \begin{enumerate}
+%   \item \textbf{Generality: } The approach should work generally for any
+%   application with response-time requirements. It should not require
+%   application- or domain-specific knowledge.
+%   \item \textbf{Minimal programmer effort: } The additional programmer effort
+%   in order to enable this should be minimal. The only needed information from
+%   the programmer is the code segments of interest and their response-time
+%   requirement.
+%   \item \textbf{Fine-grained decision: } The resource allocation decision
+%   should be made on a per-job basis in order to handle job-to-job variation.
+%   For example, recent work has shown that video decoding time can vary greatly
+%   from frame-to-frame \cite{atlas-rtas13}. 
+%   \item \textbf{Predictive decision: } Our approach looks to predict resource
+%   allocations before a job is run. Since execution times can change largely
+%   from job to job, it is important to predict the execution time for the next
+%   job to run, rather than making decisions after poor response-time performance
+%   is seen.
+% \end{enumerate}
+% 
+% \subsection{}
+% 
+% Most previous work that looking at using heterogeneous systems for energy
+% saving do this by using a smaller core when the performance impact is minimal
+% \cite{padmanabha-micro13, heteroscouts-sigmetrics11, pie-isca12} or by
+% optimizing for energy-delay product (EDP) \cite{cong-islped12, kumar-micro03,
+% chen-dac09}.
+% Guimbretiere et al. \cite{guimbretiere-tecs11} use a smaller core to save
+% energy for portions of the program where the impact on user experience is
+% minimal. This made statically by the programmer.
+% 
+% There has been work in real-time systems in applying dynamic frequency and
+% voltage scaling (DVFS) to reduce energy usage while still meeting deadlines
+% \cite{rtdvfs-systor12}. However, this require dividing applications into
+% explicit tasks and using a real-time operating system (RTOS).
+% 
+% 
+% The goal of ATLAS \cite{atlas-rtas13} is to remove the need for a programmer to
+% estimate the execution time of tasks for scheduling on a soft real-time system.
+% Instead, the programmer submits workload metrics to the ATLAS scheduler at the
+% start of a job. ATLAS uses these metrics and measured execution times to create
+% a linear regression model. Using the regression model, it is able to predict
+% job execution times and schedule them accordingly. ATLAS does not take into
+% account energy-efficiency or resource allocation.
+% 
+% PACORA \cite{pacora-hotpar11} performs resource allocation while taking into
+% account the response-time requirements of multiple workloads.  Timing
+% constraints are modeled using penalty functions. Penalty before a deadline is 0
+% and penalty after a deadline is a linear function with steeper slopes
+% indicating that a task is more time-critical. Execution time is modeled based
+% on cache and core allocations. Using the execution times and response-time
+% penalty functions, a convex optimization problem is constructed that decides
+% the cache and core allocations for each program in order to minimize penalty
+% (deadline misses).
+% 
+% Paragon \cite{paragon-asplos13} maximizes the number of workloads that meet a
+% Quality-of-Service (QoS) (e.g., 5\% overhead compared to running alone) target
+% when running together on a group of servers. This is done taking into account
+% both heterogeneity of servers and interference among workloads. Paragon uses
+% singular value decomposition (SVD) and PQ-reconstruction to predict the
+% performance of workloads on different server configurations and after only
+% profiling the workload on 2 server configurations by using previous profiling
+% data.
+% 
+% Zhu and Reddi \cite{zhu-hpca13} investigated meeting response times for 
+% web browsing.  Specifically, they create a scheduler that predicts what core
+% and DVFS configuration to use in order to meet a website loading time
+% constraint for a web browser application. This is done by creating a regression
+% model based on HTML and CSS metrics in order to predict website loading times.
+% 
+% \subsection{HPCA 2015}
+% 
+% Octopus-Man \cite{octopusman-hpca15} scales core allocation both in number and
+% in type (wimpy vs. brawny) in order to save energy while staying with in a QoS
+% target. This attempts to capture energy savings when queries per second are
+% low. They show good results with a deadzone state machine controller. This
+% captures coarser-grained variations that exist in servers due to diurnal
+% patterns but cannot take advantage of the finer grained execution time
+% differences (i.e., job to job) found in the interactive applications we
+% studied.
+% 
+% Quasar \cite{quasar-asplos14} extends Paragon's \cite{paragon-asplos13}
+% performance prediction to also include the effect of scale-up and scale-out on
+% server workloads. They use this to perform allocation and assignment of
+% datacenter resources and show improved resource utilization as a result.
+% 
+% Nachiappan et al. \cite{nachiappan-hpca15} look at setting DVFS for multiple
+% IPs in order to save energy and meet deadlines. Their applications showed
+% little variation in execution time from job to job and so a history-based
+% predictor was sufficient. For the applications we looked at, large variations
+% exited between jobs and so it was necessary to use a proactive predictor.
+% 
+% Pegasus \cite{pegasus-isca14} looks to scale DVFS to meet service level
+% objectives (SLOs) in datacenters. They use a history-based controller that
+% scales resources up/down based on whether the instantaneous and average (30 second window)
+% latencies measured are above/below thresholds. This captures phase-type
+% behavior but not the fine-grained variation in execution time that we see in
+% interactive tasks.
+% 
+% Adrenaline \cite{adrenaline-hpca15} uses fast voltage-frequency scaling (10s of
+% nanoseconds) in order to speed up slow jobs for datacenter applications. Slow
+% jobs are identified based on query type and found through profiling. For
+% example, for Memcached ``SET'' queries are boosted and for web search, short
+% queries of less than 6 keywords are boosted.
+% 
+% Zhu et al. \cite{eqos-hpca15} also looked at using event handlers in a web
+% browser to predict how to set DVFS and big/little core allocation.
+% 
+% Pack \& Cap \cite{packandcap-micro44} and FG-SYNC+ \cite{fgsync-micro14} seek
+% to improve performance with a set power budget by speeding up some cores and
+% slowing down others.
