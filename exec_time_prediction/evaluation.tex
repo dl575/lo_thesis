@@ -61,7 +61,7 @@ results for the following DVFS schemes:
   next job \cite{gu-dac08}. The PID parameters are trained offline and are
   optimized to reduce deadline misses.
   \item \textbf{prediction}: This is our prediction-based controller as
-  described in this paper.
+  described in this chapter.
 \end{enumerate}
 
 \subsection{Energy Savings and Deadline Misses}
@@ -77,7 +77,7 @@ results for the following DVFS schemes:
 
 Figure~\ref{fig:exec_time_prediction.evaluation.em_summary} compares energy
 consumption and deadline misses for the different DVFS controllers across our
-benchmark set. These experiments are run with a time budget of 50 ms per job as
+benchmark set. These experiments are run with a time budget of 50 milliseconds per job as
 running faster than this is not noticeable to a user \cite{lindgaard-bit06,
 eqos-hpca15}.  pocketsphinx takes at least 100s of milliseconds to run (see
 Table~\ref{tab:exec_time_prediction.evaluation.benchmarks}) so we use a 4
@@ -213,7 +213,7 @@ prediction-based control when the overheads of the predictor and DVFS switching
 are ignored.
 Figure~\ref{fig:exec_time_prediction.evaluation.overhead_comparison} shows the
 energy and deadline misses when these overheads are removed. These results are
-shown for a time budget of 4 s for pocketsphinx and 50 ms for all other
+shown for a time budget of 4 seconds for pocketsphinx and 50 milliseconds for all other
 benchmarks.  On average, we see a 3\% decrease in energy consumption when
 removing the overheads of DVFS switching. Removing the overhead of running the
 predictor shows negligible improvement past removing the DVFS switching
@@ -281,6 +281,6 @@ but deadline misses increase. Reducing the weight from 1000 to 100 keep misses
 at 0, but reducing the weight to 10 introduces a small number of deadline
 misses (0.03\%). Other benchmarks show similar trends and we found that across
 the benchmarks we tested, an under-predict penalty weight of 100 provided good
-energy savings without sacrificing deadline misses. The results in this paper
+energy savings without sacrificing deadline misses. The results in this chapter
 have been shown with a weight of 100.
 
