@@ -51,24 +51,51 @@ perform this profiling and distribute the trained model coefficients with the
 program. Alternatively, profiling can be done by the user during the
 application's installation.
 
+% Differences in slice features
+\begin{table*}
+  \begin{center}
+    \begin{footnotesize}
+    \input{exec_time_prediction/tabs/slice_differences.tex}
+    \end{footnotesize}
+    \caption{Differences in features selected and predicted execution times for
+    different platforms compared to an ARM-LITTLE platform.}
+    \label{tab:exec_time_prediction.system.slice_differences}
+  \end{center}
+\end{table*}
+
 The trained execution time model only requires a subset of all the features to
 perform prediction. Thus, this information is used to eliminate code for
 calculating unneeded features.  Program slicing is then used to create a
 minimal code fragment to calculate the needed control flow features.  Note that
 since the features needed depends on the training of the execution time
 prediction model, which is platform-dependent, the features needed could vary
-across platforms.  However, we expect the features that are needed are
+across platforms. However, we expect the features that are needed are
 primarily a function of the task semantics (i.e., execution time variations
 across control paths) rather than the platform it is run on. In fact, we
 compared the predictions made for an x86-based (Intel Core i7) platform when
-using the features selected for an ARM-based ODROID-XU3 platform and for the
-features selected for the x86 platform itself. For all but three of the
-benchmarks we tested, the features selected were exactly the same.  For one of
-these, the features selected by the x86 platform were a subset of those
-selected by the ARM platform and so the predicted times were exactly the same.
-For the remaining two benchmarks, the predicted times differed by less than
-3\%. Although we had to re-train the execution time model coefficients, the
-same prediction slice was applicable across both platforms.
+using the features selected for an ARM LITTLE-based ODROID-XU3 platform and for the
+features selected for the x86 platform itself. We also compared using the ARM
+big core compared to the LITTLE core on the ODROID-XU3 platform. 
+Table~\ref{tab:exec_time_prediction.system.slice_differences} shows the
+features that are added or removed in the prediction slices for these platforms
+compared to the prediction slice generated for the ARM LITTLE core. In
+addition, the differences in predicted execution times using the prediction
+slice generated for the platform and using the prediction slice from the ARM
+LITTLE core are shown. 
+For the ARM big core, only one benchmark shows differences in feature selected
+with the resulting difference in prediction times being only 0.1\% on average.
+For the x86-based platform, four benchmarks show differences in features
+selected. In two of these cases, the predicted execution times are not
+affected. In the remaining two cases, average differences in predicted
+execution times are less than 1\%.
+%For all but three of the
+%benchmarks we tested, the features selected were exactly the same.  For one of
+%these, the features selected by the x86 platform were a subset of those
+%selected by the ARM platform and so the predicted times were exactly the same.
+%For the remaining two benchmarks, the predicted times differed by less than
+%3\%. 
+Although we had to re-train the execution time model coefficients for these new
+platforms, the same prediction slice was applicable across both platforms.
 
 \subsection{Run-time Prediction}
 
