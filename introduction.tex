@@ -11,32 +11,49 @@ cyber-physical systems typically have real-time constraints in order to ensure
 safe and correct physical interactions. Similarly, even mobile and desktop
 systems, which are not traditionally considered real-time systems, are
 inherently time-sensitive because of their interaction with users.
+These real-time systems introduce new constraints and trade-offs for computer
+systems design.
 
-considered in order to ensure their safe and reliable operation.  Specifically,
-real-time systems are typically specified as a set of tasks which have
-real-time deadlines.  Correct operation involves both correct computation of
+Real-time systems are typically specified as a set of tasks which have
+real-time deadlines. Correct operation involves both correct computation of
 outputs as well as finishing tasks before their deadlines.  Deadlines can
 either be considered hard deadlines, where a missed deadline indicates a fatal
-error, or soft deadlines, where deadlines are expected to be met but a missed
-deadline is not fatal. Extensive work has been done in the software design and
+error, or soft deadlines, where a missed deadline results in poor performance
+but is not fatal. Extensive work has been done in the software design and
 analysis of real-time systems including real-time scheduling algorithms
 \cite{rtschedulingsurvey-csur11}, real-time operating systems (RTOS)
 \cite{rtossurvey-micro09, rtossurvey-icesc14}, and worst-case execution time
 (WCET) analysis \cite{wcetsurvey-tecs08}.
 
 % Thesis statement
-On the other hand, traditional techniques proposed for improving
-hardware architectures are only evaluated for their average-case
-performance and are not designed to take into account the possibility of timing
-constraints. This thesis explore the development of hardware
-architectures that are aware of real-time requirements. Specifically, 
-we present solutions for applying modern hardware techniques for improving
-system security, reliability, and energy-efficiency to real-time systems.
+In order to guarantee that deadlines are met, these systems are typically
+designed conservatively so that even in the worst-case tasks will not exceed
+their deadlines. As a result, in the average or typical case, tasks finish
+before their deadline. This results in unused slack time between the task
+finish and the deadline. One option to reclaim this unused time is to use it
+for non-real-time (e.g., best effort) tasks. In this thesis, we explore the
+software/hardware co-design of real-time systems in order to take advantage of
+slack using modern hardware features. Specifically, we explore two angles for
+improving computer systems. First, we explore the use of modern hardware
+techniques for improving system security and reliability in the context of
+real-time deadlines. Second, we take advantage of slack time to improve energy
+efficiency by adjusting hardware resource allocations.
+
+% Thesis statement
+%On the other hand, traditional techniques proposed for improving
+%hardware architectures are only evaluated for their average-case
+%performance and are not designed to take into account the possibility of timing
+%constraints. This thesis explore the development of hardware
+%architectures that are aware of real-time requirements. Specifically, 
+%we present solutions for applying modern hardware techniques for improving
+%system security, reliability, and energy-efficiency to real-time systems.
 
 \section{Secure and Reliable Hardware Architectures for Real-Time Systems}
 \label{sec:intro.security}
 
 % Run-time monitoring is useful
+One potential use of extra time is for improving system security and
+reliability by monitoring and checking run-time behavior.
 Run-time monitoring techniques have been shown to be useful for improving the
 reliability, security, and debugging capabilities of computer systems. For
 example, Hardbound is a hardware-assisted technique to detect out-of-bound
@@ -46,58 +63,56 @@ announced plans to support buffer overflow protection similar to Hardbound in
 future architectures \cite{intel-mpx}. Similarly, run-time monitoring can
 enable many other new security, reliability, and debugging capabilities such as
 fine-grained memory protection \cite{mondrian-asplos02}, information flow
-tracking \cite{dift-asplos04, testudo-micro08}, hardware error detection
-\cite{argus-micro07}, data-race detection \cite{radish-isca12, cord-hpca06},
-etc.  However, today's parallel monitoring techniques cannot be easily applied
+tracking \cite{dift-asplos04, testudo-micro08}, control flow integrity checking
+\cite{hafix-dac15}, hardware error detection \cite{argus-micro07}, data-race
+detection \cite{radish-isca12, cord-hpca06}, etc.  
+However, today's parallel monitoring techniques cannot be easily applied
 to critical real-time systems due to their lack of timing guarantees. Thus, we
 have developed several techniques in order to enable run-time monitoring on
 real-time systems.
 
 % Parallel programmable monitoring
-There are several options on how to implement run-time monitoring.
-Implementing run-time monitoring in software using binary instrumentation or
-other similar methods introduces especially high overheads. For example,
-dynamic information flow tracking (DIFT) implemented in software suffers a 3.6x
-slowdown on average \cite{qin06-lift}. Implementing monitors in hardware
-greatly decreases the performance impact by performing monitoring in parallel
-to a program's execution. A dedicated hardware implementation of DIFT reduces
-average performance overheads to just 1.1\% \cite{suh-dift-asplos04}.  However,
-fixed hardware loses the programmability of software. A fixed hardware
-implementation cannot be updated and cannot change the type of run-time
-monitoring performed. Thus, recent studies have proposed using programmable
-parallel hardware, such as extra cores in a multi-core system or FPGA
-coprocessors, for monitoring \cite{chen08-lba, flexcore-micro10,
-harmoni-dsn12}. Our work in this paper is targeted at these programmable
-parallel hardware monitors.
+%There are several options on how to implement run-time monitoring.
+%Implementing run-time monitoring in software using binary instrumentation or
+%other similar methods introduces especially high overheads. For example,
+%dynamic information flow tracking (DIFT) implemented in software suffers a 3.6x
+%slowdown on average \cite{qin06-lift}. Implementing monitors in hardware
+%greatly decreases the performance impact by performing monitoring in parallel
+%to a program's execution. A dedicated hardware implementation of DIFT reduces
+%average performance overheads to just 1.1\% \cite{suh-dift-asplos04}.  However,
+%fixed hardware loses the programmability of software. A fixed hardware
+%implementation cannot be updated and cannot change the type of run-time
+%monitoring performed. Thus, recent studies have proposed using programmable
+%parallel hardware, such as extra cores in a multi-core system or FPGA
+%coprocessors, for monitoring \cite{chen08-lba, flexcore-micro10,
+%harmoni-dsn12}. Our work in this paper is targeted at these programmable
+%parallel hardware monitors.
 
 % Monitoring WCET
-Traditional real-time design requires estimation of the worst-case execution
-time of tasks in order to guarantee schedulability. Although sequential (i.e.,
-binary instrumentation-based) monitoring can by analyzed using traditional WCET
-techniques, existing techniques cannot give tight WCET estimates for parallel
-monitoring.
-Thus, we first developed a static analysis method to estimate the worst-case
-execution time (WCET) impact of parallel run-time monitoring for real-time systems
-(Chapter~\ref{chap:monitoring_wcet}). This was done by extending the
-traditional integer-linear programming (ILP) formulation used for estimating
-WCET by adding new constraints in order to model the impact of run-time
-monitoring.
+Traditional real-time systems design requires estimation of the worst-case
+execution time of tasks in order to guarantee schedulability. Thus, we first
+developed a static analysis method to estimate the worst-case execution time
+(WCET) impact of parallel run-time monitoring for real-time systems
+(Chapter~\ref{chap:monitoring_wcet}). This allows run-time monitoring to be
+enabled if the there is enough static slack in a real-time system's schedule.
+Our analysis works by extending the traditional integer-linear programming
+(ILP) formulation used for estimating WCET by adding new constraints in order
+to model the impact of run-time monitoring.
 
 % Monitoring Hard Drop
-In our experiments, we found that the WCET of run-time monitoring can be high.
-Thus, applying monitoring to real-time systems requires a large increase in the
-time allocated to tasks. Currently, if a real-time system cannot support this
-extra utilization, then monitoring cannot be applied to the system.  Thus, we
-developed a hardware architecture that selectively performs monitoring in order
-to meet given timing constraints (Chapter~\ref{chap:monitoring_hard_drop}).
-This is possible by taking advantage of the dynamic slack that exists between
-average-case and worst-case performance.
+Slack exists not only in the real-time schedule (i.e., static slack) but also
+at run-time due to tasks running faster than their deadline (i.e., dynamic
+slack). In order to take advantage of this dynamic slack for security and
+reliability, we developed a hardware architecture that selectively performs
+monitoring while guaranteeing that deadlines are met
+(Chapter~\ref{chap:monitoring_hard_drop}). The architecture dynamically enables
+or disables monitoring in order to meet real-time deadlines.
 
 % Monitoring Soft Drop
 Finally, soft real-time and interactive systems do not require strict timing guarantees
 but still look to achieve timely execution of programs. Thus, by building on
 our work in applying monitoring to hard real-time systems, we created an
-architecture that enables a adjustable overheads by trading off monitoring coverage
+architecture that enables adjustable overheads by trading off monitoring coverage
 (Chapter~\ref{chap:monitoring_dift_drop}). 
 
 \section{Energy-Efficient Hardware Architectures for Real-Time Systems}
@@ -115,30 +130,30 @@ Traditional managers for these resource allocation techniques, such as DVFS,
 work in a best effort manner. They operate under the assumption that better
 performance is desired and only attempt to decrease resources when the
 performance impact is minimal.  However, many applications or jobs have
-response-time requirements.  Finishing faster than this response-time
+response-time deadlines. Finishing faster than this response-time
 requirement has no benefit. For example, responding to a user input faster than
 human reaction time does not improve user experience. Similarly, decoding video
 frames faster than the video frame rate has no added benefit. 
 
-In this thesis, we take advantage of this slack in order to save energy without
-impacting user experience. Specifically, we present a method to prediction job
-execution time and use this to allocate resources in order to meet deadlines
-with minimal energy (Chapter~\ref{chap:exec_time_prediction}). We instrument a
-job in order to count the number of times loops and conditionals are
-taken. From this, we construct a program slice to create a lightweight code
-segment to calculate these features without performing the actual job
-computation. These features are used in a linear model to predict the execution
-time. By running this program slice before a job, the execution time can be
-predicted. With this prediction, we set the DVFS point appropriately to
-minimize energy usage while meeting the user response deadline.
+For these soft real-time systems, we can take advantage of this slack in order
+to save energy without impacting user experience. In this thesis, we present a
+method to predict the appropriate DVFS operating point for tasks in order to
+meet deadlines with minimal energy (Chapter~\ref{chap:exec_time_prediction}).
+This prediction needs to take into account the effect of inputs and program
+state in order to account for dynamic variations in task execution time. We
+show how this is possible through static analysis of task source code in order
+to generate task-specific predictors for DVFS control.
 
 \section{Organization}
 The rest of the thesis is organized as follows.
-Chapter~\ref{chap:monitoring_wcet} discusses the static analysis of run-time
-monitoring for hard real-time systems. Chapter~\ref{chap:monitoring_hard_drop}
-describes a dynamic scheme for implementing run-time monitoring on hard
-real-time systems. Chapter~\ref{chap:monitoring_dift_drop} extends this schemes
-to other applications with soft rather than hard deadlines.
+Chapters~\ref{chap:monitoring_wcet}, \ref{chap:monitoring_hard_drop}, and
+\ref{chap:monitoring_dift_drop} discuss our work on improving system security
+and reliability through run-time monitoring on real-time systems. 
+%Chapter~\ref{chap:monitoring_wcet} discusses the static analysis of run-time
+%monitoring for hard real-time systems. Chapter~\ref{chap:monitoring_hard_drop}
+%describes a dynamic scheme for implementing run-time monitoring on hard
+%real-time systems. Chapter~\ref{chap:monitoring_dift_drop} extends this schemes
+%to other applications with soft rather than hard deadlines.
 Chapter~\ref{chap:exec_time_prediction} presents our work on creating
 energy-efficient real-time systems. Finally, Chapter~\ref{chap:related_work}
 discusses related work and Chapter~\ref{chap:conclusion} concludes the thesis.
