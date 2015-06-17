@@ -1,6 +1,20 @@
 \section{WCET Analysis}
 \label{sec:monitoring_wcet.wcet}
 
+\subsection{Analysis Assumptions}
+
+Our WCET analysis focuses on the interaction between the main core and the
+monitoring core through a FIFO with an assumption that each core has its own
+memory. Therefore, there is no interference between the two cores on memory
+accesses. This configuration applies for typical multi-core embedded
+microprocessors or a small monitor with a dedicated memory that is attached to
+a large core. The main core is assumed to not exhibit timing anomalies. This is
+required so that the worst-case monitoring stall cycles can be assumed to
+produce the WCET on the main core.  We do not make any other assumptions on the
+microarchitecture of each processing core. However, we assume that the WCET of
+a main task and a monitoring task on the given processing cores can be
+estimated individually using traditional WCET techniques.
+
 \subsection{Implicit Path Enumeration}
 \label{sec:monitoring_wcet.wcet.ipet}
 

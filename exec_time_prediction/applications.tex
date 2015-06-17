@@ -1,37 +1,37 @@
 \section{Execution Time Variation in Interactive Applications}
 \label{sec:exec_time_prediction.applications}
 
-\subsection{Tasks and Jobs}
-
-% Tasks and jobs
-\begin{figure}
-  \begin{center}
-    \includegraphics{exec_time_prediction/figs/jobs.pdf}
-    \caption{Example of tasks, jobs, and deadlines.}
-    \label{fig:exec_time_prediction.applications.jobs}
-  \end{center}
-\end{figure}
-
-We define a \emph{task} as a portion of an application that has an associated
-response-time requirement. We refer to the time period in which it must
-complete as its \emph{time budget}. For example, games are typically written
-with a main task that handles reading user input, updating game state, and
-displaying the output. In order to maintain a certain frame rate (e.g., 30
-frames per second), this task must finish within the frame period budget (e.g.,
-33 milliseconds for 30 frames per second operation).
-
-We define a \emph{job} as a dynamic instance of a task.
-Figure~\ref{fig:exec_time_prediction.applications.jobs} shows how a task maps
-to multiple jobs. Each job has a deadline which is the time by which it must
-finish execution. For example, for a game running at 30 frames-per-second, 30
-jobs for the game loop task are run each second. Each of these jobs has a
-deadline which is 33 milliseconds after the job's start time. These jobs all
-correspond to the same set of static task code, but their dynamic behavior
-differs due to different inputs and program state. For example, one job may see
-that the user has pressed a button and thus execute code to process this button
-press. Other jobs may see no new user input and skip the need to process user
-input.  As a result, job execution times can vary depending on input and
-program state.
+%\subsection{Tasks and Jobs}
+%
+%% Tasks and jobs
+%\begin{figure}
+%  \begin{center}
+%    \includegraphics{exec_time_prediction/figs/jobs.pdf}
+%    \caption{Example of tasks, jobs, and deadlines.}
+%    \label{fig:exec_time_prediction.applications.jobs}
+%  \end{center}
+%\end{figure}
+%
+%We define a \emph{task} as a portion of an application that has an associated
+%response-time requirement. We refer to the time period in which it must
+%complete as its \emph{time budget}. For example, games are typically written
+%with a main task that handles reading user input, updating game state, and
+%displaying the output. In order to maintain a certain frame rate (e.g., 30
+%frames per second), this task must finish within the frame period budget (e.g.,
+%33 milliseconds for 30 frames per second operation).
+%
+%We define a \emph{job} as a dynamic instance of a task.
+%Figure~\ref{fig:exec_time_prediction.applications.jobs} shows how a task maps
+%to multiple jobs. Each job has a deadline which is the time by which it must
+%finish execution. For example, for a game running at 30 frames-per-second, 30
+%jobs for the game loop task are run each second. Each of these jobs has a
+%deadline which is 33 milliseconds after the job's start time. These jobs all
+%correspond to the same set of static task code, but their dynamic behavior
+%differs due to different inputs and program state. For example, one job may see
+%that the user has pressed a button and thus execute code to process this button
+%press. Other jobs may see no new user input and skip the need to process user
+%input.  As a result, job execution times can vary depending on input and
+%program state.
 
 \subsection{Variations in Execution Time}
 
