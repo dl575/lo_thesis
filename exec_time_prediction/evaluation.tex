@@ -284,3 +284,123 @@ the benchmarks we tested, an under-predict penalty weight of 100 provided good
 energy savings without sacrificing deadline misses. The results in this chapter
 have been shown with a weight of 100.
 
+\subsection{Heterogeneous Cores}
+
+% Motivation for heterogeneous cores
+Recent architectures have introduced the use of heterogeneous CPU cores in
+order to better match application needs. For example, ARM's big.LITTLE
+architecture couples a set of large, fast cores (e.g., Cortex-A15) with a set
+of small, energy-efficient cores (e.g., Cortex-A7). The big cores can be used
+for tasks which need high performance while the little cores can be used to
+save energy on performance-insensitive tasks. These additional operating points
+can be taken advantage of with our prediction-based to provide a wider range of
+operating points, providing greater energy savings at slower operating points
+and/or less deadline misses using faster operating points. In this section, we
+explore the possible effects of such an architecture using first-order
+analytical models.
+
+% Modification of prediction algorithm
+The majority of our prediction-based methodology can be applied, unchanged, to
+scheduling resources with heterogeneous cores. In addition to selecting an
+appropriate frequency, the algorithm must select whether to run on the little
+or big core. The first two steps of our methodology, generating program
+features and predicting execution time (see
+Figure~\ref{fig:exec_time_prediction.prediction.prediction_flow}, remain
+unchanged. We modify the last step, predicting frequency, to predict both core
+type and frequency. This is done by extending our simple linear model of
+frequency-based performance scaling of a single core to be a pair of linear
+models. The big core is modeled as a constant factor faster than the little
+core. Based on our benchmarking on the ODROID-XU3, the big core is, on average,
+2x faster than the little core.
+
+% Evaluation setup
+In order to evaluate the effects of heterogeneous cores and DVFS scaling, we
+collected traces of jobs and execution times while running at maximum frequency
+on the big and little cores of the ODROID-XU3. For our models, we assume that
+execution time scales linearly with frequency and that energy scales
+quadratically with frequency. Switching time between cores can be as low as
+20,000 cycles \cite{cho-12} which corresponds to only 20 microseconds at 1 GHz.
+As this switching time is small compared to our deadlines, we ignore the
+switching time overhead. Note that this cited switching time only accounts for
+the dead time when instructions cannot be run and does not account for cold
+cache misses on the new core and syscall overheads to initiate the core
+migration. However, we note that including switching overheads of several
+milliseconds in our modeling results did not qualitatively change the results.
+We model the power usage of the big core as approximately 3x larger than the
+little core running at the same frequency using microbenchmarking results.
+
+% Little-only vs. Big-little
+\begin{figure*}
+  \begin{center}
+  \begin{subfigure}[Energy]{
+    \includegraphics{exec_time_prediction/data/hetero_little_energy.pdf}
+    \label{fig:exec_time_prediction.evaluation.littleonly_energy}
+  }
+  \end{subfigure}
+  \begin{subfigure}[Deadline Misses]{
+    \includegraphics{exec_time_prediction/data/hetero_little_deadline_misses.pdf}
+    \label{fig:exec_time_prediction.evaluation.littleonly_deadline_misses}
+  }
+  \end{subfigure}
+  \begin{subfigure}[Switch Count]{
+    \includegraphics{exec_time_prediction/data/hetero_little_switch_count.pdf}
+    \label{fig:exec_time_prediction.evaluation.littleonly_switch_count}
+  }
+  \end{subfigure}
+
+  \caption{Little-only versus Big-Little}
+  \label{fig:exec_time_prediction.evaluation.littleonly}
+  \end{center}
+\end{figure*}
+
+% Results littleonly
+We first compare the case of running only on a little core versus having a big
+and little core. We set the budget based on the worst-case execution time
+while running at maximum frequency. We show results for time budgets 0.6x,
+0.8x, and 1.0x of the worst-case execution time.
+Figure~\ref{fig:exec_time_prediction.evaluation.littleonly_energy} shows the
+energy usage normalized to running at a constant frequency. This constant
+frequency is the minimum needed to meet all deadlines.
+Figure~\ref{fig:exec_time_prediction.evaluation.littleonly_deadline_misses}
+shows the deadline misses and
+Figure~\ref{fig:exec_time_prediction.evaluation.littleonly_switch_count} shows
+the percentage of jobs which switch cores (i.e., from big to little or vice
+versa). We see that for budgets tighter than 1.0x, deadline misses begin to
+occur when only using the little core. However, by introducing the big core, we
+are able to run at faster operating points and eliminate these deadline misses.
+This does come at increased energy usage.
+
+% Little-only vs. Big-little
+\begin{figure*}
+  \begin{center}
+  \begin{subfigure}[Energy]{
+    \includegraphics{exec_time_prediction/data/hetero_big_energy.pdf}
+  }
+  \end{subfigure}
+  \begin{subfigure}[Deadline Misses]{
+    \includegraphics{exec_time_prediction/data/hetero_big_deadline_misses.pdf}
+  }
+  \end{subfigure}
+  \begin{subfigure}[Switch Count]{
+    \includegraphics{exec_time_prediction/data/hetero_big_switch_count.pdf}
+  }
+  \end{subfigure}
+
+  \caption{Big-only versus Big-Little}
+  \label{fig:exec_time_prediction.evaluation.bigonly}
+  \end{center}
+\end{figure*}
+
+% Results bigonly
+We also compare the case of running only on a big core versus having big and
+little cores. Figure~\ref{fig:exec_time_prediction.evaluation.bigonly} shows
+the results for this setup. We see that almost no deadline misses occur in any
+case, because the faster big core is able to meet all deadlines. However, lower
+energy can be achieved by introducing the little core, allowing lower energy
+operating points than the big core running at minimum frequency.
+
+% Conclusions
+These results show that improved energy savings and/or reduced deadline misses
+can be achieved by taking advantage of heterogeneous cores. In addition, our
+prediction-based methodology can be easily extended to select operating points
+on such a system.
