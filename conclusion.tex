@@ -1,2 +1,51 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
+
+% Summary
+Traditionally, real-time requirements have been handled at the software level,
+with the hardware being agnostic to these timing requirements. However,
+hardware operation can affect timing in ways that are not always exposed to
+software. In addition, opportunities exist for better designs by exposing these
+timing requirements to hardware. In this thesis, we have addressed some of the
+challenges and explored some of the opportunities for the hardware design of
+real-time systems.
+
+% Security
+We have explored how to apply run-time monitoring techniques for improving
+security and reliability to real-time systems. We have developed a method
+to estimate the worst-case execution time (WCET) of run-time monitoring,
+allowing it to be accounted for in real-time scheduling and analysis frameworks
+(Chapter~\ref{chap:monitoring_wcet}). Our estimated bounds for run-time
+monitoring are within 71\% of observed worst-case performance, similar to the
+baseline tools which show up to 52\% differences between simulations and WCET
+estimates. We have also developed architectures for applying run-time
+monitoring to existing systems with hard real-time deadlines
+(Chapter~\ref{chap:monitoring_hard_drop}) or soft performance constraints
+(Chapter~\ref{chap:monitoring_dift_drop}). For hard real-time systems, we show
+that an average of 15-66\% of monitoring checks, depending on the monitoring
+scheme, can be performed with no impact on WCET. Similarly, for
+performance-constrained systems, we show average monitoring coverage of 14-85\%
+with significantly reduced performance impact compared to performing full
+monitoring.
+
+% Energy-efficiency
+We have also explored some of the opportunities for reducing the energy usage
+of real-time systems. We have shown how soft real-time requirements can be used
+to inform the dynamic voltage and frequency scaling of hardware. By developing
+a prediction-based DVFS controller, we showed how the appropriate frequency
+could be selected for each job in order to minimize energy while meeting its
+deadline requirement.  Our experiments showed 56\% average energy savings with
+our DVFS controller.
+
+% Closing thoughts
+As computing systems become more widespread and more deeply embedded in our
+daily lives, their real-time interactions will become increasingly important.
+In this thesis, we have explored the use of modern hardware techniques for
+improving system security, reliability, and energy-efficiency in the context of
+real-time systems. New hardware techniques for improving computer systems are
+continually being proposed, especially as we face new challenges with
+energy-efficiency and the slowing of Moore's Law. In addition, computing
+systems continue to become more deeply in our daily lives. As a result,
+designing hardware with real-time requirements will continue to be an avenue of
+future research.
+
