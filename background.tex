@@ -16,13 +16,13 @@ Chapters~\ref{chap:monitoring_wcet}, \ref{chap:monitoring_hard_drop}, and
 % Tasks and jobs
 \begin{figure}
   \begin{center}
-    \includegraphics{exec_time_prediction/figs/jobs.pdf}
+    \includegraphics{figs/jobs.pdf}
     \caption{Example of tasks, jobs, and deadlines.}
-    \label{fig:exec_time_prediction.applications.jobs}
+    \label{fig:background.rts.jobs}
   \end{center}
 \end{figure}
 
-A real-time system application is typically specified as a set of \emph{tasks}
+A real-time application is typically specified as a set of \emph{tasks}
 which have timing requirements. We refer to the time period in which a task
 must complete as its \emph{time budget}. For example, games are typically
 written with a main task that handles reading user input, updating game state,
@@ -31,7 +31,7 @@ frames per second), this task must finish within the frame period budget (e.g.,
 33 milliseconds for 30 frames per second operation).
 
 We define a \emph{job} as a dynamic instance of a task.
-Figure~\ref{fig:exec_time_prediction.applications.jobs} shows how a task maps
+Figure~\ref{fig:background.rts.jobs} shows how a task maps
 to multiple jobs. Each job has a \emph{deadline} which is the time by which it must
 finish execution. For example, for a game running at 30 frames-per-second, 30
 jobs for the game loop task are run each second. Each of these jobs has a
@@ -69,7 +69,21 @@ the slack time that is only available at run-time.
 \section{Run-Time Monitoring}
 \label{sec:background.monitoring}
 
-\subsection{Architecture Overview}
+\subsection{Overview}
+
+Run-time monitoring techniques have been shown to be useful for improving the
+security and reliability of computer systems. The basic idea behind run-time
+monitoring techniques is to observe the run-time operation of programs and
+check that certain invariants are met or identify anomalous behavior. A wide
+variety of checks have been proposed including fine-grained memory protection
+\cite{mondrian-asplos02}, information flow tracking \cite{dift-asplos04,
+testudo-micro08}, etc. Section~\ref{sec:background.monitoring.arch} discusses
+the hardware architecture for implementing run-time monitoring and
+Section~\ref{sec:background.monitoring.example} walks through how an example
+array bounds check operates.
+
+\subsection{Hardware Architecture}
+\label{sec:background.monitoring.arch}
 
 % Parallel programmable monitoring
 There are several options on how to implement run-time monitoring.
@@ -91,24 +105,24 @@ parallel hardware monitors.
 % Monitoring architecture
 \begin{figure}
   \begin{center}
-    \includegraphics[width=3.5in]{monitoring_wcet/figs/arch.pdf}
+    \includegraphics[width=3.5in]{figs/arch.pdf}
     \caption{Parallel monitoring architecture model.}
-    \label{fig:monitoring_wcet.monitoring.arch} 
+    \label{fig:background.monitoring.arch} 
   \end{center}
 \end{figure}
 
 % Automatically forward instructions
 \begin{figure}
   \begin{center}
-    \includegraphics{monitoring_wcet/figs/forwarding.pdf}
+    \includegraphics{figs/forwarding.pdf}
     \caption{The main core pipeline is modified to forward information on certain
     instruction types.}
-    \label{fig:monitoring_wcet.monitoring.forwarding}
+    \label{fig:background.monitoring.forwarding}
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:monitoring_wcet.monitoring.arch} shows a model of the
-run-time parallel monitoring architecture that is assumed in this thesis. The
+Figure~\ref{fig:background.monitoring.arch} shows a model of the
+parallel run-time monitoring architecture that is assumed in this thesis. The
 architecture consists of two parallel processing elements, main and monitoring
 cores, which are loosely coupled with a FIFO buffer.  The main core runs a
 computation task, called the {\em main task}, which performs the original
@@ -120,7 +134,7 @@ core as {\em forwarded instructions} or {\em monitored instructions}. The
 forwarded instructions are determined based on a particular monitoring
 technique, and are sent by the main core transparently without explicit
 instructions added to the main task.
-Figure~\ref{fig:monitoring_wcet.monitoring.forwarding} shows how an example
+Figure~\ref{fig:background.monitoring.forwarding} shows how an example
 main core pipeline can be modified to automatically forward information when
 instructions of certain types are committed. When an instruction commits, a
 comparator checks whether the opcode of the committed instruction is one that
@@ -146,10 +160,10 @@ user, or switching to a simple, more trusted main task \cite{sha-simplex-sw01}.
 % Pipeline diagram to show stalls
 \begin{figure}
   \begin{center}
-    \includegraphics{monitoring_wcet/figs/pipeline.pdf}
+    \includegraphics{figs/pipeline.pdf}
     \caption{Pipeline diagram of monitoring. The main core stalls due to the
     slower throughput of the monitor.}
-    \label{fig:monitoring_wcet.monitoring.pipeline}
+    \label{fig:background.monitoring.pipeline}
   \end{center}
 \end{figure}
 
@@ -161,7 +175,7 @@ every forwarded instruction of the main task
 takes several instructions to monitor, the monitoring core is not always able to keep
 up with the throughput of monitoring events generated by the main core.  Thus,
 when the FIFO is full, the main core is forced to stall on monitoring events.
-Figure~\ref{fig:monitoring_wcet.monitoring.pipeline} shows an example
+Figure~\ref{fig:background.monitoring.pipeline} shows an example
 execution where a series of instructions are monitored. In this simple example,
 the FIFO only has 2 entries and it takes the monitoring task 2 cycles to
 process a monitoring event. For simplicity, only the commit stage of the main
@@ -175,8 +189,8 @@ stalls} and the number of cycles stalled as \emph{monitoring stall cycles}. In
 the example code sequence shown, three monitoring stall cycles occur, two for
 instruction 4 and one for instruction 5.
 
-\subsection{Example Monitoring Scheme}
-\label{sec:monitoring_wcet.monitoring.example}
+\subsection{Example: Array Bounds Check}
+\label{sec:background.monitoring.example}
 
 There are many possible monitoring schemes that can be implemented on this type
 of fine-grained parallel monitoring architecture such as memory protection
@@ -196,13 +210,13 @@ instructions to track the corresponding array pointers.
 % Example monitor (BC)
 \begin{figure}
   \begin{center}
-    \includegraphics{monitoring_wcet/figs/example_full.pdf}
+    \includegraphics{figs/example_full.pdf}
     \caption{Example of array bounds check monitor.}
-    \label{fig:monitoring_wcet.monitoring.example_full}
+    \label{fig:background.monitoring.example_full}
   \end{center}
 \end{figure} 
 
-Figure~\ref{fig:monitoring_wcet.monitoring.example_full} shows an example
+Figure~\ref{fig:background.monitoring.example_full} shows an example
 pseudo-code segment, its assembly level instructions, and the corresponding
 monitoring operations for an array bounds check monitor.  First, an array {\tt
 x} is allocated using {\tt malloc} (line 1).  As {\tt malloc} returns the
