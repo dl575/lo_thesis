@@ -94,7 +94,7 @@ execution time of tasks in order to guarantee schedulability. Thus, we first
 developed a static analysis method to estimate the worst-case execution time
 (WCET) impact of parallel run-time monitoring for real-time systems
 (Chapter~\ref{chap:monitoring_wcet}). This allows run-time monitoring to be
-enabled if the there is enough static slack in a real-time system's schedule.
+enabled if there is enough static slack in a real-time system's schedule.
 Our analysis works by extending the traditional integer-linear programming
 (ILP) formulation used for estimating WCET by adding new constraints in order
 to model the impact of run-time monitoring.
@@ -119,12 +119,10 @@ architecture that enables adjustable overheads by trading off monitoring coverag
 \label{sec:intro.energy}
 
 For modern mobile and embedded systems, energy usage is a major concern due to
-limited battery life. Energy is also an important concern for servers and
-datacenters due to their significant contribution to operating costs.
-Techniques, such as dynamic frequency and voltage scaling (DVFS) and
-heterogeneous core mixes, have been developed to enable a trade off between
-power and performance. These resource allocation techniques can be used to
-reduce energy usage at the cost of increased execution time.
+limited battery life. Techniques, such as dynamic frequency and voltage scaling
+(DVFS) and heterogeneous core mixes, have been developed to enable a trade off
+between power and performance. These resource allocation techniques can be used
+to reduce energy usage at the cost of increased execution time.
 
 Traditional managers for these resource allocation techniques, such as DVFS,
 work in a best effort manner. They operate under the assumption that better
