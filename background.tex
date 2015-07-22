@@ -52,8 +52,9 @@ program state.
   \end{center}
 \end{figure}
 
-There are several times of interest for a job when dealing with real-time
-systems (see Figure~\ref{fig:background.rts.timings}). The time that it takes a
+There are several time periods involved with the execution of a job in a
+real-time system (see Figure~\ref{fig:background.rts.timings}).
+The time that it takes a
 job to finish is its \emph{actual execution time}. The worst-case execution
 time of the task across all possible inputs and initial states is its
 \emph{actual worst-case execution time (WCET)}. Tasks are statically analyzed
@@ -74,7 +75,7 @@ the slack time that is only available at run-time.
 Run-time monitoring techniques have been shown to be useful for improving the
 security and reliability of computer systems. The basic idea behind run-time
 monitoring techniques is to observe the run-time operation of programs and
-check that certain invariants are met or identify anomalous behavior. A wide
+check that certain invariants are met in order to identify anomalous behavior. A wide
 variety of checks have been proposed including fine-grained memory protection
 \cite{mondrian-asplos02}, information flow tracking \cite{dift-asplos04,
 testudo-micro08}, etc. Section~\ref{sec:background.monitoring.arch} discusses
@@ -98,8 +99,8 @@ fixed hardware loses the programmability of software. A fixed hardware
 implementation cannot be updated and cannot change the type of run-time
 monitoring performed. Thus, recent studies have proposed using programmable
 parallel hardware, such as extra cores in a multi-core system or FPGA
-coprocessors, for monitoring \cite{chen08-lba, flexcore-micro10,
-harmoni-dsn12}. Our work in this thesis is targeted at these programmable
+coprocessors \cite{chen08-lba, flexcore-micro10,
+harmoni-dsn12}, for monitoring. Our work in this thesis is targeted at these programmable
 parallel hardware monitors.
 
 % Monitoring architecture
@@ -153,9 +154,10 @@ maintain metadata corresponding to each memory location ({\tt
 mem\_metadata[addr]}) and register ({\tt rf\_metadata[reg\_id]}) of the main
 core.  If the monitoring scheme detects an inconsistent or undesired behavior
 in the sequence of monitoring events, then an error is detected. We do not
-focus here on how to handle such an error. However, there are several options
-on how to handle such an error such as raising an exception, notifying the
-user, or switching to a simple, more trusted main task \cite{sha-simplex-sw01}.
+focus here on how to handle an error. However, there are several options
+on how to handle an error, depending on the monitoring scheme, such as raising
+an exception, notifying the user, or switching to a simple, more trusted main
+task \cite{sha-simplex-sw01}.
 
 % Pipeline diagram to show stalls
 \begin{figure}
@@ -183,7 +185,7 @@ core pipeline is shown.  After the 4th instruction ({\tt ADD}) is committed by
 the main core, the FIFO is full and the monitoring core is busy. Thus, in order
 to not miss information about a monitoring event, the main core must stall
 before continuing execution and committing the 5th instruction ({\tt STR}).
-These stalls due to the mismatch in throughput are a major source of overhead.
+These stalls due to the mismatch in throughput are a major source of performance overhead.
 We refer to these stalls of the main core due to monitoring as \emph{monitoring
 stalls} and the number of cycles stalled as \emph{monitoring stall cycles}. In
 the example code sequence shown, three monitoring stall cycles occur, two for

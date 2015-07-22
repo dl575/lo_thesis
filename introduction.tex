@@ -29,8 +29,8 @@ analysis of real-time systems including real-time scheduling algorithms
 In order to guarantee that deadlines are met, these systems are typically
 designed conservatively so that even in the worst-case tasks will not exceed
 their deadlines. As a result, in the average or typical case, tasks finish
-before their deadline. This results in unused slack time between the task
-finish and the deadline. One option to reclaim this unused time is to use it
+before their deadline. This results in unused slack time between the time when the task 
+finishes and the deadline. One option to reclaim this unused time is to use it
 for non-real-time (e.g., best effort) tasks. In this thesis, we explore the
 software/hardware co-design of real-time systems in order to take advantage of
 slack using modern hardware features. Specifically, we explore two angles for
@@ -52,7 +52,7 @@ efficiency by adjusting hardware resource allocations.
 \label{sec:intro.security}
 
 % Run-time monitoring is useful
-One potential use of extra time is for improving system security and
+One potential use of slack is for improving system security and
 reliability by monitoring and checking run-time behavior.
 Run-time monitoring techniques have been shown to be useful for improving the
 reliability, security, and debugging capabilities of computer systems. For
@@ -90,12 +90,13 @@ real-time systems.
 
 % Monitoring WCET
 Traditional real-time systems design requires estimation of the worst-case
-execution time of tasks in order to guarantee schedulability. Thus, we first
-developed a static analysis method to estimate the worst-case execution time
-(WCET) impact of parallel run-time monitoring for real-time systems
+execution time (WCET) of tasks in order to guarantee schedulability. In order to
+enable run-time monitoring to be applied to traditional real-time design flows,
+an estimate of its impact on worst-case execution time is needed. Thus, we
+first developed a static analysis method to estimate the WCET impact of monitoring
 (Chapter~\ref{chap:monitoring_wcet}). This allows run-time monitoring to be
 enabled if there is enough static slack in a real-time system's schedule.
-Our analysis works by extending the traditional integer-linear programming
+Our analysis extends the traditional integer-linear programming
 (ILP) formulation used for estimating WCET by adding new constraints in order
 to model the impact of run-time monitoring.
 
@@ -110,7 +111,7 @@ or disables monitoring in order to meet real-time deadlines.
 
 % Monitoring Soft Drop
 Finally, soft real-time and interactive systems do not require strict timing guarantees
-but still look to achieve timely execution of programs. Thus, by building on
+but still look to achieve timely execution of programs. For these systems, by building on
 our work in applying monitoring to hard real-time systems, we created an
 architecture that enables adjustable overheads by trading off monitoring coverage
 (Chapter~\ref{chap:monitoring_dift_drop}). 
@@ -120,14 +121,15 @@ architecture that enables adjustable overheads by trading off monitoring coverag
 
 For modern mobile and embedded systems, energy usage is a major concern due to
 limited battery life. Techniques, such as dynamic frequency and voltage scaling
-(DVFS) and heterogeneous core mixes, have been developed to enable a trade off
+(DVFS) and core migration, have been developed to enable a trade off
 between power and performance. These resource allocation techniques can be used
 to reduce energy usage at the cost of increased execution time.
 
 Traditional managers for these resource allocation techniques, such as DVFS,
 work in a best effort manner. They operate under the assumption that better
 performance is desired and only attempt to decrease resources when the
-performance impact is minimal.  However, many applications or jobs have
+performance impact is minimal or when power or thermal limits are reached.
+However, many applications or jobs have
 response-time deadlines. Finishing faster than this response-time
 requirement has no benefit. For example, responding to a user input faster than
 human reaction time does not improve user experience. Similarly, decoding video
@@ -139,7 +141,7 @@ method to predict the appropriate DVFS operating point for tasks in order to
 meet deadlines with minimal energy (Chapter~\ref{chap:exec_time_prediction}).
 This prediction needs to take into account the effect of inputs and program
 state in order to account for dynamic variations in task execution time. We
-show how this is possible through static analysis of task source code in order
+show how this is possible through analysis of task source code in order
 to generate task-specific predictors for DVFS control.
 
 \section{Organization}
@@ -147,13 +149,9 @@ The rest of the thesis is organized as follows.
 Chapter~\ref{chap:background} discusses some background knowledge and
 terminology that will be used throughout the thesis.
 Chapters~\ref{chap:monitoring_wcet}, \ref{chap:monitoring_hard_drop}, and
-\ref{chap:monitoring_dift_drop} discuss our work on improving system security
+\ref{chap:monitoring_dift_drop} discuss techniques on improving system security
 and reliability through run-time monitoring on real-time systems. 
-%Chapter~\ref{chap:monitoring_wcet} discusses the static analysis of run-time
-%monitoring for hard real-time systems. Chapter~\ref{chap:monitoring_hard_drop}
-%describes a dynamic scheme for implementing run-time monitoring on hard
-%real-time systems. Chapter~\ref{chap:monitoring_dift_drop} extends this schemes
-%to other applications with soft rather than hard deadlines.
-Chapter~\ref{chap:exec_time_prediction} presents our work on creating
-energy-efficient real-time systems. Finally, Chapter~\ref{chap:related_work}
+Chapter~\ref{chap:exec_time_prediction} presents predictive control of resource
+allocation for creating energy-efficient real-time systems.
+Finally, Chapter~\ref{chap:related_work}
 discusses related work and Chapter~\ref{chap:conclusion} concludes the thesis.
