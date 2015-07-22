@@ -82,7 +82,7 @@ compared to the prediction slice generated for the ARM LITTLE core. In
 addition, the differences in predicted execution times using the prediction
 slice generated for the platform and using the prediction slice from the ARM
 LITTLE core are shown. 
-For the ARM big core, only one benchmark shows differences in feature selected
+For the ARM big core, only one benchmark shows differences in features selected
 with the resulting difference in prediction times being only 0.1\% on average.
 For the x86-based platform, four benchmarks show differences in features
 selected. In two of these cases, the predicted execution times are not
@@ -113,14 +113,16 @@ combined to form the \emph{DVFS predictor} or simply \emph{predictor} There are
 several options for how to run the predictor in relation to jobs.
 Figure~\ref{fig:exec_time_prediction.system.predictor_operation} shows some of
 these options.  The simplest approach is to run the slice just before the
-execution of a job. This uses up part of the time budget to perform slicing, as
+execution of a job. This uses up part of the time budget to execute the predictor, as
 mentioned in Section~\ref{sec:exec_time_prediction.prediction.dvfs}. However,
 if this time is low, then the impact is minimal.
 
 An alternative option would be to run the predictors and jobs in a parallel,
 pipelined manner such that during job $i$, the predictor for job $i+1$ is run.
 This ensures that the DVFS decision is ready at the start of a job with no
-impact on time budget from the predictor.  However, this assumes that
+impact on time budget from the predictor. Due to the longer time budget,
+running in a pipelined manner can save more energy than running in a sequential
+manner. However, this assumes that
 information needed by the prediction slice, specifically the job inputs and
 program state, is ready one job in advance. This is not possible for
 interactive tasks which depend on real-time user inputs or tasks which are not
@@ -129,15 +131,18 @@ periodic.
 The predictor could also be run in parallel with the task. This avoids the
 issue of needing input values early. In terms of time budget, this mode of
 operation still reduces the effective budget by the predictor execution time.
-However, part of the task also executes during the prediction time. By
-accounting for this, the energy savings may be higher than running in a
-sequential manner. Running in parallel also avoids the issue of side-effects
+However, part of the task also executes during the prediction time, so the
+remaining work to be done is also reduced. Thus, this could still lead to
+higher energy savings than running in a sequential manner.
+Running in parallel also avoids the issue of side-effects
 caused by the prediction slice that was discussed in
 Section~\ref{sec:exec_time_prediction.prediction.features}. However, running in
 parallel either requires forking off the predictor for each job or sharing data
 with a dedicated predictor thread, both of which can introduce overhead.
 
 For our target applications, we found that the execution time of the predictor
-was low. Thus, we decided to run the predictor and task in a sequential manner.
+was low. Thus, we decided to run the predictor and task in a sequential manner
+(i.e., ``Sequential'' in
+Figure~\ref{fig:exec_time_prediction.system.predictor_operation})
 For applications which require more complicated predictors, these alternative
 operation modes may be beneficial.

@@ -292,7 +292,7 @@ order to allow a wider power-performance trade-off range. For example, ARM's
 big.LITTLE architecture couples a set of fast out-of-order cores (e.g.,
 Cortex-A15) with a set of energy-efficient in-order cores (e.g., Cortex-A7).
 These additional operating points can be taken advantage of with our
-prediction-based to provide a wider range of operating points, providing
+prediction-based scheme to provide a wider range of operating points, providing
 greater energy savings by using slower operating points and/or less deadline
 misses by using faster operating points. In this section, we explore the
 possible effects of such an architecture using first-order analytical models.
@@ -305,8 +305,8 @@ The majority of our prediction-based methodology can be applied, unchanged, to
 scheduling resources with heterogeneous cores. The first two steps of our
 methodology (see
 Figure~\ref{fig:exec_time_prediction.prediction.prediction_flow}), generating
-program features and predicting execution time , remain unchanged. We modify
-the last step, predicting frequency, to instead predict both core type and
+program features and predicting execution time, remain unchanged. We modify
+the last step, choosing the target frequency, to instead select both core type and
 frequency.  This is done by extending our simple linear model of
 frequency-based performance scaling of a single core to be a pair of linear
 models. For our experiments, we model the big core as a constant factor faster
@@ -374,8 +374,9 @@ Table~\ref{tab:exec_time_prediction.evaluation.model_params} shows the DVFS
 levels used for each core. Switching between cores introduces overheads. For
 ARM's big.LITTLE architecture, this switching time has been reported to be as
 low as 20,000 cycles (\cite{cho-12}) which corresponds to 20 microseconds at 1
-GHz. As this time is an over an order-of-magnitude lower than the times we are
-considering, our first-order model does not account for switching overheads.
+GHz. As this switching time is an over an order-of-magnitude lower than the
+time budgets we are considering, our first-order model does not account for
+switching overheads.
 
 % Basic trade-offs from the model
 \begin{figure*}
@@ -413,10 +414,10 @@ the energy for each frequency setting. At the same frequency, the little core
 uses less energy than the big core. Finally,
 Figure~\ref{fig:exec_time_prediction.evaluation.hetero_energy_time} directly
 shows the trade-off between energy and execution time for each core at the
-various frequency levels. Only the big core is able to achieve low execution
+various frequency levels. Only the big core is able to achieve the lowest execution
 times. On the other hand, when longer execution times are adequate, the little
 core is able to scale out to lower energies. For execution times that are
-achievable by both cores, we actually see that for the model parameters chosen,
+achievable by both cores, we see that for the model parameters chosen,
 the big core is actually more energy-efficient. This trade-off will be
 different depending on the model parameters $\lambda$ and $\mu$.
 
@@ -451,12 +452,12 @@ used to calculate the energy usage of the resulting allocations.
 We first compare the case of running only on a little core versus having both
 big and little cores.
 Figure~\ref{fig:exec_time_prediction.evaluation.hetero_little_em} shows the
-energy and deadline misses for varying budgets which are normalized to the
+energy and deadline misses for varying time budgets which are normalized to the
 worst-case job execution time for each benchmark running on the little core at
 max frequency. Energy is normalized to running all jobs at maximum frequency on
 the little core and can exceed 100\% due to using the big core. We see that
 introducing the big core can actually reduce energy. This is because running on
-the big core reduces execution time and leads to reduced energy usage, as was
+the big core reduces execution time and leads to reduced energy usage in some cases, as was
 shown in Figure~\ref{fig:exec_time_prediction.evaluation.hetero_energy_time}.
 For a normalized budget of 1, we see an average reduction in normalized energy
 of 31\% by introducing the big core. In addition, for tighter budgets, the
@@ -477,7 +478,7 @@ run on the big core.
     \includegraphics{exec_time_prediction/data/hetero_big_em.pdf}
     \caption{Energy and deadline misses for running with only a big core and
     with both big and little cores for a normalized budget of 1.}
-    \label{fig:exec_time_prediction.evaluation.hetero_little_em}
+    \label{fig:exec_time_prediction.evaluation.hetero_big_em}
   \end{center}
 \end{figure*}
 
@@ -493,7 +494,7 @@ run on the big core.
 
 % Results bigonly
 We also compared the case of running only on a big core versus having big and
-little cores. Figure~\ref{fig:exec_time_prediction.evaluation.bigonly} shows
+little cores. Figure~\ref{fig:exec_time_prediction.evaluation.hetero_big_em} shows
 energy and deadline misses for this setup. As the introduction of the little
 core is for energy savings as opposed to reducing deadline misses, we only show
 results for a normalized budget of 1 which corresponds to the worst-case job

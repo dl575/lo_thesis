@@ -216,8 +216,9 @@ found in literature \cite{xie-pldi03, wu-micro05}:
 where $t$ is the execution time, $T_{mem}$ is the memory-dependent execution
 time that does not scale with frequency, $N_{dependent}$ is the number of CPU
 cycles that do not overlap with memory and scale with frequency, and $f$ is the
-frequency.  In order to verify this linearity assumption, we measured average
-job execution times as frequency was varied.
+frequency.  In order to verify this linearity assumption, we ran our benchmark
+applications at each available frequency level.  We then tested the linear
+correlation between average job time and frequency for each application.
 Figure~\ref{fig:exec_time_prediction.prediction.dvfs_linearity} shows the
 average job execution time versus $1/f$ for ldecode (video decoder
 application). We can see that $t$ and $1/f$ do show a linear relationship. 
