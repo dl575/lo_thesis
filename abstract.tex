@@ -11,9 +11,25 @@ techniques proposed for improving hardware architectures are not designed with
 these real-time constraints in mind. In this thesis, we explore some of the
 challenges and opportunities in hardware design for real-time systems.
 Specifically, we study recent techniques for improving security, reliability,
-and energy-efficiency of computer systems. We analyze and adapt recently
-proposed run-time monitoring techniques for improving security and reliability
-to real-time systems. In addition, we show how to take advantage of dynamic
-voltage and frequency scaling in the presence of timing requirements for
-improved energy-efficiency.
+and energy-efficiency of computer systems. 
+
+Run-time monitoring has been shown to be a promising technique for improving
+system security and reliability. Applying run-time monitoring to real-time
+systems introduces challenges due to the performance impact of monitoring.
+To address this, we first developed a technique for estimating the worst-case
+execution time impact of run-time monitoring, enabling it to be applied within
+existing real-time system design methodologies. Next, we developed hardware
+architectures that selectively enable and disable monitoring in order to meet
+real-time deadlines while still allowing a portion of the monitoring to be
+performed. We show architectures for hard and soft real-time systems, with
+different design decisions and trade-offs for each.
+
+Dynamic voltage and frequency scaling (DVFS) is commonly found in modern
+processors as a way to dynamically trade-off power and performance.
+In the presence of real-time deadlines, this presents an opportunity
+for improved energy-efficiency by slowing down jobs to reduce energy while
+still meeting deadline requirements. We developed a method for creating DVFS
+controllers that are able to predict the appropriate frequency level for tasks
+before they execute and show improved energy savings and reduced deadline
+misses compared to current state-of-the-art DVFS controllers.
 
