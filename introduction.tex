@@ -14,46 +14,68 @@ inherently time-sensitive because of their interaction with users.
 These real-time systems introduce new constraints and trade-offs for computer
 systems design.
 
-Real-time systems are typically specified as a set of tasks which have
-real-time deadlines. Correct operation involves both correct computation of
-outputs as well as finishing tasks before their deadlines.  Deadlines can
-either be considered hard deadlines, where a missed deadline indicates a fatal
-error, or soft deadlines, where a missed deadline results in poor performance
-but is not fatal. Extensive work has been done in the software design and
-analysis of real-time systems including real-time scheduling algorithms
-\cite{rtschedulingsurvey-csur11}, real-time operating systems (RTOS)
+% Challenges of designing real-time systems
+Real-time systems introduce new constraints and trade-offs to system design.
+This is due to the presence of real-time deadlines for tasks.
+Correct operation involves both correct computation of outputs as well as
+completing tasks before their deadlines. Depending on the application,
+deadlines can be either considered hard deadlines, where a missed deadline
+indicates a fatal error, or soft deadlines, where a missed deadline results in
+poor performance but is not fatal. Depending on the type of deadline, the level
+of timing guarantee differs which can affect the design decisions made.
+
+% Thesis statement
+Typically, these systems are designed conservatively so that, even in the
+worst-case, tasks will not exceed their deadlines.  This has been traditionally
+handled at the software layer and there exists extensive work in developing real-time scheduling
+algorithms \cite{rtschedulingsurvey-csur11}, real-time operating systems (RTOS)
 \cite{rtossurvey-micro09, rtossurvey-icesc14}, and worst-case execution time
-(WCET) analysis \cite{wcetsurvey-tecs08}.
+(WCET) analysis techniques \cite{wcetsurvey-tecs08}. On the other hand, modern hardware
+features are typically evaluated and optimized for average-case performance in
+order to apply to general compute workloads. Modern hardware features do not
+take into account the deadlines of the real-time deadline that runs on them.
+In this thesis, we explore the hardware/software co-design of real-time systems
+in order to address the challenges and take advantage of opportunities that
+appear when the underlying hardware is aware of real-time requirements.
 
-% Thesis statement
-In order to guarantee that deadlines are met, these systems are typically
-designed conservatively so that even in the worst-case tasks will not exceed
-their deadlines. As a result, in the average or typical case, tasks finish
-before their deadline. This results in unused slack time between the time when the task 
-finishes and the deadline. One option to reclaim this unused time is to use it
-for non-real-time (e.g., best effort) tasks. In this thesis, we explore the
-software/hardware co-design of real-time systems in order to take advantage of
-slack using modern hardware features. Specifically, we explore two angles for
-improving computer systems. First, we explore the use of modern hardware
-techniques for improving system security and reliability in the context of
-real-time deadlines. Second, we take advantage of slack time to improve energy
-efficiency by adjusting hardware resource allocations.
+% Thesis overview
+Specifically, we explore two modern hardware techniques. First, we explore
+run-time monitoring techniques for improving system security and reliability in
+the context of real-time systems. Second, we look at using real-time deadlines
+to inform dynamic frequency and voltage scaling of hardware for improved energy efficiency.
 
-% Thesis statement
-%On the other hand, traditional techniques proposed for improving
-%hardware architectures are only evaluated for their average-case
-%performance and are not designed to take into account the possibility of timing
-%constraints. This thesis explore the development of hardware
-%architectures that are aware of real-time requirements. Specifically, 
-%we present solutions for applying modern hardware techniques for improving
-%system security, reliability, and energy-efficiency to real-time systems.
+% % Definition of terms
+% Real-time systems are typically specified as a set of tasks which have
+% real-time deadlines. Correct operation involves both correct computation of
+% outputs as well as finishing tasks before their deadlines.  Deadlines can
+% either be considered hard deadlines, where a missed deadline indicates a fatal
+% error, or soft deadlines, where a missed deadline results in poor performance
+% but is not fatal. Extensive work has been done in the software design and
+% analysis of real-time systems including real-time scheduling algorithms
+% \cite{rtschedulingsurvey-csur11}, real-time operating systems (RTOS)
+% \cite{rtossurvey-micro09, rtossurvey-icesc14}, and worst-case execution time
+% (WCET) analysis \cite{wcetsurvey-tecs08}.
+% 
+% % Thesis statement
+% In order to guarantee that deadlines are met, these systems are typically
+% designed conservatively so that even in the worst-case tasks will not exceed
+% their deadlines. As a result, in the average or typical case, tasks finish
+% before their deadline. This results in unused slack time between the time when the task 
+% finishes and the deadline. One option to reclaim this unused time is to use it
+% for non-real-time (e.g., best effort) tasks. In this thesis, we explore the
+% software/hardware co-design of real-time systems in order to take advantage of
+% slack using modern hardware features. Specifically, we explore two angles for
+% improving computer systems. First, we explore the use of modern hardware
+% techniques for improving system security and reliability in the context of
+% real-time deadlines. Second, we take advantage of slack time to improve energy
+% efficiency by adjusting hardware resource allocations.
 
 \section{Secure and Reliable Hardware Architectures for Real-Time Systems}
 \label{sec:intro.security}
 
 % Run-time monitoring is useful
-One potential use of slack is for improving system security and
-reliability by monitoring and checking run-time behavior.
+%One potential use of slack is for improving system security and
+%reliability by monitoring and checking run-time behavior.
 Run-time monitoring techniques have been shown to be useful for improving the
 reliability, security, and debugging capabilities of computer systems. For
 example, Hardbound is a hardware-assisted technique to detect out-of-bound
@@ -101,20 +123,22 @@ Our analysis extends the traditional integer-linear programming
 to model the impact of run-time monitoring.
 
 % Monitoring Hard Drop
-Slack exists not only in the real-time schedule (i.e., static slack) but also
-at run-time due to tasks running faster than their deadline (i.e., dynamic
-slack). In order to take advantage of this dynamic slack for security and
-reliability, we developed a hardware architecture that selectively performs
-monitoring while guaranteeing that deadlines are met
-(Chapter~\ref{chap:monitoring_hard_drop}). The architecture dynamically enables
-or disables monitoring in order to meet real-time deadlines.
+Next, we look at the challenge of apply run-time monitoring to an existing
+real-time system design. In this case, the real-time schedule may not have
+enough extra time (i.e., slack in the schedule) in order to support the
+full overhead of performing run-time monitoring. However, it may still be possible
+to perform a portion of the monitoring. We designed a hardware architecture
+that enables and disables run-time monitoring in order to perform as much
+monitoring as possible without violating hard real-time deadlines
+(Chapter~\ref{chap:monitoring_hard_drop}).
 
 % Monitoring Soft Drop
 Finally, soft real-time and interactive systems do not require strict timing guarantees
-but still look to achieve timely execution of programs. For these systems, by building on
-our work in applying monitoring to hard real-time systems, we created an
+but still look to achieve timely execution of programs. For these systems, we designed an
 architecture that enables adjustable overheads by trading off monitoring coverage
-(Chapter~\ref{chap:monitoring_dift_drop}). 
+(Chapter~\ref{chap:monitoring_dift_drop}). By relaxing some of the constraints
+for our architecture for hard real-time systems, we are able to achieve higher
+monitoring coverage while still remaining close to to deadlines.
 
 \section{Energy-Efficient Hardware Architectures for Real-Time Systems}
 \label{sec:intro.energy}
@@ -145,6 +169,19 @@ show how this is possible through analysis of task source code in order
 to generate task-specific predictors for DVFS control.
 
 \section{Organization}
+
+% Thesis overview
+\begin{figure}
+  \begin{center}
+    \includegraphics{figs/thesis_overview.pdf}
+    \caption{Overview of techniques presented in this thesis.}
+    \label{fig:intro.thesis_overview}
+  \end{center}
+\end{figure}
+
+
+Figure~\ref{fig:intro.thesis_overview} shows an overview of the techniques
+presented in this thesis.
 The rest of the thesis is organized as follows.
 Chapter~\ref{chap:background} discusses some background knowledge and
 terminology that will be used throughout the thesis.
