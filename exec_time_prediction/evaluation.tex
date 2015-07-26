@@ -538,7 +538,23 @@ percentage of total jobs. On average, 23\% of jobs switch cores and 60\% are
 run on the big core.
 
 % Conclusions
-These results show that improved energy savings and/or reduced deadline misses
-can be achieved by taking advantage of heterogeneous cores. In addition, our
-prediction-based methodology can be easily extended to select operating points
-on such a system.
+In this section, we have shown how our prediction-based methodology can be
+extended to architectures with heterogeneous cores. Our first-order results
+based on analytical modeling show that with heterogeneous cores, our
+prediction-based controller is able to further reduce energy usage and/or
+deadline misses. However, there are several additional points to consider for
+implementing this on a real system. First, a detailed characterization of the
+energy-performance points provided by the target platform are needed.  Here, we
+have assumed a constact factor of power and performance difference between the
+big and little cores, but this may not hold for a particular system. In
+addition, the difference in idle power of the different cores should also be
+accounted for. Second, the overhead of switching cores needs to be measured
+and, if significant, accounted for in the prediction algorithm. We have
+mentioned that the switching time between cores has been reported to be low,
+but this does not take into account other possible overheads such as cold cache
+misses, pipeline filling, etc. that come with core migration. Finally, in order
+to use our prediction-based methodology, a software interface for core
+migration will need to be exposed to the controller. Depending on its
+implementation, this interface may also introduce switching overheads that need
+to be accounted for.
+
