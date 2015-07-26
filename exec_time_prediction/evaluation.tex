@@ -217,7 +217,8 @@ shown for a time budget of 4 seconds for pocketsphinx and 50 milliseconds for al
 benchmarks.  On average, we see a 3\% decrease in energy consumption when
 removing the overheads of DVFS switching. Removing the overhead of running the
 predictor shows negligible improvement past removing the DVFS switching
-overhead.
+overhead. Thus, improvements to the program slicing and feature selection
+execution time are expected to have little effect on energy savings.
 
 % Prediction error
 \begin{figure}
@@ -245,8 +246,8 @@ show higher prediction errors, which limits the energy savings possible.
 pocketsphinx (not shown) has errors ranging from 60 ms under-prediction to 2
 seconds over-prediction with an average of 880 ms over-prediction. Although
 these errors are larger in absolute terms than the other benchmarks, they are
-on the same order of magnitude when when compared to the execution time of
-pocketsphinx jobs.
+on the same order of magnitude as seen for the other benchmarks when 
+compared to the execution time of pocketsphinx jobs.
 
 In order to explore the possible improvements with perfect prediction, we
 implemented an ``oracle'' controller that uses recorded job times from a
@@ -428,13 +429,29 @@ frequency on the big and little cores of the ODROID-XU3. Using these traces, we
 predict the core and frequency to use for each job. Our analytical model is
 used to calculate the energy usage of the resulting allocations.
 
-% Little-only vs big-little, energy and deadline misses
+%% Little-only vs big-little, energy and deadline misses
 \begin{figure*}
   \begin{center}
-    \includegraphics{exec_time_prediction/data/hetero_little_em.pdf}
+    \begin{subfigure}[Normalized budget of 1.0]{
+      \includegraphics{exec_time_prediction/data/hetero_little_100_em.pdf}
+      \label{fig:exec_time_prediction.evaluation.hetero_little_100_em}
+    }
+    \end{subfigure}
+
+    \begin{subfigure}[Normalized budget of 0.8]{
+      \includegraphics{exec_time_prediction/data/hetero_little_80_em.pdf}
+      \label{fig:exec_time_prediction.evaluation.hetero_little_80_em}
+    }
+    \end{subfigure}
+
+    \begin{subfigure}[Normalized budget of 0.6]{
+      \includegraphics{exec_time_prediction/data/hetero_little_60_em.pdf}
+      \label{fig:exec_time_prediction.evaluation.hetero_little_60_em}
+    }
+    \end{subfigure}
+
     \caption{Energy and deadline misses for running with only a little core
-    (littleonly-x) and with both big and little cores (biglittle-x) where x is
-    the normalized budget.}
+    (littleonly) and with both big and little cores (biglittle).}
     \label{fig:exec_time_prediction.evaluation.hetero_little_em}
   \end{center}
 \end{figure*}
@@ -444,7 +461,8 @@ used to calculate the energy usage of the resulting allocations.
   \begin{center}
     \includegraphics{exec_time_prediction/data/hetero_little_counts.pdf}
     \caption{Number of core switches and jobs run on the big core as a
-    percentage of total jobs for varying normalized budgets.}
+    percentage of total jobs for varying normalized budgets when comparing
+    biglittle to littleonly.}
     \label{fig:exec_time_prediction.evaluation.hetero_little_counts}
   \end{center}
 \end{figure*}
@@ -459,13 +477,21 @@ the little core and can exceed 100\% due to using the big core. We see that
 introducing the big core can actually reduce energy. This is because running on
 the big core reduces execution time and leads to reduced energy usage in some cases, as was
 shown in Figure~\ref{fig:exec_time_prediction.evaluation.hetero_energy_time}.
-For a normalized budget of 1, we see an average reduction in normalized energy
-of 31\% by introducing the big core. In addition, for tighter budgets, the
-little core alone is not able to meet all deadlines, showing deadline misses of
-35\% and 20\% for normalized budgets of 0.6 and 0.8 respectively. Introducing
-the big core eliminates these deadline misses because of the faster operating
-points available. In some cases, this leads to higher overall energy usage.
-Figure~\ref{fig:exec_time_prediction.evaluation.hetero_little_counts} shows
+For a normalized budget of 1
+(Figure~\ref{fig:exec_time_prediction.evaluation.hetero_little_100_em}), we see
+an average reduction in normalized energy
+of 31\% by introducing the big core. 
+For tighter budgets
+(Figures~\ref{fig:exec_time_prediction.evaluation.hetero_little_80_em} and
+\ref{fig:exec_time_prediction.evaluation.hetero_little_60_em}), the little core
+alone is not able to meet all deadlines, showing deadline
+misses of 20\% and 35\% for normalized budgets of 0.8 and 0.6 respectively.
+Introducing the big core eliminates these deadline misses because of the faster
+operating points available.  This can lead to a higher energy usage than when
+running on the little core only, as seen for certain benchmarks with a
+normalized budget of 0.6.
+Figure~\ref{fig:exec_time_prediction.evaluation.hetero_little_counts} shows the
+number of 
 times that the core type is switched between jobs (e.g., moving from big core
 to little core or vice versa) as a percentage of number of jobs. In addition,
 it also shows the percentage of jobs run on the big core. For a normalized
@@ -475,9 +501,10 @@ run on the big core.
 % Big-only vs big-little, energy and deadline misses
 \begin{figure*}
   \begin{center}
-    \includegraphics{exec_time_prediction/data/hetero_big_em.pdf}
-    \caption{Energy and deadline misses for running with only a big core and
-    with both big and little cores for a normalized budget of 1.}
+    \includegraphics{exec_time_prediction/data/hetero_big_100_em.pdf}
+    \caption{Energy and deadline misses for running with only a big core
+    (bigonly) and with both big and little cores (biglittle) for a normalized
+    budget of 1.}
     \label{fig:exec_time_prediction.evaluation.hetero_big_em}
   \end{center}
 \end{figure*}
@@ -487,7 +514,8 @@ run on the big core.
   \begin{center}
     \includegraphics{exec_time_prediction/data/hetero_big_counts.pdf}
     \caption{Number of core switches and jobs run on the big core as a
-    percentage of total jobs for a normalized budget of 1.}
+    percentage of total jobs for a normalized budget of 1 when comparing
+    biglittle to bigonly.}
     \label{fig:exec_time_prediction.evaluation.hetero_big_counts}
   \end{center}
 \end{figure*}
