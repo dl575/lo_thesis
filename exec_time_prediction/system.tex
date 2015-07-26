@@ -100,25 +100,46 @@ platforms, the same prediction slice was applicable across both platforms.
 \subsection{Run-time Prediction}
 
 % Slice operation choices
-\begin{figure}
+\begin{figure*}
   \begin{center}
-    \includegraphics{exec_time_prediction/figs/predictor_operation.pdf}
-    \caption{Options for how to run predictor.}
-    \label{fig:exec_time_prediction.system.predictor_operation}
+  \begin{subfigure}[Sequential] {
+    \includegraphics{exec_time_prediction/figs/predictor_operation_sequential.pdf}
+    \label{fig:exec_time_prediction.system.predictor_operation_sequential}
+  }
+  \end{subfigure}
+
+  \begin{subfigure}[Pipelined] {
+    \includegraphics{exec_time_prediction/figs/predictor_operation_pipelined.pdf}
+    \label{fig:exec_time_prediction.system.predictor_operation_pipelined}
+  }
+  \end{subfigure}
+
+  \begin{subfigure}[Parallel] {
+    \includegraphics{exec_time_prediction/figs/predictor_operation_parallel.pdf}
+    \label{fig:exec_time_prediction.system.predictor_operation_parallel}
+  }
+  \end{subfigure}
+
+  \caption{Options for how to run predictor.}
+  \label{fig:exec_time_prediction.system.predictor_operation}
   \end{center}
-\end{figure}
+\end{figure*}
 
 The prediction slice, execution time predictor, and frequency predictor are
 combined to form the \emph{DVFS predictor} or simply \emph{predictor} There are
 several options for how to run the predictor in relation to jobs.
 Figure~\ref{fig:exec_time_prediction.system.predictor_operation} shows some of
-these options.  The simplest approach is to run the slice just before the
-execution of a job. This uses up part of the time budget to execute the predictor, as
+these options.  The simplest approach is to run the predictor just before the
+execution of a job (see
+Figure~\ref{fig:exec_time_prediction.system.predictor_operation_sequential}).
+This uses up part of the time budget to execute the predictor, as
 mentioned in Section~\ref{sec:exec_time_prediction.prediction.dvfs}. However,
 if this time is low, then the impact is minimal.
 
 An alternative option would be to run the predictors and jobs in a parallel,
-pipelined manner such that during job $i$, the predictor for job $i+1$ is run.
+pipelined manner such that during job $i$, the predictor for job $i+1$ is run
+(see
+Figure~\ref{fig:exec_time_prediction.system.predictor_operation_pipelined}).
 This ensures that the DVFS decision is ready at the start of a job with no
 impact on time budget from the predictor. Due to the longer time budget,
 running in a pipelined manner can save more energy than running in a sequential
@@ -128,7 +149,9 @@ program state, is ready one job in advance. This is not possible for
 interactive tasks which depend on real-time user inputs or tasks which are not
 periodic.
 
-The predictor could also be run in parallel with the task. This avoids the
+The predictor could also be run in parallel with the task (see
+Figure~\ref{fig:exec_time_prediction.system.predictor_operation_parallel}).
+This avoids the
 issue of needing input values early. In terms of time budget, this mode of
 operation still reduces the effective budget by the predictor execution time.
 However, part of the task also executes during the prediction time, so the
@@ -142,7 +165,6 @@ with a dedicated predictor thread, both of which can introduce overhead.
 
 For our target applications, we found that the execution time of the predictor
 was low. Thus, we decided to run the predictor and task in a sequential manner
-(i.e., ``Sequential'' in
-Figure~\ref{fig:exec_time_prediction.system.predictor_operation})
+(Figure~\ref{fig:exec_time_prediction.system.predictor_operation_sequential}).
 For applications which require more complicated predictors, these alternative
 operation modes may be beneficial.
