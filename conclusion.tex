@@ -1,6 +1,8 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
+\section{Summary}
+
 % Summary
 Traditionally, real-time requirements have been handled at the software level,
 with the hardware being agnostic to these timing requirements. However,
@@ -49,3 +51,93 @@ systems continue to become more deeply in our daily lives. As a result,
 designing hardware with real-time requirements will continue to be an avenue of
 future research.
 
+\section{Secure and Reliable Real-Time Systems}
+
+In this thesis, we have presented how to apply hardware run-time monitoring to
+real-time systems. However, these type of monitoring features have not yet been
+implemented in general-purpose commercial processors, much less any that target
+real-time systems. Thus, it may be some time before this research becomes
+directly applicable. 
+
+However, current trends could cause hardware run-time monitoring to be realized
+sooner rather than later. Although Moore's Law has continued increaser
+transistor count on chips, it is becoming more difficult to find ways to use
+these transistors to improve performance. Additionally, the last few years have
+seen numerous high-profile and high-cost security attacks occur. Major
+corporations have been attacked and had user information leaked.  The continued
+increase in transistor count and the rising importance of computer security
+could indicate that we may begin to see hardware security features, such as
+run-time monitoring, in commercial processors in the near future. Being able to
+apply these techniques to real-time systems will be especially beneficial as
+real-time systems are also often safety-critical due to cyber-physical
+interactions. These systems have not been immune to attack either as recent
+reports of attacks in automobiles and airplanes have surfaced. 
+
+A quicker application of run-time monitoring for real-time systems could in
+soft-core processors implemented on FPGAs. This does not require as long a
+design cycle as an ASIC processor. In addition, although run-time monitoring
+would require resources in an FPGA, it would not require justifying the cost of
+silicon for an ASIC design, especially as it may be niche applications which
+would seek these added security and reliability benefits at first.
+
+One interesting future direction to explore would be to see if there are
+possible gains from combining static analysis of applications with run-time
+monitoring. Run-time monitoring can catch certain errors that would not be
+caught be static analysis due to incomplete information that is only available
+at run-time (e.g., input-dependent data values). However, there are a number of
+properties that can be checked statically. If this information of what is
+already verified can be passed to the run-time monitoring system, then the
+monitoring that must be done at run-time can be reduced and the overheads of
+monitoring can be reduced.
+
+\section{Energy-Efficient Real-Time Systems}
+
+In this thesis, we have also shown how response-time requirements can be used
+with prediction-based DVFS control in order to reduce energy usage without
+impacting user experience. This was an interesting interaction of real-time
+constraints with system design. Typically, real-time constraints introduce new
+requirements that constrict and degrade the design. Instead, in this case, the
+presence of real-time requirements offers an \emph{opportunity} to produce a
+better system (i.e., lower energy usage).
+
+Our work presented in this thesis is a first step in developing general and
+automated prediction-based resource control. Our results on a real system show
+significant savings and indicate that this may be a promising direction of
+future research. Similar approaches could be applied to other domains and
+components such as GPUs, FPGAs, hardware accelerators, multi-threaded
+applications, and/or heterogeneous datacenters. These will require expanding on
+the prediction methods presented in this thesis. We have shown one example of
+this with with our study of applying the technique to selecting core type for a
+system with heterogeneous big and little cores.
+
+It seems promising that this approach can be applied to commercial applications
+as we have demonstrated the technique working on applications running on a real
+system. The main weakness likely lies in the quality of the tools written. We
+have written a set of tools to instrument code for features, perform program
+slicing, and generate the resulting predictor. These tools may run into issues
+with more complex code bases. However, these tool requirements are not
+particularly new. For example, commercial tools exist for performing program
+slicing, likely the most complex portion of the toolflow. Thus, the challenges
+in creating a more robust toolset are not insurmountable. 
+
+The workloads we tested worked well with using control flow features. However,
+it is likely that irregular workloads exist which do not show execution time
+that correlates well with control flow features. This will require further
+study into what additional features may be useful for prediction, such as
+information about memory patterns. In addition, although we have avoided
+needing detailed programmer knowledge, it is likely that some amount of hints
+from the programmer will be useful in informing the prediction.
+
+\section{Hardware Designs for Real-Time Systems}
+
+The increased integration of computers in our daily lives, especially in the
+form of cyber-physical systems, is increasingly creating context where
+real-time is an issue for computing. In addition, as hardware becomes
+increasingly complex, it is harder to manage the timing of tasks purely from
+the software layer. For example, hardware-based run-time monitoring is designed
+to be largely transparent to the programmer but can have large impacts on
+program execution time. As a result, the idea of pushing real-time requirements
+past the software layer and down into the hardware will be important for future
+computer designs. We have shown in this thesis how to handle some of the
+challenges as well as how to capture some of the opportunities created from
+this co-design of hardware and real-time requirements.
