@@ -94,12 +94,12 @@ dynamic information flow tracking (DIFT) implemented in software suffers a 3.6x
 slowdown on average \cite{qin06-lift}. Implementing monitors in hardware
 greatly decreases the performance impact by performing monitoring in parallel
 to a program's execution. A dedicated hardware implementation of DIFT reduces
-average performance overheads to just 1.1\% \cite{suh-dift-asplos04}.  However,
+average performance overheads to just 1.1\% \cite{dift-asplos04}.  However,
 fixed hardware loses the programmability of software. A fixed hardware
 implementation cannot be updated and cannot change the type of run-time
 monitoring performed. Thus, recent studies have proposed using programmable
 parallel hardware, such as extra cores in a multi-core system or FPGA
-coprocessors \cite{lba-asid06, nagarajan08-dift, lba-isca08, flexcore-micro10,
+coprocessors \cite{lba-asid06, nagarajan-interact08, lba-isca08, flexcore-micro10,
 harmoni-dsn12, fade-hpca14, pump-asplos15}, for monitoring. Our work in this
 thesis is targeted at these programmable parallel hardware monitors.
 
