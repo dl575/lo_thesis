@@ -37,77 +37,54 @@ what is expected when a strictly conservative WCET is used.
 \subsection{Amount of Monitoring Performed}
 \label{sec:monitoring_hard_drop.evaluation.coverage}
 
-% % Full monitoring at zero slack
-% \begin{table}
-%   \begin{center}
-%     \caption{Number of monitored, dropped, and filtered monitoring events as a
-%     percentage of the total number of monitoring events. These percentages are
-%     shown for zero headstart slack.}
-%     \begin{tiny}
-%     \input{monitoring_hard_drop/tabs/zero_slack}
-%     \end{tiny}
-%     \label{tab:monitoring_hard_drop.evaluation.zero_slack}
-%   \end{center}
-% \end{table}
-% 
-% % Coverage at zero slack
-% \begin{table}
-%   \begin{center}
-%     \caption{Percentage of checks that are not dropped or filtered. These percentages are shown for zero headstart slack.}
-%     \label{tab:monitoring_hard_drop.evaluation.zero_slack_coverage}
-%     \begin{tiny}
-%     \input{monitoring_hard_drop/tabs/zero_slack_coverage}
-%     \end{tiny}
-%   \end{center}
-% \end{table}
-
 % Monitoring event breakdown for UMC
 \begin{figure}
   \begin{center}
-    \includegraphics{monitoring_hard_drop/data/zero_slack_umc.pdf}
+    \begin{subfigure}[UMC]{
+      \includegraphics{monitoring_hard_drop/data/zero_slack_umc.pdf}
+      \label{fig:monitoring_hard_drop.evaluation.zero_slack_umc}
+    }
+    \end{subfigure}
+
+    \begin{subfigure}[RAC]{
+      \includegraphics{monitoring_hard_drop/data/zero_slack_lrc.pdf}
+      \label{fig:monitoring_hard_drop.evaluation.zero_slack_lrc}
+    }
+    \end{subfigure}
+
+    \begin{subfigure}[DIFT]{
+      \includegraphics{monitoring_hard_drop/data/zero_slack_dift.pdf}
+      \label{fig:monitoring_hard_drop.evaluation.zero_slack_dift}
+    }
+    \end{subfigure}
+
     \caption{Percentage of monitored, dropped, and filtered monitoring events
-    for UMC with zero headstart slack.}
-    \label{fig:monitoring_hard_drop.evaluation.zero_slack_umc}
-  \end{center}
-\end{figure}
-% Monitoring event breakdown for LRC
-\begin{figure}
-  \begin{center}
-    \includegraphics{monitoring_hard_drop/data/zero_slack_lrc.pdf}
-    \caption{Percentage of monitored, dropped, and filtered monitoring events
-    for RAC with zero headstart slack.}
-    \label{fig:monitoring_hard_drop.evaluation.zero_slack_lrc}
-  \end{center}
-\end{figure}
-% Monitoring event breakdown for DIFT
-\begin{figure}
-  \begin{center}
-    \includegraphics{monitoring_hard_drop/data/zero_slack_dift.pdf}
-    \caption{Percentage of monitored, dropped, and filtered monitoring events
-    for DIFT with zero headstart slack.}
-    \label{fig:monitoring_hard_drop.evaluation.zero_slack_dift}
+    with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack}
+
   \end{center}
 \end{figure}
 
-Figures~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_umc},
-\ref{fig:monitoring_hard_drop.evaluation.zero_slack_lrc}, and
-\ref{fig:monitoring_hard_drop.evaluation.zero_slack_dift} show the number of
-monitoring events that are monitored, dropped, and filtered for UMC, LRC, and
-DIFT as a percentage of the total number of monitoring events. In these
+Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack} shows the number of
+monitoring events that are monitored, dropped, and filtered for UMC, RAC, and
+DIFT as a percentage of the total number of monitoring events.  In these
 experiments, no headstart slack was added. Thus, we see that a portion of
-monitoring can
-still be done without exceeding the main task's original WCET. This is due to the
-dynamic slack that is gained during run time. On average, UMC can perform 17\%
-of its monitoring tasks. RAC can perform 66\% of its monitoring and DIFT can
-perform 31\% of its monitoring.  No results are shown for {\tt insertsort} and
-{\tt nsichneu} for RAC because these benchmarks do not make any function calls.
-For DIFT, we store the actual DIFT register file metadata in the MISP instead
-of invalidation flags as discussed in
-Section~\ref{sec:monitoring_hard_drop.extensions.dift}. This optimization
-allows us to use the MIM and MFM to
-perform certain monitoring tasks. These correct metadata updates are counted as
-``Monitored'' in the statistics while events are counted as dropped or filtered
-only if they were handled by the dropping hardware due to insufficient slack.
+monitoring can still be done without exceeding the main task's original WCET.
+This is due to the dynamic slack that is gained during run time. On average,
+UMC (Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_umc}) can
+perform 17\% of its monitoring tasks. RAC
+(Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_lrc}) can perform
+66\% of its monitoring and DIFT
+(Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_dift}) can perform
+31\% of its monitoring.  No results are shown for {\tt insertsort} and {\tt
+nsichneu} for RAC because these benchmarks do not make any function calls.  For
+DIFT, we store the actual DIFT register file metadata in the MISP instead of
+invalidation flags as discussed in
+Section~\ref{sec:monitoring_hard_drop.extensions.dift}.  This optimization
+allows us to use the MIM and MFM to perform certain monitoring tasks. These
+correct metadata updates are counted as ``Monitored'' in the statistics while
+events are counted as dropped or filtered only if they were handled by the
+dropping hardware due to insufficient slack.
 
 % Coverage
 \begin{figure}
@@ -119,7 +96,7 @@ only if they were handled by the dropping hardware due to insufficient slack.
   \end{center}
 \end{figure}
 
-As expected, a false positive never occurred in our experiments. However, false
+As expected, false positives never occurred in our experiments. However, false
 negatives can occur due to dropping monitoring tasks. Specifically, dropped or
 filtered check-type monitoring operations can result in false negatives.
 Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_coverage} shows the
@@ -188,56 +165,30 @@ not able to reach 100\% coverage with zero headstart slack are shown.
 \subsection{FPGA-based Monitor}
 \label{sec:monitoring_hard_drop.evaluation.fpga}
 
-% % Full monitoring at zero slack on Flex
-% \begin{table}[tb]
-%   \begin{center}
-%     \caption{Number of monitored, dropped, and filtered monitoring events as a
-%     percentage of the total number of monitoring events for an FPGA-based
-%     monitor. These percentages are shown for zero headstart slack.}
-%     \begin{footnotesize}
-%     \input{monitoring_hard_drop/tabs/zero_slack_flex}
-%     \end{footnotesize}
-%     \label{tab:monitoring_hard_drop.evaluation.zero_slack_flex}
-%   \end{center}
-% \end{table}
-% 
-% % Full monitoring at zero slack on Flex
-% \begin{table}[tb]
-%   \begin{center}
-%     \caption{Percentage of checks that are not dropped or filtered for an
-%     FPGA-based monitor. These percentages are shown for zero headstart slack.}
-%     \label{tab:monitoring_hard_drop.evaluation.zero_slack_flex_coverage}
-%     \begin{footnotesize}
-%     \input{monitoring_hard_drop/tabs/zero_slack_flex_coverage}
-%     \end{footnotesize}
-%   \end{center}
-% \end{table}
+% Monitoring event breakdown for FPGA
+\begin{figure}
+  \begin{center}
+    \begin{subfigure}[UMC]{
+      \includegraphics{monitoring_hard_drop/data/zero_slack_flex_umc.pdf}
+      \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_umc}
+    }
+    \end{subfigure}
 
-% Monitoring event breakdown for UMC
-\begin{figure}
-  \begin{center}
-    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_umc.pdf}
+    \begin{subfigure}[RAC]{
+      \includegraphics{monitoring_hard_drop/data/zero_slack_flex_lrc.pdf}
+      \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_lrc}
+    }
+    \end{subfigure}
+
+    \begin{subfigure}[DIFT]{
+      \includegraphics{monitoring_hard_drop/data/zero_slack_flex_dift.pdf}
+      \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_dift}
+    }
+    \end{subfigure}
+
     \caption{Percentage of monitored, dropped, and filtered monitoring events
-    for UMC on an FPGA-based monitor with zero headstart slack.}
-    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_umc}
-  \end{center}
-\end{figure}
-% Monitoring event breakdown for LRC
-\begin{figure}
-  \begin{center}
-    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_lrc.pdf}
-    \caption{Percentage of monitored, dropped, and filtered monitoring events
-    for RAC on an FPGA-based monitor with zero headstart slack.}
-    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_lrc}
-  \end{center}
-\end{figure}
-% Monitoring event breakdown for UMC
-\begin{figure}
-  \begin{center}
-    \includegraphics{monitoring_hard_drop/data/zero_slack_flex_dift.pdf}
-    \caption{Percentage of monitored, dropped, and filtered monitoring events
-    for DIFT on an FPGA-based monitor with zero headstart slack.}
-    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex_dift}
+    for an FPGA-based monitor with zero headstart slack.}
+    \label{fig:monitoring_hard_drop.evaluation.zero_slack_flex}
   \end{center}
 \end{figure}
 
@@ -255,17 +206,18 @@ Performing monitoring in software, although parallelized, can still incur high
 overheads since multiple instructions are needed to handle each monitoring
 event. One possible solution to improve the performance of monitoring while
 maintaining programmability is to use an FPGA-based monitor
-\cite{flexcore-micro10}. We model the FPGA-based monitor as being able to
-run at 250 MHz and handle up to one monitoring event each cycle. Note that this
+\cite{flexcore-micro10}. We model the FPGA-based monitor as being able to run
+at 250 MHz and handle up to one monitoring event each cycle. Note that this
 means that the FPGA-based monitor can process a monitoring event every two
 cycles of the main core which runs at 500 MHz.
-Figures~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_umc},
-\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_lrc}, and
-\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_dift} show the
+Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex} shows the
 number of monitored, dropped, and filtered events with no headstart slack for
-this FPGA-based monitor. UMC and RAC are able to run 67\% of their monitoring
-tasks on average, while DIFT is able to run 72\% of its monitoring tasks on
-average.
+this FPGA-based monitor. UMC
+(Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_umc}) and RAC
+(Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_lrc}) are able
+to run 67\% of their monitoring tasks on average, while DIFT
+(Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_dift}) is able
+to run 72\% of its monitoring tasks on average.
 Figure~\ref{fig:monitoring_hard_drop.evaluation.zero_slack_flex_coverage} shows
 the coverage achieved by these monitoring schemes on an FPGA-based monitor. RAC
 shows similar numbers to processor-based monitoring because the number of calls
