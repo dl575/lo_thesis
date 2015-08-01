@@ -19,7 +19,7 @@ There have been a number of proposals for run-time monitoring systems exploring
 various design points.
 Table~\ref{tab:monitoring_dift_drop.monitoring.previous_overheads} summarizes
 some of the representative designs and their reported performance overheads.
-The previous studies clearly show that there exist trade-offs between
+The previous studies show that there exist trade-offs between
 efficiency, flexibility, and hardware costs.  For example, a run-time
 monitoring scheme can often be realized with fairly low performance overhead
 (less than 20\%) if implemented with custom hardware that is designed only for
@@ -47,7 +47,7 @@ operations if necessary. In essence, this framework adds a new dimension to the
 monitor design space by allowing coverage or accuracy to be traded off for
 lower overhead. For example, the capability to adjust overhead allows users to
 use monitoring with partial coverage in order to reduce performance or energy
-overhead. Alternatively, partial monitoring allows designers to use less
+overheads. Alternatively, partial monitoring allows designers to use less
 expensive hardware for a given performance overhead budget.
 
 In this framework, a user specifies how much monitoring should be done in the
@@ -64,7 +64,7 @@ worst-case guarantee.
 \subsection{Applications and Metrics}
 
 While it is ideal if run-time monitoring can be performed in full, we believe
-that the capability to trade-off coverage/accuracy for lower
+that the capability to trade off coverage/accuracy for lower
 performance/hardware overhead will be useful in many application scenarios
 where full monitoring is not a viable option.  Here, we briefly discuss example
 applications of partial monitoring and the metrics that are important in each
@@ -94,7 +94,7 @@ monitoring.
 
 {\bf Partial protection for low overhead:}
 Even without real-time constraints, systems may have tight budgets for the
-performance, energy, or hardware overhead that they can tolerate for run-time
+performance, energy, or hardware overheads that they can tolerate for run-time
 monitoring. In such cases, full monitoring cannot be enabled unless its
 overhead is low enough. Adjustable monitoring allows partial protection on such
 systems. For example, array bounds may be checked for a subset of memory

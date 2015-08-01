@@ -37,8 +37,11 @@ of real-time systems. We have shown how soft real-time requirements can be used
 to inform the dynamic voltage and frequency scaling of hardware. By developing
 a prediction-based DVFS controller, we showed how the appropriate frequency
 could be selected for each job in order to minimize energy while meeting its
-deadline requirement.  Our experiments showed 56\% average energy savings with
-our DVFS controller.
+deadline requirement.  Our experiments showed 56\% average energy savings over
+running at maximum frequency by using our prediction-based controller. In
+addition, our prediction-based controller outperforms both the Linux
+interactive governor and a PID-based controller in energy savings and deadline
+misses.
 
 % % Closing thoughts
 % As computing systems become more widespread and more deeply embedded in our
@@ -61,8 +64,10 @@ However, current trends could cause hardware run-time monitoring to be realized
 sooner rather than later. Although Moore's Law has continued to increase
 transistor count on chips, it is becoming more difficult to find ways to use
 these transistors to improve performance. Additionally, the last few years have
-seen numerous high-profile and high-cost security attacks occur. Major
-corporations have been attacked and had information leaked. The continued
+seen numerous high-profile and high-cost security attacks occur. 
+%Major
+%corporations have been attacked and had information leaked. 
+The continued
 increase in transistor count and the rising importance of computer security
 could indicate the beginning of hardware security features, such as run-time
 monitoring, in commercial processors in the near future. Applying these
@@ -71,14 +76,14 @@ often safety-critical cyber-physical interactions of real-time systems.  In
 addition, these systems have not been immune to attack as seen by recent
 reports of attacks in automobiles and airplanes. 
 
-Run-time monitoring for real-time systems could see more immediate deployment
-in the form of soft-core processors on FPGAs. As this does not require as long
-or expensive a design cycle as ASIC processors, it is easier to justify its
-implementation, especially for niche applications which require high security.
+%Run-time monitoring for real-time systems could see more immediate deployment
+%in the form of soft-core processors on FPGAs. As this does not require as long
+%or expensive a design cycle as ASIC processors, it is easier to justify its
+%implementation, especially for niche applications which require high security.
 
 One interesting future research direction is to explore possible gains from
 combining static analysis of applications with run-time monitoring. Run-time
-monitoring can catch certain errors that would not be caught be static analysis
+monitoring can catch certain errors that would not be caught by static analysis
 due to incomplete information (e.g., input-dependent data values). However,
 there are a number of properties that can be checked statically. 
 By verifying some properties statically and passing this information to the
@@ -97,7 +102,7 @@ extending this DVFS control to commercial applications and systems lies in the
 quality of the tools written. We have written a set of tools to instrument code
 for features, perform program slicing, and generate the resulting predictor.
 The tools written for our experiments may run into issues with more complex
-code bases. However, these tool requirements are not particularly new. For
+code. However, these tool requirements are not particularly new. For
 example, commercial tools exist for performing program slicing, which is the
 most complex portion of the toolflow. Thus, the challenges in creating a more
 robust toolset are not insurmountable. 
@@ -105,7 +110,7 @@ robust toolset are not insurmountable.
 Our work presented in this thesis is a first step in developing general and
 automated prediction-based resource control. Generalizing this to other
 applications and platforms is a promising direction for future research.
-Similar approaches could be applied to DVFS and resoure control of other
+Similar approaches could be applied to DVFS and resource control of other
 domains such as GPUs, FPGAs, hardware accelerators, heterogeneous datacenters,
 etc. These will require expanding on the prediction methods presented in this
 thesis. We have shown one example of this by extending our controller to select

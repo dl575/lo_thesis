@@ -1,6 +1,15 @@
 \chapter{Related Work}
 \label{chap:related_work}
 
+This chapter describes some of the previous work that is related to this
+thesis. Section~\ref{sec:related_work.realtime} discusses related work in
+hardware design and WCET analysis of real-time systems.
+Section~\ref{sec:related_work.security} talks about related work on security and
+reliability, specifically previous work on run-time monitoring and partial
+monitoring. Finally, Section~\ref{sec:related_work.energy} discusses work
+related to our techniques for prediction-based DVFS control including previous
+DVFS control techniques and methods for execution time prediction.
+
 \section{Real-Time Systems}
 \label{sec:related_work.realtime}
 
@@ -8,9 +17,11 @@
 
 Previous work has looked at designing processor architectures for real-time
 systems. These projects focus on improving performance in predictable ways in
-order to improve the worst-case execution time. For example, simple pipelines
-that allow for static scheduling of instructions are easily analyzable
-\cite{spear-ecrts03, mcgrep-rtss06, jop-jsa07, patmos-ppes2011}. Other projects
+order to improve the worst-case execution time. For example, several projects
+\cite{spear-ecrts03, mcgrep-rtss06, jop-jsa07, patmos-ppes2011}
+have created architectures with simple pipelines that allow for static
+scheduling of instructions. These architectures are easily analyzable so that the
+resulting WCET estimates are tight and lower than more unpredictable architectures. Other projects
 have explored using fine-grained simultaneous multi-threading (SMT) in order to
 improve performance by isolating hard real-time threads from each other
 \cite{pret-dac07, pret-cases08, ptarm-iccd12} or from soft or non-real-time
@@ -158,11 +169,11 @@ our work:
 \begin{enumerate}
   \item \textbf{Generality:} Our architectures apply to a variety of
   monitoring techniques.
-  \item \textbf{Adjustable Overhead:} Our architectures allow an overhead or
+  \item \textbf{Target Overhead:} Our architectures allow an overhead or
   deadline to be targeted. The architecture presented in
   Chapter~\ref{chap:monitoring_hard_drop} provides hard guarantees on the
   overhead while the architecture from Chapter~\ref{chap:monitoring_dift_drop}
-  relaxes the strict guarantee. Other work performs sampling to reduce overhead
+  relaxes the strict guarantee. Pervious work performs sampling to reduce overhead
   but does not try to bound overhead, which we have shown can vary greatly.
   \item \textbf{Prevent False Positives:} We have presented an
   invalidation-based mechanism to prevent false positives. Previous work either
@@ -251,12 +262,13 @@ in control flow depending on event type.
 \subsection{Execution Time Prediction}
 
 Worst-case execution time analysis is a well-studied problem in hard real-time
-systems \cite{wcetsurvey-tecs08}. This analysis looks at the problem of
-estimating execution time of a program in the worst-case. This can be used as a
+systems \cite{wcetsurvey-tecs08}. 
+%This analysis looks at the problem of
+%estimating execution time of a program in the worst-case. 
+This can be used as a
 conservative bound for setting DVFS in order to meet deadlines, but it does not
 predict the changes in job execution time based on specific inputs or program
 state.
-
 ATLAS \cite{atlas-rtas13} looked at predicting execution time in the context of
 soft real-time scheduling. Their approach uses programmer-marked features in a
 linear model in order to predict execution time. Instead, our approach is able
@@ -264,161 +276,6 @@ to automatically identify features without programmer assistance.  Mantis
 \cite{mantis-atc13} presents an automated approach for predicting execution
 time, similar to the approach we have presented. However, neither Mantis nor
 ATLAS looks at execution time prediction in the context of DVFS control.
-Applying execution time prediction to DVFS allocation with deadlines required
-creating a prediction method that placed greater penalty on under-prediction
-and extending the predictor to select a DVFS level.
-
-% Mantis \cite{mantis-atc13} performs execution time prediction in a manner
-% similar to ours. They also instrument loops and conditionals to use as
-% features. Our predictor differs in that it enforces conservativeness which is
-% useful in our application in order to meet deadlines. In addition, we show how
-% such execution time prediction can be used to improve energy-efficiency.
-% 
-% Gu and Chakraborty \cite{gu-dac08} use a PID-based controller to adjust DVFS
-% for a game. They show less deadline misses than a history-based controller but
-% deadline misses still occur because the PID prediction lags phase changes.
-% 
-% Paragon \cite{paragon-asplos13} attempts to predict performance of datacenter
-% workloads due to server heterogeneity and interference. This does not
-% specifically aim to keep execution times under some target.
-% 
-% Previous work targets using heterogeneous cores to improve performance
-% \cite{paragon-asplos13, pie-isca12, heteroscouts-sigmetrics11} or EDP \cite{chen-dac09}.
-% 
-% There are several existing projects which have looked into the problem of
-% resource management in the presence of timing requirements. One possible
-% solution is to use DVFS in conjunction with a real-time operating system (RTOS)
-% \cite{rtdvfs-systor12}. This is useful for hard real-time systems where timing
-% requirements are strict. However, it requires considerable programmer expertise
-% and effort in order to write applications in a form that is amenable to an RTOS
-% and to perform the detailed timing analysis required. For soft real-time
-% systems, such as the response-time requirements we are considering, it should
-% be possible to use a more lightweight approach to handle the timing
-% requirements. Zhu and Reddi \cite{zhu-hpca13} explored using DVFS and
-% heterogeneous cores in order to lower energy usage while still meeting website
-% loading times for a web browser. This was done by analyzing the relationship of
-% various HTML and CSS metrics to loading time. They showed a 9\% average
-% reduction in energy usage by using this information when selecting core and
-% DVFS operating point compared to an OS scheduler that uses only utilization
-% information.  However, their approach is specific to web browsing and does not
-% generalize to other applications. PACORA \cite{pacora-hotpar11} looks at
-% resource partitioning for datacenters while taking into account response-time
-% requirements. It can dynamically alter these allocations but these are done on
-% a course-grained level in order to detect changes in workload behavior rather
-% than on a fine-grained per-job level. Recent work has shown that timing on a
-% job-to-job basis can have large variations \cite{atlas-rtas13} and that
-% fine-grained resource allocations can have a high impact on energy efficiency
-% that is not captured by coarse-grained allocations \cite{padmanabha-micro13}.
-% 
-% Given the previous work in this domain, our approach is unique in targeting the
-% combination of several design objectives:
-% \begin{enumerate}
-%   \item \textbf{Generality: } The approach should work generally for any
-%   application with response-time requirements. It should not require
-%   application- or domain-specific knowledge.
-%   \item \textbf{Minimal programmer effort: } The additional programmer effort
-%   in order to enable this should be minimal. The only needed information from
-%   the programmer is the code segments of interest and their response-time
-%   requirement.
-%   \item \textbf{Fine-grained decision: } The resource allocation decision
-%   should be made on a per-job basis in order to handle job-to-job variation.
-%   For example, recent work has shown that video decoding time can vary greatly
-%   from frame-to-frame \cite{atlas-rtas13}. 
-%   \item \textbf{Predictive decision: } Our approach looks to predict resource
-%   allocations before a job is run. Since execution times can change largely
-%   from job to job, it is important to predict the execution time for the next
-%   job to run, rather than making decisions after poor response-time performance
-%   is seen.
-% \end{enumerate}
-% 
-% \subsection{}
-% 
-% Most previous work that looking at using heterogeneous systems for energy
-% saving do this by using a smaller core when the performance impact is minimal
-% \cite{padmanabha-micro13, heteroscouts-sigmetrics11, pie-isca12} or by
-% optimizing for energy-delay product (EDP) \cite{cong-islped12, kumar-micro03,
-% chen-dac09}.
-% Guimbretiere et al. \cite{guimbretiere-tecs11} use a smaller core to save
-% energy for portions of the program where the impact on user experience is
-% minimal. This made statically by the programmer.
-% 
-% There has been work in real-time systems in applying dynamic frequency and
-% voltage scaling (DVFS) to reduce energy usage while still meeting deadlines
-% \cite{rtdvfs-systor12}. However, this require dividing applications into
-% explicit tasks and using a real-time operating system (RTOS).
-% 
-% 
-% The goal of ATLAS \cite{atlas-rtas13} is to remove the need for a programmer to
-% estimate the execution time of tasks for scheduling on a soft real-time system.
-% Instead, the programmer submits workload metrics to the ATLAS scheduler at the
-% start of a job. ATLAS uses these metrics and measured execution times to create
-% a linear regression model. Using the regression model, it is able to predict
-% job execution times and schedule them accordingly. ATLAS does not take into
-% account energy-efficiency or resource allocation.
-% 
-% PACORA \cite{pacora-hotpar11} performs resource allocation while taking into
-% account the response-time requirements of multiple workloads.  Timing
-% constraints are modeled using penalty functions. Penalty before a deadline is 0
-% and penalty after a deadline is a linear function with steeper slopes
-% indicating that a task is more time-critical. Execution time is modeled based
-% on cache and core allocations. Using the execution times and response-time
-% penalty functions, a convex optimization problem is constructed that decides
-% the cache and core allocations for each program in order to minimize penalty
-% (deadline misses).
-% 
-% Paragon \cite{paragon-asplos13} maximizes the number of workloads that meet a
-% Quality-of-Service (QoS) (e.g., 5\% overhead compared to running alone) target
-% when running together on a group of servers. This is done taking into account
-% both heterogeneity of servers and interference among workloads. Paragon uses
-% singular value decomposition (SVD) and PQ-reconstruction to predict the
-% performance of workloads on different server configurations and after only
-% profiling the workload on 2 server configurations by using previous profiling
-% data.
-% 
-% Zhu and Reddi \cite{zhu-hpca13} investigated meeting response times for 
-% web browsing.  Specifically, they create a scheduler that predicts what core
-% and DVFS configuration to use in order to meet a website loading time
-% constraint for a web browser application. This is done by creating a regression
-% model based on HTML and CSS metrics in order to predict website loading times.
-% 
-% \subsection{HPCA 2015}
-% 
-% Octopus-Man \cite{octopusman-hpca15} scales core allocation both in number and
-% in type (wimpy vs. brawny) in order to save energy while staying with in a QoS
-% target. This attempts to capture energy savings when queries per second are
-% low. They show good results with a deadzone state machine controller. This
-% captures coarser-grained variations that exist in servers due to diurnal
-% patterns but cannot take advantage of the finer grained execution time
-% differences (i.e., job to job) found in the interactive applications we
-% studied.
-% 
-% Quasar \cite{quasar-asplos14} extends Paragon's \cite{paragon-asplos13}
-% performance prediction to also include the effect of scale-up and scale-out on
-% server workloads. They use this to perform allocation and assignment of
-% datacenter resources and show improved resource utilization as a result.
-% 
-% Nachiappan et al. \cite{nachiappan-hpca15} look at setting DVFS for multiple
-% IPs in order to save energy and meet deadlines. Their applications showed
-% little variation in execution time from job to job and so a history-based
-% predictor was sufficient. For the applications we looked at, large variations
-% exited between jobs and so it was necessary to use a proactive predictor.
-% 
-% Pegasus \cite{pegasus-isca14} looks to scale DVFS to meet service level
-% objectives (SLOs) in datacenters. They use a history-based controller that
-% scales resources up/down based on whether the instantaneous and average (30 second window)
-% latencies measured are above/below thresholds. This captures phase-type
-% behavior but not the fine-grained variation in execution time that we see in
-% interactive tasks.
-% 
-% Adrenaline \cite{adrenaline-hpca15} uses fast voltage-frequency scaling (10s of
-% nanoseconds) in order to speed up slow jobs for datacenter applications. Slow
-% jobs are identified based on query type and found through profiling. For
-% example, for Memcached ``SET'' queries are boosted and for web search, short
-% queries of less than 6 keywords are boosted.
-% 
-% Zhu et al. \cite{eqos-hpca15} also looked at using event handlers in a web
-% browser to predict how to set DVFS and big/little core allocation.
-% 
-% Pack \& Cap \cite{packandcap-micro44} and FG-SYNC+ \cite{fgsync-micro14} seek
-% to improve performance with a set power budget by speeding up some cores and
-% slowing down others.
+To apply execution time prediction to DVFS control, we needed to create a
+prediction method that placed greater penalty on under-prediction and to extend
+the predictor to select the appropriate frequency level.

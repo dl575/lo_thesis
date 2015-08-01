@@ -151,8 +151,9 @@ work if there are merge points in the monitoring dependence graph and only part
 of the incoming flows are dropped, but it should result in less wasted work
 than compared to an unrestricted dropping policy. 
 
-Source-only dropping will result in no wasted work and thus better coverage at
-a given overhead than unrestricted dropping. However, because of the
+Source-only dropping will result in no wasted work and thus provide better
+coverage than unrestricted dropping at a given overhead.  However, because of
+the
 coarser-grained decision, it may be more difficult to closely match overhead
 targets.  Sub-flow dropping enables a design point in between unrestricted
 dropping and source-only dropping in terms of matching overhead and coverage

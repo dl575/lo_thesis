@@ -44,7 +44,7 @@
   \end{center}
 \end{figure}
 
-These variations in execution times between jobs can be significant.
+The execution time for a task can vary significantly from job to job.
 Figure~\ref{fig:exec_time_prediction.applications.ldecode_time} shows the
 execution time per job (frame) for a video decoder application (ldecode)
 running on an ODROID-XU3 development board (see
@@ -57,8 +57,9 @@ problem.
 Using a single DVFS level based on the average execution time (28.6
 milliseconds) will lead to a number of jobs missing their deadline. On the
 other hand, looking at the worst-case execution time (32.3 milliseconds)
-implies that the application must be run at its maximum frequency, which means
-that minimal energy saving from DVFS is possible. Instead, the large variations
+implies that the application must be run at its maximum frequency in order run
+at 30 frames per second, resulting in no energy savings from using DVFS.
+Instead, the large variations
 from job to job imply that we need a fine-grained, per-job decision of the DVFS
 level to use in order to minimize energy usage while avoiding deadline misses.
 

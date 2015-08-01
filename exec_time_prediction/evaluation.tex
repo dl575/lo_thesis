@@ -250,28 +250,53 @@ on the same order of magnitude as seen for the other benchmarks when
 compared to the execution time of pocketsphinx jobs. From these results, we can
 see that there are small but significant inaccuracies in our prediction of
 execution time.  However, based on our energy and deadline miss results (see
-Figure~\ref{fig:exec_time_prediction.evaluation.em_summary}), the predicted times are adequate
-as heuristics for making DVFS decisions without violating deadlines. That is,
-the prediction is accurate enough that we are able to differentiate between
-short jobs that can be slowed down and long jobs that must be run at high
-frequencies. In addition, by skewing the prediction
-towards over-predicting, we are able to tolerate these inaccuracies without
-causing deadline misses. However, there may be possible energy savings from
-improving this prediction accuracy.
+Figure~\ref{fig:exec_time_prediction.evaluation.em_summary}), the predicted
+times are adequate as heuristics for making DVFS decisions without violating
+deadlines. That is, the prediction is accurate enough that we are able to
+differentiate between short jobs that can be slowed down and long jobs that
+must be run at high frequencies. In addition, by skewing the prediction towards
+over-predicting, we are able to tolerate these inaccuracies without causing
+deadline misses. 
 
 In order to explore the possible improvements with perfect prediction, we
 implemented an ``oracle'' controller that uses recorded job times from a
 previous run with the same inputs to predict the execution time of jobs.
 Figure~\ref{fig:exec_time_prediction.evaluation.overhead_comparison} also
 includes these oracle results. We see that an additional 11\% energy savings
-are achievable with oracle on top of removing the predictor and DVFS switching
-overheads. From this, and the prediction errors seen in
+are achievable with the oracle controller on top of removing the predictor and
+DVFS switching overheads. From these results and the prediction errors seen in
 Figure~\ref{fig:exec_time_prediction.evaluation.prediction_error}, the most
 room for improvement for our prediction-based DVFS controller lies in improving
 the prediction accuracy. Note that we do not have oracle results for uzbl and
 xpilot as
 non-deterministic variations in the ordering of jobs across runs made it
 difficult to implement a good oracle controller.
+
+\subsection{Under-prediction Trade-off}
+
+% Under-predict trade-off
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/underpredict_sweep.pdf}
+    \caption{Energy vs. deadline misses for various under-predict penalty
+    weights ($\alpha$) for ldecode.}
+    \label{fig:exec_time_prediction.evaluation.underpredict_sweep}
+  \end{center}
+\end{figure}
+
+In Section~\ref{sec:exec_time_prediction.prediction.model}, we discussed how we
+can vary the penalty weight for under-prediction, $\alpha$, when we fit our
+execution time prediction model. Placing greater penalty on under-prediction
+increases the energy usage but reduces the likelihood of deadline misses.
+Figure~\ref{fig:exec_time_prediction.evaluation.underpredict_sweep} shows the
+energy and deadline misses for varying under-predict penalty weights for
+ldecode. We see that as the weight is decreased, energy consumption decreases
+but deadline misses increase. Reducing the weight from 1000 to 100 keep misses
+at 0, but reducing the weight to 10 introduces a small number of deadline
+misses (0.03\%). Other benchmarks show similar trends and we found that across
+the benchmarks we tested, an under-predict penalty weight of 100 provided good
+energy savings without sacrificing deadline misses. The results in this chapter
+have been shown with a weight of 100.
 
 \subsection{Race to Idle}
 
@@ -285,7 +310,7 @@ difficult to implement a good oracle controller.
   \end{center}
 \end{figure}
 
-It is possible in some situations to optimize energy usage by running quickly
+It is possible, in some situations, to optimize energy usage by running quickly
 and then dropping to a lower power mode. This is the idea behind ``race to
 idle'' techniques.  If a job finishes quickly enough and the idle power is low
 enough, then this can save more energy than running for longer at a lower
@@ -320,35 +345,9 @@ because the prediction is skewed to overestimate, there are cases where jobs
 finish early and reducing frequency can be used to further reduce energy usage.
 We see that for the benchmarks we tested, our prediction-based controller is
 still able to save more energy than the performance and interactive governors.
-In some cases, the prediction-based controller uses more energy than the pid
+In some cases, the prediction-based controller uses more energy than the PID-based 
 controller. However, as this technique does not affect the number of deadline
-misses, the pid controller is still missing many of its deadlines.
-
-\subsection{Under-prediction Trade-off}
-
-% Under-predict trade-off
-\begin{figure}
-  \begin{center}
-    \includegraphics{exec_time_prediction/data/underpredict_sweep.pdf}
-    \caption{Energy vs. deadline misses for various under-predict penalty
-    weights ($\alpha$) for ldecode.}
-    \label{fig:exec_time_prediction.evaluation.underpredict_sweep}
-  \end{center}
-\end{figure}
-
-In Section~\ref{sec:exec_time_prediction.prediction.model}, we discussed how we
-can vary the penalty weight for under-prediction, $\alpha$, when we fit our
-execution time prediction model. Placing greater penalty on under-prediction
-increases the energy usage but reduces the likelihood of deadline misses.
-Figure~\ref{fig:exec_time_prediction.evaluation.underpredict_sweep} shows the
-energy and deadline misses for varying under-predict penalty weights for
-ldecode. We see that as the weight is decreased, energy consumption decreases
-but deadline misses increase. Reducing the weight from 1000 to 100 keep misses
-at 0, but reducing the weight to 10 introduces a small number of deadline
-misses (0.03\%). Other benchmarks show similar trends and we found that across
-the benchmarks we tested, an under-predict penalty weight of 100 provided good
-energy savings without sacrificing deadline misses. The results in this chapter
-have been shown with a weight of 100.
+misses, the PID-based controller is still missing many of its deadlines.
 
 \subsection{Heterogeneous Cores}
 
@@ -485,7 +484,8 @@ times. On the other hand, when longer execution times are adequate, the little
 core is able to scale out to lower energies. For execution times that are
 achievable by both cores, we see that for the model parameters chosen,
 the big core is actually more energy-efficient. This trade-off will be
-different depending on the model parameters $\lambda$ and $\mu$.
+different depending on the model parameters $\lambda$ and $\mu$. Note that we
+do not model idle power here.
 
 % Evaluation setup
 In order to evaluate the effects of heterogeneous cores on actual workloads, we
@@ -497,19 +497,19 @@ used to calculate the energy usage of the resulting allocations.
 %% Little-only vs big-little, energy and deadline misses
 \begin{figure*}
   \begin{center}
-    \begin{subfigure}[Normalized budget of 1.0]{
+    \begin{subfigure}[Normalized budget of 1.0.]{
       \includegraphics{exec_time_prediction/data/hetero_little_100_em.pdf}
       \label{fig:exec_time_prediction.evaluation.hetero_little_100_em}
     }
     \end{subfigure}
 
-    \begin{subfigure}[Normalized budget of 0.8]{
+    \begin{subfigure}[Normalized budget of 0.8.]{
       \includegraphics{exec_time_prediction/data/hetero_little_80_em.pdf}
       \label{fig:exec_time_prediction.evaluation.hetero_little_80_em}
     }
     \end{subfigure}
 
-    \begin{subfigure}[Normalized budget of 0.6]{
+    \begin{subfigure}[Normalized budget of 0.6.]{
       \includegraphics{exec_time_prediction/data/hetero_little_60_em.pdf}
       \label{fig:exec_time_prediction.evaluation.hetero_little_60_em}
     }
@@ -536,8 +536,8 @@ We first compare the case of running only on a little core versus having both
 big and little cores.
 Figure~\ref{fig:exec_time_prediction.evaluation.hetero_little_em} shows the
 energy and deadline misses for varying time budgets which are normalized to the
-worst-case job execution time for each benchmark running on the little core at
-max frequency. Energy is normalized to running all jobs at maximum frequency on
+maximum execution time for each task running on the little core at
+max frequency (see Table~\ref{tab:exec_time_prediction.evaluation.job_statistics}). Energy is normalized to running all jobs at maximum frequency on
 the little core and can exceed 100\% due to using the big core. We see that
 introducing the big core can actually reduce energy. This is because running on
 the big core reduces execution time and leads to reduced energy usage in some cases, as was
@@ -590,7 +590,7 @@ We also compared the case of running only on a big core versus having big and
 little cores. Figure~\ref{fig:exec_time_prediction.evaluation.hetero_big_em} shows
 energy and deadline misses for this setup. As the introduction of the little
 core is for energy savings as opposed to reducing deadline misses, we only show
-results for a normalized budget of 1 which corresponds to the worst-case job
+results for a normalized budget of 1 which corresponds to the maximum task
 execution time for running on the big core at max frequency. Energy results
 are normalized to running all jobs on the big core at max frequency. For some
 benchmarks, introducing the little core is able to increase energy savings with
