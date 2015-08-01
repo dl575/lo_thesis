@@ -188,7 +188,7 @@ Figure~\ref{fig:exec_time_prediction.evaluation.overhead_time} shows the
 average times for executing the predictor and for switching DVFS levels.  On
 average, the predictor takes 3.2 ms to execute and DVFS switching takes 0.8 ms.
 Excluding pocketsphinx, the average total overhead is less than 1 ms which is
-2\% of a 50 ms time budget.  pocketsphinx shows a long execution time for the
+2\% of a 50 ms time budget.  pocketsphinx shows a longer execution time of 24 ms for the
 predictor. However, this time is negligible compared to the execution time of
 pocketsphinx jobs which are on the order of seconds.
 
@@ -241,21 +241,35 @@ marked with an ``x'' and the non-outlier range is marked by the whiskers.
 Positive values represent over-prediction and negative-numbers represent
 under-prediction. We can see that the prediction skews toward over-prediction
 with average errors greater than 0.  Most benchmarks show prediction errors of
-less than 5 ms, which is only 10\% of a 50 ms time budget. ldecode and rijndael
+less than 5 ms, which is 10\% of a 50 ms time budget. ldecode and rijndael
 show higher prediction errors, which limits the energy savings possible.
 pocketsphinx (not shown) has errors ranging from 60 ms under-prediction to 2
 seconds over-prediction with an average of 880 ms over-prediction. Although
 these errors are larger in absolute terms than the other benchmarks, they are
 on the same order of magnitude as seen for the other benchmarks when 
-compared to the execution time of pocketsphinx jobs.
+compared to the execution time of pocketsphinx jobs. From these results, we can
+see that there are small but significant inaccuracies in our prediction of
+execution time.  However, based on our energy and deadline miss results (see
+Figure~\ref{fig:exec_time_prediction.evaluation.em_summary}), the predicted times are adequate
+as heuristics for making DVFS decisions without violating deadlines. That is,
+the prediction is accurate enough that we are able to differentiate between
+short jobs that can be slowed down and long jobs that must be run at high
+frequencies. In addition, by skewing the prediction
+towards over-predicting, we are able to tolerate these inaccuracies without
+causing deadline misses. However, there may be possible energy savings from
+improving this prediction accuracy.
 
 In order to explore the possible improvements with perfect prediction, we
 implemented an ``oracle'' controller that uses recorded job times from a
 previous run with the same inputs to predict the execution time of jobs.
 Figure~\ref{fig:exec_time_prediction.evaluation.overhead_comparison} also
-includes these oracle results. We see than an additional 11\% energy savings
+includes these oracle results. We see that an additional 11\% energy savings
 are achievable with oracle on top of removing the predictor and DVFS switching
-overheads. Note that we do not have oracle results for uzbl and xpilot as
+overheads. From this, and the prediction errors seen in
+Figure~\ref{fig:exec_time_prediction.evaluation.prediction_error}, the most
+room for improvement for our prediction-based DVFS controller lies in improving
+the prediction accuracy. Note that we do not have oracle results for uzbl and
+xpilot as
 non-deterministic variations in the ordering of jobs across runs made it
 difficult to implement a good oracle controller.
 
