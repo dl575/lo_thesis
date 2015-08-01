@@ -259,6 +259,57 @@ overheads. Note that we do not have oracle results for uzbl and xpilot as
 non-deterministic variations in the ordering of jobs across runs made it
 difficult to implement a good oracle controller.
 
+\subsection{Race to Idle}
+
+% Idle power vs. frequency
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/idle_power.pdf}
+    \caption{Idle power for the ODROID-XU3's Cortex-A7 core for each frequency
+    setting.}
+    \label{fig:exec_time_prediction.evaluation.idle_power}
+  \end{center}
+\end{figure}
+
+It is possible in some situations to optimize energy usage by running quickly
+and then dropping to a lower power mode. This is the idea behind ``race to
+idle'' techniques.  If a job finishes quickly enough and the idle power is low
+enough, then this can save more energy than running for longer at a lower
+frequency level.  Figure~\ref{fig:exec_time_prediction.evaluation.idle_power}
+shows the idle power at each frequency setting for the ODROID-XU3's Cortex-A7
+core.  There is a large difference in idle power at maximum and minimum
+frequency, implying that significant energy savings are possible by reducing
+the frequency after a job finishes.
+
+% Race to idle
+\begin{figure}
+  \begin{center}
+    \includegraphics{exec_time_prediction/data/em_summary_idle.pdf}
+    \caption{Normalized energy usage and deadline misses when the frequency is
+    dropped to minimum (200 MHz) when jobs finish.}
+    \label{fig:exec_time_prediction.evaluation.em_summary_idle}
+  \end{center}
+\end{figure}
+
+In an attempt to estimate the possible energy savings from ``race to idle''
+techniques, we calculated the energy usage for each controller assuming that
+the core only consumes the minimum idle power between jobs.
+Figure~\ref{fig:exec_time_prediction.evaluation.em_summary_idle} shows these
+energy numbers normalized to the energy usage when always running at maximum
+frequency. The performance governor here represents ``race to idle'' where the
+max frequency is used during job execution and then the frequency is dropped to
+the minimum frequency. We see that this significantly reduces the energy usage
+of the performance governor. This technique can also be applied to the other
+controllers in order to reduce energy usage. Although the prediction controller
+seeks to run as slow as possible in order to finish just before the deadline,
+because the prediction is skewed to overestimate, there are cases where jobs
+finish early and reducing frequency can be used to further reduce energy usage.
+We see that for the benchmarks we tested, our prediction-based controller is
+still able to save more energy than the performance and interactive governors.
+In some cases, the prediction-based controller uses more energy than the pid
+controller. However, as this technique does not affect the number of deadline
+misses, the pid controller is still missing many of its deadlines.
+
 \subsection{Under-prediction Trade-off}
 
 % Under-predict trade-off
