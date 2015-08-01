@@ -35,8 +35,8 @@ features are typically evaluated and optimized for average-case performance in
 order to apply to general compute workloads. Modern hardware features do not
 take into account the deadlines of the real-time deadline that runs on them.
 In this thesis, we explore the hardware/software co-design of real-time systems
-in order to address the challenges and take advantage of opportunities that
-appear when the underlying hardware is aware of real-time requirements.
+in order to address the challenges and opportunities that
+arise when the underlying hardware is aware of real-time requirements.
 
 % Thesis overview
 Specifically, we explore two modern hardware techniques. First, we explore
@@ -118,12 +118,12 @@ an estimate of its impact on worst-case execution time is needed. Thus, we
 first developed a static analysis method to estimate the WCET impact of monitoring
 (Chapter~\ref{chap:monitoring_wcet}). This allows run-time monitoring to be
 enabled if there is enough static slack in a real-time system's schedule.
-Our analysis extends the traditional integer-linear programming
+Our analysis extends the traditional integer linear programming
 (ILP) formulation used for estimating WCET by adding new constraints in order
 to model the impact of run-time monitoring.
 
 % Monitoring Hard Drop
-Next, we look at the challenge of apply run-time monitoring to an existing
+Next, we look at the challenge of applying run-time monitoring to an existing
 real-time system design. In this case, the real-time schedule may not have
 enough extra time (i.e., slack in the schedule) in order to support the
 full overhead of performing run-time monitoring. However, it may still be possible
@@ -138,14 +138,14 @@ but still look to achieve timely execution of programs. For these systems, we de
 architecture that enables adjustable overheads by trading off monitoring coverage
 (Chapter~\ref{chap:monitoring_dift_drop}). By relaxing some of the constraints
 for our architecture for hard real-time systems, we are able to achieve higher
-monitoring coverage while still remaining close to to deadlines.
+monitoring coverage while still remaining close to deadlines.
 
 \section{Energy-Efficient Real-Time Systems}
 \label{sec:intro.energy}
 
 For modern mobile and embedded systems, energy usage is a major concern due to
-limited battery life. Techniques, such as dynamic frequency and voltage scaling
-(DVFS) and core migration, have been developed to enable a trade off
+limited battery life. Techniques, such as dynamic voltage and frequency scaling
+(DVFS) and core migration, have been developed to enable a trade-off
 between power and performance. These resource allocation techniques can be used
 to reduce energy usage at the cost of increased execution time.
 
@@ -159,8 +159,9 @@ requirement has no benefit. For example, responding to a user input faster than
 human reaction time does not improve user experience. Similarly, decoding video
 frames faster than the video frame rate has no added benefit. 
 
-For these soft real-time systems, we can take advantage of this slack in order
-to save energy without impacting user experience. In this thesis, we present a
+For these interactive applications, we can save energy by using techniques such
+as DVFS to run at a lower power point, without impacting user experience.  In
+this thesis, we present a
 method to predict the appropriate DVFS operating point for tasks in order to
 meet deadlines with minimal energy (Chapter~\ref{chap:exec_time_prediction}).
 This prediction needs to take into account the effect of inputs and program
@@ -179,16 +180,15 @@ to generate task-specific predictors for DVFS control.
   \end{center}
 \end{figure}
 
-
 Figure~\ref{fig:intro.thesis_overview} shows an overview of the techniques
-presented in this thesis.
-The rest of the thesis is organized as follows.
+presented in this thesis.  The rest of the thesis is organized as follows.
 Chapter~\ref{chap:background} discusses some background knowledge and
 terminology that will be used throughout the thesis.
 Chapters~\ref{chap:monitoring_wcet}, \ref{chap:monitoring_hard_drop}, and
 \ref{chap:monitoring_dift_drop} discuss techniques on improving system security
-and reliability through run-time monitoring on real-time systems. 
-Chapter~\ref{chap:exec_time_prediction} presents predictive control of resource
-allocation for creating energy-efficient real-time systems.
-Finally, Chapter~\ref{chap:related_work}
-discusses related work and Chapter~\ref{chap:conclusion} concludes the thesis.
+and reliability through run-time monitoring on real-time systems.
+Chapter~\ref{chap:exec_time_prediction} presents a method for improving the
+energy efficiency of real-time systems through prediction-based DVFS control.
+Finally, Chapter~\ref{chap:related_work} discusses related work and
+Chapter~\ref{chap:conclusion} concludes the thesis and discusses future
+directions.

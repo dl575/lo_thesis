@@ -8,7 +8,7 @@ monitoring is done sequentially. However, this bound is overly conservative when
 In this chapter, we present a method for estimating the increase in WCET of
 programs running on a system with parallel monitoring. We first investigate how
 to mathematically model the loosely-coupled relationship between the main 
-processing core and parallel monitoring hardware, which are often connected
+processing core and parallel monitoring hardware, which are connected
 through a FIFO buffer with a fixed number of entries. The resulting model
 is non-linear but can be transformed into a mixed integer linear programming (MILP) 
 formulation.
@@ -16,7 +16,7 @@ The MILP formulation produces the maximum number of cycles for each basic block
 that the main core may be stalled due to monitoring.
 These monitoring stalls can be incorporated into popular
 WCET analysis methods based on implicit path enumeration techniques (IPET)
-\cite{li-ipet-dac95}.
+\cite{li-ipet-dac95} in order to estimate the WCET of tasks with run-time monitoring.
 
 The rest of this chapter is organized as follows.
 %Section~\ref{sec:monitoring_wcet.monitoring} gives an overview of the run-time

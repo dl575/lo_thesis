@@ -93,7 +93,7 @@ Dropping a monitoring task implies that some functionality of the monitor has
 been lost.  This may cause either false negatives, where an error that occurs
 in the main task's execution is not detected, or false positives, where the
 monitor incorrectly believes an error has occurred.  For example, a false
-positive can occur for UMC if a store monitoring event is dropped. This causes
+positive can occur for an uninitialized memory check (UMC) if a store monitoring event is dropped. This causes
 the memory location of the store to not be marked as initialized. A subsequent
 load for the memory location will incorrectly cause an error to be raised.  We
 accept false negatives as the loss in coverage that we trade off in order to

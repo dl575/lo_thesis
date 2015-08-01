@@ -36,10 +36,10 @@ In this section, we detail how our architecture works for the three different
 monitoring schemes we evaluated: uninitialized memory check (UMC), return
 address check (RAC), and dynamic information flow tracking (DIFT).
 Table~\ref{tab:monitoring_hard_drop.extensions.tasks} shows a summary of the
-monitoring tasks for these monitoring schemes and
-Tables~\ref{tab:monitoring_hard_drop.extensions.mim} and
-\ref{tab:monitoring_hard_drop.extensions.mfm} shows how the MIM and MFM
-operate. 
+monitoring tasks for these monitoring schemes.
+Table~\ref{tab:monitoring_hard_drop.extensions.mim} shows how the MIM operates
+and Table~\ref{tab:monitoring_hard_drop.extensions.mfm} shows how the MFM
+operates for each monitoring scheme. 
 
 \subsection{Uninitialized Memory Check}
 \label{sec:monitoring_hard_drop.extensions.umc}
@@ -64,7 +64,7 @@ detects that the metadata invalidation flag corresponding to the memory access
 address is invalid, then the monitoring event is dropped and no operation is
 performed.  For a store event, the source operand of the operation is a
 register value which is always valid. Thus, the MFM never filters a store
-event. Instead, if the store event is not dropped, the monitor will set the
+event. Instead, if the store event is not dropped, the monitoring task will set the
 metadata bit and can clear the corresponding invalidation flag.
 
 \subsection{Return Address Check}
@@ -116,9 +116,10 @@ of the register used is checked. If the register is found to be tainted, then
 an error is detected. These monitoring task operations are summarized in
 Table~\ref{tab:monitoring_hard_drop.extensions.tasks}.
 
-In the case of DIFT, since the registers have associated metadata and these are
-used very often, we use the MISP to avoid aliasing. Also, in this discussion,
-we are considering a 1-bit taint, so the MISP can be used to store the exact
+In the case of DIFT, register metadata is used often, so we will use the MISP
+to store the register metadata invalidation information in order to avoid aliasing.  Furthermore,
+in this discussion, we are considering a 1-bit taint, so the MISP can actually
+be used to store the exact
 taint value, rather than an invalidation flag. This shows some of the
 flexibility in how these hardware structures can be used for specific
 monitoring schemes. For more complicated multi-bit DIFT schemes, the MISP would

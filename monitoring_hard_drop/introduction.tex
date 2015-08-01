@@ -9,7 +9,7 @@ that deadlines will be met. However, the increase in WCET introduced by
 run-time monitoring can be quite high, requiring a large amount of slack in a
 system's schedule in order to support it. For example,
 Section~\ref{sec:monitoring_hard_drop.evaluation} showed that even an
-aggressive implementation of UMC showed increased WCET of 3.5x compared to
+aggressive implementation of an uninitialized memory check (UMC) showed increased WCET of 3.5x compared to
 without monitoring. A more realistic implementation that includes deciding
 which tasks to run in software can show increases of WCET of up to 12x compared
 to the baseline.  Thus, applying monitoring to real-time systems requires a

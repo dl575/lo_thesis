@@ -109,7 +109,7 @@ in the FIFO and estimate the worst-case stalls.
   \label{fig:monitoring_wcet.wcet.flow_graphs} 
 \end{figure}
 
-In this approach, the original control flow graph must be transformed so that
+In this approach, the original control flow graph must be first transformed so that
 each node contains at most one forwarded instruction which is located at the
 end of the code sequence represented by the node.  This transformed graph is
 called a {\em monitoring flow graph (MFG)} (see
@@ -315,8 +315,8 @@ Then, another set of constraints upper bounds $li_{M}$ by the maximum $lo_{M_{pr
   li_{M} - b \cdot \delta_{M_{prev}} \leq& lo_{M_{prev}}, \text{ } \forall M_{prev} \in \mathcal{M_\text{prev}} \\
   \sum_{M_{prev} \in \mathcal{M_\text{prev}}}\delta_{M_{prev}} =& |\mathcal{M_\text{prev}}| - 1
 \end{align*}
-where $b$ is chosen to be greater than $[\max(lo_{M_{prev}}) -\\
-\min(lo_{M_{prev}})]$ and $|\mathcal{M_\text{prev}}|$ is the number of nodes
+where $b$ is chosen to be greater than $\left[\max(lo_{M_{prev}}) -
+\min(lo_{M_{prev}})\right]$ and $|\mathcal{M_\text{prev}}|$ is the number of nodes
 with edges pointing to $M$. $\delta_i$ are binary variables. The use of the
 binary variables $\delta_i$ and the second constraint ensure that $li_{M}$ is
 only upper bound by one of the $lo_{M_{prev}}$. In order for all constraints to

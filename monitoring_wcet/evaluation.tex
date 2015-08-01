@@ -15,7 +15,7 @@
 Our toolflow for the proposed WCET method is shown in
 Figure~\ref{fig:monitoring_wcet.evaluation.toolflow}. We first use Chronos
 \cite{chronos-tool}, an open source WCET tool, to estimate the WCET for the
-main task and the monitoring tasks. We also modified Chronos to produce a MFG
+main task and the monitoring task. We also modified Chronos to produce a MFG
 of the main task. This MFG and the monitoring task WCET are used to produce an
 MILP formulation as in Section \ref{sec:monitoring_wcet.wcet}. This MILP
 problem is solved using lp\_solve \cite{lpsolve}, which produces the worst-case
@@ -112,9 +112,9 @@ the number of clock cycles.
   \end{center}
 \end{figure}
 
-Figure~\ref{fig:monitoring_wcet.evaluation.wcet-sim} shows the WCET estimates
-from ILP/MILP formulations with the worst-case simulation cycles for each
-monitoring setup.  The results show that the
+Figure~\ref{fig:monitoring_wcet.evaluation.wcet-sim} shows the ratio of the WCET estimates
+from ILP/MILP formulations to the worst-case simulation cycles for each
+monitoring setup. The results show that the
 analytical WCET estimates from our proposed scheme are larger than the observed
 WCET by 0\% to 52\% for UMC and 0\% to 71\% for CFP, depending on the main
 task. This difference is comparable to the case without parallel run-time
@@ -169,7 +169,7 @@ and monitoring techniques needs to be performed.
 \end{table*}
 
 In this section, we evaluate the running time of our analysis method.
-The most time intensive portion of this analysis is solving of
+The most time intensive portion of this analysis is solving 
 the linear programming (LP) problem. For our experiments, we used lp\_solve
 5.5.2.0 \cite{lpsolve} as our LP solver. These experiments were run on a 2.67
 GHz Xeon E5430 quad-core processor with 4 GB of RAM. The running times for
