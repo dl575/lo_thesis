@@ -4,14 +4,24 @@
 In the last chapter, we described a hardware architecture that dynamically
 limits the amount of monitoring performed in order to meet hard real-time
 deadlines. This allows run-time monitoring to be implemented even when the
-worst-case impact of performing full monitoring cannot be tolerated. 
-For some of these monitoring techniques, even the average or typical case
-overheads can be prohibitively high depending on the application and system
-requirements.  Thus, in this chapter, we explore the use of similar hardware
-techniques in order to enable a new trade-off dimension for run-time monitoring
-designs.  We propose to enable low overhead monitors by using partial
-monitoring. This enables a trade-off between overhead and
-monitoring coverage or accuracy. 
+worst-case impact of performing full monitoring cannot be tolerated. Although
+soft real-time systems do not require strict guarantees, the performance of the
+system must still be controlled in order to meet soft real-time deadlines.
+In this chapter, we explore the use of similar hardware techniques in order to
+enable run-time monitoring with adjustable overhead. This allows us to use
+partial monitoring to create a trade-off between overhead and monitoring
+coverage or accuracy.
+
+%In the last chapter, we described a hardware architecture that dynamically
+%limits the amount of monitoring performed in order to meet hard real-time
+%deadlines. This allows run-time monitoring to be implemented even when the
+%worst-case impact of performing full monitoring cannot be tolerated. 
+%For some of these monitoring techniques, even the average or typical case
+%overheads can be prohibitively high depending on the application and system
+%requirements. Thus, in this chapter, we explore the use of similar hardware
+%techniques in order to meet soft real-time deadlines or performance
+%constraints. We use partial monitoring to enable a trade-off between overhead
+%and monitoring coverage or accuracy.
 
 We enable partial monitoring with adjustable overhead by dynamically dropping
 monitoring operations when the overhead exceeds a specified overhead budget.
@@ -29,11 +39,11 @@ increasing the monitoring coverage.
 
 This chapter is organized as follows.
 Section~\ref{sec:monitoring_dift_drop.monitoring} introduces the notion of
-adjustable overhead through partial monitoring.
+adjustable overhead through partial monitoring and its possible uses.
 Section~\ref{sec:monitoring_dift_drop.dropping} discusses the hardware
 architecture that enables partial monitoring using our dataflow tracking
 engine.  Section~\ref{sec:monitoring_dift_drop.policies} investigates the
 design space for dropping policies that determine when and which monitoring
-operations to drop.  Section~\ref{sec:monitoring_dift_drop.evaluation} presents
-our evaluation methodology and results. 
+operations to drop. Finally, Section~\ref{sec:monitoring_dift_drop.evaluation}
+presents our evaluation methodology and results. 
 

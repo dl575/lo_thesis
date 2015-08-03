@@ -6,8 +6,10 @@
 
 We implemented our dataflow-guided monitoring architecture by modifying the ARM
 version of the gem5 simulator \cite{gem5} to support parallel run-time
-monitoring. We implement the monitor as a software-based monitor running on a
-parallel processor core, similar to LBA \cite{lba-asid06}.  We model the main
+monitoring. 
+% We implement the monitor as a software-based monitor running on a
+% parallel processor core, similar to LBA \cite{lba-asid06}.  
+We model the main
 and monitoring cores as running at 2.5 GHz with 4-way set-associative 32 kB
 private L1 I/D caches and a shared 8-way 2 MB L2 cache. This setup is similar
 to the Snapdragon 801 processor commonly found in mobile systems. A 16-entry
@@ -17,8 +19,8 @@ engine uses a 1 kB cache for invalidation and null flags.
 In order to explore the generality of the architecture for different monitors,
 we implemented five different monitors: uninitialized memory check (UMC), array
 bounds check (BC), dynamic information flow tracking (DIFT), instruction-mix
-profiling (IMP), and LockSet-based race detection (LS).  Since we implement the
-monitor using a processor core and our dataflow engine was designed to be
+profiling (IMP), and LockSet-based race detection (LS).  Since we implement run-time
+monitoring using a processor core and our dataflow engine was designed to be
 generally applicable, the same hardware platform supports all of these
 monitoring techniques.  Uninitialized memory check seeks to detect loading from
 memory locations that are not initialized first. Array bounds check is a monitoring
@@ -152,7 +154,7 @@ dropping these events can reduce overhead without a large impact on monitoring
 coverage.
 
 Figure~\ref{fig:monitoring_dift_drop.evaluation.umc_sweep} shows the analogous
-graph for UMC. Again we see that varying overhead budgets enables partial
+graph for UMC. Again, we see that varying overhead budgets enables varying levels of partial
 monitoring.  With a 2x overhead target, UMC achieves 22\% monitoring coverage
 on average and with a 4x overhead target, this increases to 49\%.  Even higher
 coverage can be achieved by allowing higher overhead budgets.  Similarly,
@@ -163,8 +165,8 @@ average. This increases to 71\% coverage with a 1.1x overhead budget.  For DIFT
 to reach 100\% coverage.  Note that the overheads shown are the target
 overhead. In some cases, a high overhead target is needed in order to achieve
 100\% coverage. For example, for {\tt mcf} with UMC monitoring, a 12x overhead
-target is needed to achieve 100\% coverage while the overheads of performing
-monitoring in full were 2.6x (see
+target is needed to achieve 100\% coverage while the overhead of performing
+monitoring in full was 2.6x (see
 Figure~\ref{fig:monitoring_dift_drop.evaluation.filter_mon}). This is due to
 the fact that we accumulate slack gradually and so bursty monitoring events may
 require a higher overhead target in order for all monitoring to be performed.
@@ -279,11 +281,11 @@ for BC, it can be difficult for source-only dropping to match overhead targets.
 Although Figure~\ref{fig:monitoring_dift_drop.evaluation.bc_coverage} shows
 higher coverage for source-only dropping, this is largely due to the fact that
 it is running with higher overhead.
-On the other hand, UMC showed higher coverage while matching overhead well with
-source-only dropping because UMC monitoring consists of a large number of short,
-independent dependence chains (i.e., store to load dependence).
+% On the other hand, UMC showed higher coverage while matching overhead well with
+% source-only dropping because UMC monitoring consists of a large number of short,
+% independent dependence chains (i.e., store to load dependence).
 
-From these results, we see that depending on the monitor and the program
+From these results, we see that depending on the monitoring scheme and the program
 behavior, source-only dropping can provide better coverage than unrestricted
 dropping with the same overhead. However, unrestricted dropping is better at
 meeting an overhead target.  Thus, for applications where staying within an
@@ -298,7 +300,7 @@ not support fast-forwarding. Instead, we compared the sub-flow dropping with
 other policies by running simulations for 1 billion instructions without
 fast-forwarding. The results (not shown) showed that sub-flow dropping produced
 similar coverage and overhead target matching to unrestricted dropping for the
-benchmarks and monitors that we tested.
+benchmarks and monitoring schemes that we tested.
 
 \subsection{Multiple-Run Coverage}
 

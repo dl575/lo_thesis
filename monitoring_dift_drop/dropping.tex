@@ -97,10 +97,10 @@ access on line 4 was within bounds.
 \end{figure}
 
 Although the functionality of dropping and invalidation could be implemented on
-the monitor, this is unlikely to be much faster than performing the full
+the monitoring core, this is unlikely to be much faster than performing the full
 monitoring operations.  Instead, in order to efficiently support dropping
 monitoring events and to prevent false positives, we propose to insert a
-hardware module between the main core and monitor (see
+hardware module between the main core and the monitoring core (see
 Figure~\ref{fig:monitoring_dift_drop.dropping.dataflow_overview}).  This module
 handles the invalidation operations shown in the middle column of
 Figure~\ref{fig:monitoring_dift_drop.dropping.example_invalid}.  There are two
@@ -138,11 +138,11 @@ the worst-case, misses in the dataflow flag cache can cause high overheads for
 dropping. However, we expect misses to be rare.
 
 Since different monitoring operations are performed based on instruction type,
-the dataflow engine is also configured based on instruction type. The source
-and operation of the address generation units are set based on instruction
+the dataflow engine is also configured based on instruction type. The source operands
+and operation for the address generation units are set based on instruction
 type. Note that the address generation units also take information from the
-monitored event as inputs. Thus, in the same way that the monitor selects
-metadata based on register indices or memory address of the specific monitoring
+monitored event as inputs. Thus, in the same way that the monitoring core selects
+metadata based on register indices or the memory address of the specific monitoring
 event, the dataflow engine also reads the appropriate flags. In addition, the
 filter decision table is configured based on instruction type to decide what
 combination of input flags will lead to a filtered event and whether
@@ -161,9 +161,9 @@ propagation is required.
 \end{figure}
 
 One way to reduce the number of monitoring events that must be handled by the
-monitor is to filter out monitoring events that correspond to operating on null
+monitoring core is to filter out monitoring events that correspond to operating on null
 metadata. Null metadata correspond to events that are not relevant to the
-monitor. For example, Hardbound \cite{hardbound-asplos08} filters out
+monitoring core. For example, Hardbound \cite{hardbound-asplos08} filters out
 operations on non-pointer (i.e., no base and bounds metadata) instructions
 since it is not relevant to array bounds checking. More recently, FADE
 \cite{fade-hpca14} has been proposed as a general hardware module to perform
@@ -176,7 +176,7 @@ how this null filtering operates.  Here, the main core's code has been slightly
 modified from Figure~\ref{fig:monitoring_dift_drop.dropping.example_full} and
 on line 2, {\tt r2} is no longer set as an array pointer.  Without null
 metadata filtering, the instruction for line 4 would be forwarded to the
-monitor since the system does not know whether {\tt r2} contains a pointer
+monitoring core since the system does not know whether {\tt r2} contains a pointer
 address or not. However, if we use a 1-bit flag to mark {\tt r2} as null when
 it is loaded with a constant, then we can propagate this null information and
 filter out monitoring for line 4.
