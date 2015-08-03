@@ -1,6 +1,14 @@
 \section{Introduction}
 \label{sec:exec_time_prediction.introduction}
 
+In the previous chapters, we have explored improving the security and
+reliability of real-time systems. We have looked at the challenges and design
+choices involved with applying run-time monitoring to real-time systems.
+However, information about real-time requirements can also provide an
+opportunity with which to better optimize designs. In this chapter, we discuss
+how soft real-time constraints can be used to inform the control of
+dynamic voltage and frequency scaling (DVFS) for improved energy-efficiency.
+
 Many modern applications on mobile and desktop systems are interactive.
 That is, users will provide inputs and expect a response in a timely manner.
 For example, games must read in user input, update game state, and display the
@@ -48,23 +56,24 @@ program state. We train a model to predict the execution time for a task given
 these features. At run-time, we are able to quickly run this code fragment and
 predict the execution time of a task. With this information, we can
 appropriately select a DVFS level in order to minimize energy while satisfying
-response-time requirements.  Our main contributions include:
-\begin{enumerate}
-  \item An automated approach for generating control flow features.
-  \item A method for training a model to map features to execution times in
-  such a way as to be conservative and avoid deadline misses.
-  \item Application of these predictions to DVFS control in order to minimize
-  energy in the presence of deadlines.
-\end{enumerate}
+response-time requirements.  
+% Our main contributions include:
+% \begin{enumerate}
+%   \item An automated approach for generating control flow features.
+%   \item A method for training a model to map features to execution times in
+%   such a way as to be conservative and avoid deadline misses.
+%   \item Application of these predictions to DVFS control in order to minimize
+%   energy in the presence of deadlines.
+% \end{enumerate}
 
-We implemented a prototype of this method on an ODROID-XU3 development board.
-We tested eight different applications, including games, speech recognition,
-video decoding, and a web browser. Our results show energy savings of 56\% over
-running at maximum frequency with almost no deadline misses. This is 27\%
-increased energy savings compared to the default Linux interactive governor
-which shows 2\% deadline misses.  Compared to a PID-based governor, our
-approach sees only a 1\% improvement in energy savings but the PID-based
-controller shows 13\% deadline misses on average.
+% We implemented a prototype of this method on an ODROID-XU3 development board.
+% We tested eight different applications, including games, speech recognition,
+% video decoding, and a web browser. Our results show energy savings of 56\% over
+% running at maximum frequency with almost no deadline misses. This is 27\%
+% increased energy savings compared to the default Linux interactive governor
+% which shows 2\% deadline misses.  Compared to a PID-based governor, our
+% approach sees only a 1\% improvement in energy savings but the PID-based
+% controller shows 13\% deadline misses on average.
 
 The rest of the chapter is organized as follows.
 Section~\ref{sec:exec_time_prediction.applications} discusses general

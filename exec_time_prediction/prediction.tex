@@ -93,13 +93,26 @@ Generating these features using an instrumented version of the task code is not
 suitable for prediction because the instrumented task will take at least as
 long as the original task to run. Instead, we need to quickly generate these
 features before the task execution. In order to minimize the prediction
-execution time, we use program slicing to produce the minimal code needed to
-calculate these features.
+execution time, we use program slicing \cite{tip-jpl95} to produce the minimal
+code needed to calculate these features.
 Figure~\ref{fig:exec_time_prediction.prediction.code_transformations} shows a
 simple example of this flow. By removing the actual computation and only
-running through the control flow, the execution time can be greatly reduced. We
-refer to the resulting program slice that computes the control flow features as
-the \emph{prediction slice} or simply as the \emph{slice}.
+running through the control flow, the execution time can be greatly reduced. 
+Note that since the information from this slice will ultimately be used to make a
+heuristic decision on DVFS control, we do not need an exact slice
+that perfectly calculates the program features. Issues such as pointer aliasing
+can limit the amount of code removed for an exact slice.  Instead, using an
+approximate slice can reduce the slice's size and execution time. As long as
+inaccuracies in the generated program features are low, an approximate slice is
+adequate for our prediction needs.
+We refer to the resulting program slice that computes the control flow features
+as the \emph{prediction slice} or simply as the \emph{slice}.
+%An exact program slice may not be much smaller than the original program as
+%issues such as pointer aliasing can require large portions of the original
+%program to remain in the slice. Thus, in order to keep the execution time of
+%the prediction slice low, we use an approximate slice. As we will ultimately
+%use these features to make a heuristic decision on DVFS control, we can
+%tolerate some inaccuracy in the feature values.
 
 One problem that arises with running this prediction slice before a task is the
 issue of side-effects. That is, the slice could write to global variables and
@@ -293,12 +306,13 @@ Figure~\ref{fig:exec_time_prediction.prediction.prediction_flow}. However, we
 note that each step in this prediction flow can be substituted with alternate
 models as long as it produces the needed prediction for the next step.  The
 most obvious change would be to use more complex prediction models for each
-step (e.g., more features generated and higher-order, non-linear models).  For
-the benchmarks we evaluated, we saw relatively little gain to be had from
-improved prediction (see
-Section~\ref{sec:exec_time_prediction.evaluation.overheads}) and thus the
-increased overheads of more complex models were not justified.  Instead, we
-discuss here some alternative extensions.
+step (e.g., more features generated and higher-order, non-linear models) in
+order to improve the prediction accuracy.  
+%For the benchmarks we evaluated, we saw relatively little gain to be had from
+%improved prediction (see
+%Section~\ref{sec:exec_time_prediction.evaluation.overheads}) and thus the
+%increased overheads of more complex models were not justified.  
+Here, we discuss some other possible directions for extending our prediction flow.
 
 For feature generation, we have focused on automated generation in order for
 the approach to be general and limit the need for domain-specific expertise.

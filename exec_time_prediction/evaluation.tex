@@ -335,11 +335,14 @@ techniques, we calculated the energy usage for each controller assuming that
 the core only consumes the minimum idle power between jobs.
 Figure~\ref{fig:exec_time_prediction.evaluation.em_summary_idle} shows these
 energy numbers normalized to the energy usage when always running at maximum
-frequency. The performance governor here represents ``race to idle'' where the
+frequency. These results are shown for a deadline of 4 seconds for pocketsphinx
+and 50 milliseconds for all other benchmarks and is an analogous setup to the
+results shown in Figure~\ref{fig:exec_time_prediction.evaluation.em_summary}.
+The performance governor here represents ``race to idle'' where the
 max frequency is used during job execution and then the frequency is dropped to
 the minimum frequency. We see that this significantly reduces the energy usage
 of the performance governor. This technique can also be applied to the other
-controllers in order to reduce energy usage. Although the prediction controller
+controllers in order to reduce energy usage. Although the prediction-based controller
 seeks to run as slow as possible in order to finish just before the deadline,
 because the prediction is skewed to overestimate, there are cases where jobs
 finish early and reducing frequency can be used to further reduce energy usage.
